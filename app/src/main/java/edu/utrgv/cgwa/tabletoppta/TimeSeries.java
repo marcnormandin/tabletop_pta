@@ -18,6 +18,13 @@ public class TimeSeries {
         this.t = t;
     }
 
+    public TimeSeries(TimeSeries cpy) {
+        this.h = new double[cpy.h.length];
+        this.t = new double[cpy.t.length];
+        System.arraycopy(cpy.h, 0, this.h, 0, this.h.length);
+        System.arraycopy(cpy.t, 0, this.t, 0, this.t.length);
+    }
+
     public TimeSeries(String filename) {
         loadFromFile(filename);
     }

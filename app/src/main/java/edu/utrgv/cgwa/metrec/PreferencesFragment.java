@@ -51,7 +51,7 @@ public class PreferencesFragment extends PreferenceFragment {
         // Delete the first metronome
         String prefix = sp.getString("metronome_one_filename_prefix", "error");
         if (!prefix.equalsIgnoreCase("error")) {
-            MetronomeModel model = new MetronomeModel(prefix);
+            ProfileModel model = new ProfileModel(prefix);
             model.clearAll();
         }else {
             Log.d(TAG, "ERROR! Metronome one prefix not found in settings.");
@@ -60,7 +60,7 @@ public class PreferencesFragment extends PreferenceFragment {
         // Delete the second metronome
         String prefix2 = sp.getString("metronome_two_filename_prefix", "error");
         if (!prefix2.equalsIgnoreCase("error")) {
-            MetronomeModel model = new MetronomeModel(prefix);
+            ProfileModel model = new ProfileModel(prefix);
             model.clearAll();
         } else {
             Log.d(TAG, "ERROR! Metronome two prefix not found in settings.");

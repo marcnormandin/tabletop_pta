@@ -65,10 +65,15 @@ public class BaseModel {
     }
 
     public TimeSeries getTimeSeries() {
-        if (hasTimeSeries() && mTimeSeries == null) {
+        if (mTimeSeries == null) {
             loadTimeSeries();
         }
-        return mTimeSeries;
+
+        if (mTimeSeries != null) {
+            return new TimeSeries(mTimeSeries);
+        } else {
+            return null;
+        }
     }
 
     protected void newTimeSeries() {

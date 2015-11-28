@@ -17,7 +17,7 @@ import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class TimeSeriesFragmentPresenter {
     private final String TAG = "ProfilePresenter";
-    private MetronomeModel mMetronome;
+    private ProfileModel mMetronome;
     private TimeSeriesFragment mFragment;
 
     // Fixme
@@ -28,7 +28,7 @@ public class TimeSeriesFragmentPresenter {
         ProfileManager manager = new ProfileManager(frag.getActivity());
         DbProfileTable.ProfileEntry entry = manager.getProfileEntryByProfileID(profileID);
         Log.d(TAG, "Timeseries fragment presenter created for: filenamePrefix = "  + entry.filenamePrefix());
-        mMetronome = new MetronomeModel(entry.filenamePrefix());
+        mMetronome = new ProfileModel(entry.filenamePrefix());
     }
 
     void onCreateView() {
@@ -69,9 +69,9 @@ public class TimeSeriesFragmentPresenter {
     class RefreshTimeSeriesViewAsync extends AsyncTask<Void, Void, Void> {
         private TimeSeries mTS = null;
         private LineChart mLineChart = null;
-        private MetronomeModel mMetronome = null;
+        private ProfileModel mMetronome = null;
 
-        public RefreshTimeSeriesViewAsync(LineChart lc, MetronomeModel metronome) {
+        public RefreshTimeSeriesViewAsync(LineChart lc, ProfileModel metronome) {
             mLineChart = lc;
             mMetronome = metronome;
         }

@@ -29,7 +29,7 @@ import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class NewProfileActivityPresenter {
     private final String TAG = "NewProfileActivityPresenter";
-    private MetronomeModel mMetronome;
+    private ProfileModel mMetronome;
     private NewProfileActivityFragment mFragment;
 
     private boolean mRecorded = false;
@@ -42,7 +42,7 @@ public class NewProfileActivityPresenter {
         Log.d(TAG, "Constructing a NewProfileActivityPresenter given prefix = " + filenamePrefix);
 
         mFragment = frag;
-        mMetronome = new MetronomeModel(filenamePrefix);
+        mMetronome = new ProfileModel(filenamePrefix);
     }
 
     public void onCreateViews() {
@@ -236,9 +236,9 @@ public class NewProfileActivityPresenter {
     class RefreshTimeSeriesViewAsync extends AsyncTask<Void, Void, Void> {
         private TimeSeries mTS = null;
         private LineChart mLineChart = null;
-        private MetronomeModel mMetronome = null;
+        private ProfileModel mMetronome = null;
 
-        public RefreshTimeSeriesViewAsync(LineChart lc, MetronomeModel metronome) {
+        public RefreshTimeSeriesViewAsync(LineChart lc, ProfileModel metronome) {
             mLineChart = lc;
             mMetronome = metronome;
         }
@@ -315,9 +315,9 @@ public class NewProfileActivityPresenter {
     class RefreshSelfCorrelationViewAsync extends AsyncTask<Void, Void, Void> {
         private TimeSeries mTS = null;
         private LineChart mLineChart = null;
-        private MetronomeModel mMetronome = null;
+        private ProfileModel mMetronome = null;
 
-        public RefreshSelfCorrelationViewAsync(LineChart lc, MetronomeModel metronome) {
+        public RefreshSelfCorrelationViewAsync(LineChart lc, ProfileModel metronome) {
             mLineChart = lc;
             mMetronome = metronome;
         }

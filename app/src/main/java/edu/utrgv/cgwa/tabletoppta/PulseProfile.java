@@ -19,6 +19,12 @@ public class PulseProfile {
         this.bpm = bpm;
     }
 
+    public PulseProfile(PulseProfile cpy) {
+        this.ts = new TimeSeries(cpy.ts);
+        this.T = cpy.T;
+        this.bpm = cpy.bpm;
+    }
+
     public PulseProfile(String filename) {
         loadFromFile(filename);
     }

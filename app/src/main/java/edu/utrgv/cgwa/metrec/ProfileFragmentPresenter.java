@@ -17,7 +17,7 @@ import edu.utrgv.cgwa.tabletoppta.PulseProfile;
 
 public class ProfileFragmentPresenter {
     private final String TAG = "ProfilePresenter";
-    private MetronomeModel mMetronome;
+    private ProfileModel mMetronome;
     private ProfileFragment mFragment;
 
     // Fixme
@@ -28,7 +28,7 @@ public class ProfileFragmentPresenter {
         ProfileManager manager = new ProfileManager(frag.getActivity());
         DbProfileTable.ProfileEntry entry = manager.getProfileEntryByProfileID(profileID);
         Log.d(TAG, "Profile fragment presenter created for: filenamePrefix = "  + entry.filenamePrefix());
-        mMetronome = new MetronomeModel(entry.filenamePrefix());
+        mMetronome = new ProfileModel(entry.filenamePrefix());
     }
 
     void onCreateView() {

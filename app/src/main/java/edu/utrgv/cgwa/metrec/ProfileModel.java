@@ -10,14 +10,14 @@ import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 import static edu.utrgv.cgwa.tabletoppta.Routines.caltemplate;
 
-public class MetronomeModel extends BaseModel {
-    private static final String TAG = "MetronomeModel";
+public class ProfileModel extends BaseModel {
+    private static final String TAG = "ProfileModel";
 
     private PulseProfile mPulseProfile = null;
 
     private TimeSeries mSelfCorrelation = null;
 
-    public MetronomeModel(String filenamePrefix) {
+    public ProfileModel(String filenamePrefix) {
         super(filenamePrefix);
     }
 
@@ -37,10 +37,16 @@ public class MetronomeModel extends BaseModel {
     }
 
     public PulseProfile getPulseProfile() {
-        if (hasProfile() && mPulseProfile == null) {
+        if (mPulseProfile == null) {
             loadProfile();
         }
-        return mPulseProfile;
+
+        if (mPulseProfile != null) {
+            // Return a copy
+            return new PulseProfile(mPulseProfile);
+        } else {
+            return null;
+        }
     }
 
 
