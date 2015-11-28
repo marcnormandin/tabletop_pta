@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <ImageView
+        android:layout_width="199dp"
+        android:layout_height="168dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/table"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.55" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Built-in Metronome"
+        android:id="@+id/buttonMetronome"
+        android:drawableLeft="@android:drawable/ic_lock_silent_mode_off"
+        android:onClick="startBuiltinMetronomeActivity"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Metronome Profiles"
+        android:id="@+id/btnProfiles"
+        android:layout_gravity="center_horizontal"
+        android:onClick="viewProfiles" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Visit Official Website"
+        android:id="@+id/launchWebsite"
+        android:drawableLeft="@android:drawable/ic_menu_info_details"
+        android:onClick="launchWebsite" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:id="@+id/buttonSettings"
+        android:layout_gravity="center_horizontal"
+        android:drawableLeft="@android:drawable/ic_menu_preferences"
+        android:onClick="viewSettings" />
+
+</LinearLayout>

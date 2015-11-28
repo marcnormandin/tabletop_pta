@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_category_general">
+
+        <EditTextPreference
+            android:key="samplerate"
+            android:title="@string/pref_title_samplerate"
+            android:text="8000"
+            android:summary="@string/pref_summary_samplerate"
+            android:defaultValue="8000"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Built-in Metronome">
+
+        <EditTextPreference
+            android:key="mode_a_frequency"
+            android:title="Mode A frequency (Hz)"
+            android:text="900"
+            android:summary="Sets the first mode's frequency"
+            android:defaultValue="900"/>
+
+        <EditTextPreference
+            android:key="mode_b_frequency"
+            android:title="Mode B frequency (Hz)"
+            android:text="900"
+            android:summary="Sets the second mode's frequency"
+            android:defaultValue="1200"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_pulseprofile">
+
+        <EditTextPreference
+            android:key="pulserecordingduration"
+            android:title="@string/pref_title_pulserecordingduration"
+            android:text="8"
+            android:summary="@string/pref_summary_pulserecordingduration"
+            android:defaultValue="8"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/pref_category_analysis">
+
+        <EditTextPreference
+            android:key="analysisrecordingdelay"
+            android:title="@string/pref_title_analysisrecordingdelay"
+            android:text="8"
+            android:summary="@string/pref_summary_analysisrecordingdelay"
+            android:defaultValue="8"/>
+
+        <EditTextPreference
+            android:key="analysisrecordingduration"
+            android:title="@string/pref_title_analysisrecordingduration"
+            android:text="8"
+            android:summary="@string/pref_summary_analysisrecordingduration"
+            android:defaultValue="8"/>
+    </PreferenceCategory>
+
+    <Preference android:title="@string/pref_title_restoredefaultsettings"
+        android:key="restoredefaultsettings"
+        android:summary="@string/pref_summary_restoredefaultsettings"/>
+</PreferenceScreen>

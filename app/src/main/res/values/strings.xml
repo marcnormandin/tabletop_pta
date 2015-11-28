@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Tabletop PTA</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_audio_record">AudioRecordActivity</string>
+
+    <!-- General -->
+    <string name="pref_category_general">General</string>
+
+    <string name="pref_title_samplerate">Sampling rate</string>
+    <string name="pref_summary_samplerate">Samples per second for audio recordings</string>
+
+    <!-- Pulse profile -->
+    <string name="pref_category_pulseprofile">Pulse profile</string>
+
+    <string name="pref_title_pulserecordingduration">Duration (s)</string>
+    <string name="pref_summary_pulserecordingduration">Sets the time duration of the metronome pulse recordings</string>
+
+    <!-- Analysis -->
+    <string name="pref_category_analysis">Analysis</string>
+
+    <string name="pref_title_analysisrecordingdelay">Delay (s)</string>
+    <string name="pref_summary_analysisrecordingdelay">Seconds to wait before beginning the analysis recording</string>
+
+    <string name="pref_title_analysisrecordingduration">Duration (s)</string>
+    <string name="pref_summary_analysisrecordingduration">Sets the time duration for the analysis recording of two metronomes with the moving recorder.</string>
+
+    <!-- Restore defaults -->
+    <string name="pref_title_restoredefaultsettings">Restore default settings</string>
+    <string name="pref_summary_restoredefaultsettings">WARNING! This can not be undone.</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_record_sound">RecordSoundActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">Tabletop\n Pulsar Timing Array</string>
+
+    <string name="title_activity_profile_list">ProfileListActivity</string>
+    <string name="title_activity_view_profile">ViewProfileActivity</string>
+    <string name="title_activity_view_time_series">ViewTimeSeriesActivity</string>
+
+</resources>

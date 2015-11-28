@@ -1,0 +1,21 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/primary_color_dark</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
+    </style>
+
+    <style name="CustomToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
+
+    <style name="ListViewStyle" parent="android:style/Widget.ListView">
+        <item name="android:background">@color/background_light</item>
+        <item name="android:divider">@color/accent_color</item>
+        <item name="android:dividerHeight">5dp</item>
+        <item name="android:drawSelectorOnTop">false</item>
+        <item name="android:cacheColorHint">#00000000</item>
+    </style>
+
+</resources>
