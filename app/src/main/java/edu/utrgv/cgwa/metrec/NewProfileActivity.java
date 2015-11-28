@@ -11,15 +11,15 @@ import android.view.MenuInflater;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MetronomeActivity extends AppCompatActivity {
-    private MetronomeFragment mProfile;
+public class NewProfileActivity extends AppCompatActivity {
+    private NewProfileActivityFragment mProfile;
     private Toolbar mToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_metronome);
+        setContentView(R.layout.activity_newprofile);
 
         mToolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(mToolbar);
@@ -28,7 +28,7 @@ public class MetronomeActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
 
-            mProfile = MetronomeFragment.newInstance(getFilenamePrefix());
+            mProfile = NewProfileActivityFragment.newInstance(getFilenamePrefix());
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, mProfile);
 
@@ -38,7 +38,7 @@ public class MetronomeActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_metronome, menu);
+        inflater.inflate(R.menu.menu_newprofile, menu);
         return true;
     }
 

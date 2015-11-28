@@ -27,10 +27,10 @@ import java.util.Date;
 import edu.utrgv.cgwa.tabletoppta.PulseProfile;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
-public class MetronomePresenter {
-    private final String TAG = "MetronomePresenter";
+public class NewProfileActivityPresenter {
+    private final String TAG = "NewProfileActivityPresenter";
     private MetronomeModel mMetronome;
-    private MetronomeFragment mFragment;
+    private NewProfileActivityFragment mFragment;
 
     private boolean mRecorded = false;
 
@@ -38,8 +38,8 @@ public class MetronomePresenter {
     private static final int MAX_PLOT_POINTS = 40000;
 
 
-    public MetronomePresenter(MetronomeFragment frag, String filenamePrefix) {
-        Log.d(TAG, "Constructing a MetronomePresenter given prefix = " + filenamePrefix);
+    public NewProfileActivityPresenter(NewProfileActivityFragment frag, String filenamePrefix) {
+        Log.d(TAG, "Constructing a NewProfileActivityPresenter given prefix = " + filenamePrefix);
 
         mFragment = frag;
         mMetronome = new MetronomeModel(filenamePrefix);

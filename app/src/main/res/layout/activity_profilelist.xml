@@ -17,7 +17,7 @@
         <fragment
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="edu.utrgv.cgwa.metrec.ProfileListViewFragment"
+            android:name="edu.utrgv.cgwa.metrec.ProfileListFragment"
             android:id="@+id/listfragment"
             android:layout_gravity="left|top" />
 

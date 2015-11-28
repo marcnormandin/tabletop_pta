@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class ProfileListViewFragment extends Fragment {
-    private static final String TAG = "ProfileListViewFragment";
+public class ProfileListFragment extends Fragment {
+    private static final String TAG = "ProfileListFragment";
     private OnFragmentInteractionListener mListener;
     private RecyclerView mProfileList;
 
@@ -103,7 +103,7 @@ public class ProfileListViewFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ProfileListViewFragment() {
+    public ProfileListFragment() {
     }
 
 

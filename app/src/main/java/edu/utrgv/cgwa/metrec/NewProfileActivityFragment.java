@@ -16,10 +16,10 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 
-public class MetronomeFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "MetronomeFragment";
+public class NewProfileActivityFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "NewProfileActivityFragment";
     private static final String ARG_FILENAME = "filename";
-    private MetronomePresenter mPresenter;
+    private NewProfileActivityPresenter mPresenter;
 
     private static class MyChartGestureListener implements OnChartGestureListener {
         @Override
@@ -63,8 +63,8 @@ public class MetronomeFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    public static MetronomeFragment newInstance(String filename) {
-        MetronomeFragment fragment = new MetronomeFragment();
+    public static NewProfileActivityFragment newInstance(String filename) {
+        NewProfileActivityFragment fragment = new NewProfileActivityFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FILENAME, filename);
         fragment.setArguments(args);
@@ -77,7 +77,7 @@ public class MetronomeFragment extends Fragment implements View.OnClickListener 
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mPresenter = new MetronomePresenter(this, getArguments().getString(ARG_FILENAME));
+            mPresenter = new NewProfileActivityPresenter(this, getArguments().getString(ARG_FILENAME));
         } else {
             Log.d(TAG, "Fragment created without filename for the presenter");
         }
@@ -87,7 +87,7 @@ public class MetronomeFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        View rootView = inflater.inflate(R.layout.fragment_metronome, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_newprofile, container, false);
 
 
 

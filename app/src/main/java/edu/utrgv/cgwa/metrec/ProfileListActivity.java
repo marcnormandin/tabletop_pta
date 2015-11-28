@@ -9,7 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 
-public class ProfileListActivity extends AppCompatActivity implements ProfileListViewFragment.OnFragmentInteractionListener {
+public class ProfileListActivity extends AppCompatActivity implements ProfileListFragment.OnFragmentInteractionListener {
     private Toolbar mToolbar;
 
     @Override
@@ -55,7 +55,7 @@ public class ProfileListActivity extends AppCompatActivity implements ProfileLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_newprofile:
-                Intent intent = new Intent(this, MetronomeActivity.class);
+                Intent intent = new Intent(this, NewProfileActivity.class);
                 startActivity(intent);
                 return true;
         }
