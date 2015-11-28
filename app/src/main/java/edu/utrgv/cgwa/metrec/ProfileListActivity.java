@@ -4,15 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 
 public class ProfileListActivity extends AppCompatActivity implements ProfileListViewFragment.OnFragmentInteractionListener {
-    private static final String TAG = "ProfileList";
-
     private Toolbar mToolbar;
 
     @Override
@@ -24,11 +21,6 @@ public class ProfileListActivity extends AppCompatActivity implements ProfileLis
         setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public void onFragmentInteraction(String id) {
-        Log.d(TAG, "Item Selected");
     }
 
     @Override
@@ -62,11 +54,6 @@ public class ProfileListActivity extends AppCompatActivity implements ProfileLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_deleteprofile:
-                // Get the fragment so we can relay the "delete" command
-                ProfileListViewFragment frag = (ProfileListViewFragment) getSupportFragmentManager().findFragmentById(R.id.listfragment);
-                frag.onDeleteSelectedProfiles();
-                return true;
             case R.id.action_newprofile:
                 Intent intent = new Intent(this, MetronomeActivity.class);
                 startActivity(intent);

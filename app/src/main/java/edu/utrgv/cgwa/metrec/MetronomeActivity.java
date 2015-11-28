@@ -12,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MetronomeActivity extends AppCompatActivity {
-    private static final String TAG = "MetronomeActivity";
-
     private MetronomeFragment mProfile;
     private Toolbar mToolbar;
 

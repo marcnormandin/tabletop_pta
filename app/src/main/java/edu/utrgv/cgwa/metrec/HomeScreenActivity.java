@@ -8,8 +8,6 @@ import android.view.View;
 
 
 public class HomeScreenActivity extends Activity {
-    private static final String TAG = "HomeScreenActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

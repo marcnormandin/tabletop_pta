@@ -14,28 +14,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Record"
-            android:id="@+id/btnRecord"
+            android:id="@+id/btnMain"
             android:layout_below="@+id/textView2"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Play"
-            android:id="@+id/btnPlay"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
 
-        <EditText
+    </LinearLayout>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frequency Mode:"
+        android:id="@+id/frequencySwitch" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/editBPM"
-            android:layout_weight="1"
-            android:text="120" />
+            android:text="Beats per minute:"
+            android:id="@+id/textView3"
+            android:layout_gravity="center_horizontal" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/beatsPerMinuteSpinner" />
 
     </LinearLayout>
 

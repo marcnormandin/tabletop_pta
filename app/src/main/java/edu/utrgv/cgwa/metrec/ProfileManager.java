@@ -1,6 +1,5 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
@@ -36,15 +35,7 @@ public class ProfileManager {
         return profile;
     }
 
-    public void deleteProfileEntryByProfileID(long profileID) {
-        final String SQL = "DELETE FROM " + DbProfileTable.ProfileEntry.TABLE_NAME
-                + " WHERE _ID = " + profileID;
-        Log.d(TAG, "Deleting Profile with _ID = " + profileID + " from the database.");
-
-        mHelper.getWritableDatabase().execSQL(SQL);
-    }
-
-    public DbProfileTable.ProfileEntry getProfileEntryByProfileID(int profileID) {
+    public DbProfileTable.ProfileEntry getProfileEntryByProfileID(long profileID) {
         final String SQL = "SELECT * FROM " + DbProfileTable.ProfileEntry.TABLE_NAME + " WHERE _ID = " + profileID;
         Cursor cursor = mHelper.getReadableDatabase().rawQuery(SQL, null);
         cursor.moveToFirst();
@@ -57,7 +48,7 @@ public class ProfileManager {
     }
 
     private DbProfileTable.ProfileEntry getEntry(Cursor cursor) {
-        int uniqueIndex = cursor.getInt(0);
+        long uniqueIndex = cursor.getLong(0);
 
         int dateIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_DATE);
         String dateString = cursor.getString(dateIndex);
@@ -77,7 +68,18 @@ public class ProfileManager {
         int samplesPerSecondIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_SAMPLES_PER_SECOND);
         int samplesPerSecond = cursor.getInt(samplesPerSecondIndex);
 
+        int frequencyIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_FREQUENCY);
+        double frequency = cursor.getDouble(frequencyIndex);
+
         return new DbProfileTable.ProfileEntry(uniqueIndex, dateString, timeString, filenamePrefix, bpm,
-                computedPeriod, samplesPerSecond);
+                computedPeriod, samplesPerSecond, frequency);
+    }
+
+    public void deleteProfileEntryByProfileID(long profileID) {
+        final String SQL = "DELETE FROM " + DbProfileTable.ProfileEntry.TABLE_NAME
+                + " WHERE _ID = " + profileID;
+        Log.d(TAG, "Deleting Profile with _ID = " + profileID + " from the database.");
+
+        mHelper.getWritableDatabase().execSQL(SQL);
     }
 }

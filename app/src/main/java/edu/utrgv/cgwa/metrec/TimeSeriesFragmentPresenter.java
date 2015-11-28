@@ -23,7 +23,7 @@ public class TimeSeriesFragmentPresenter {
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public TimeSeriesFragmentPresenter(TimeSeriesFragment frag, int profileID) {
+    public TimeSeriesFragmentPresenter(TimeSeriesFragment frag, long profileID) {
         mFragment = frag;
         ProfileManager manager = new ProfileManager(frag.getActivity());
         DbProfileTable.ProfileEntry entry = manager.getProfileEntryByProfileID(profileID);

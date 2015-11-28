@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.listener.ChartTouchListener;
@@ -87,6 +89,8 @@ public class MetronomeFragment extends Fragment implements View.OnClickListener 
         Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_metronome, container, false);
 
+
+
         // Manage the time series plot
         LineChart plotTimeSeries = (LineChart) rootView.findViewById(R.id.metronomepulseprofiletimeseries);
         if (plotTimeSeries == null) {
@@ -131,11 +135,8 @@ public class MetronomeFragment extends Fragment implements View.OnClickListener 
         plotSelfCorrelation.setDrawGridBackground(false);
 
 
-        Button btnRec = (Button)rootView.findViewById(R.id.btnRecord);
+        Button btnRec = (Button)rootView.findViewById(R.id.btnMain);
         btnRec.setOnClickListener(this);
-
-        Button btnPlay = (Button)rootView.findViewById(R.id.btnPlay);
-        btnPlay.setOnClickListener(this);
 
         return rootView;
     }
@@ -144,6 +145,13 @@ public class MetronomeFragment extends Fragment implements View.OnClickListener 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mPresenter.onCreateViews();
+
+        // Setup the beats per minute spinner
+        Spinner bpm = (Spinner) getActivity().findViewById(R.id.beatsPerMinuteSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.beats_per_minute, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bpm.setAdapter(adapter);
     }
 
     @Override
@@ -155,13 +163,8 @@ public class MetronomeFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnRecord: {
-                mPresenter.record();
-
-                break;
-            }
-            case R.id.btnPlay: {
-                mPresenter.play();
+            case R.id.btnMain: {
+                mPresenter.buttonClicked();
                 break;
             }
         }

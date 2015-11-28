@@ -4,6 +4,10 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar"/>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="212dp"
@@ -23,17 +27,15 @@
             android:text="Beats per minute (#)"
             android:id="@+id/textBeatsPerMinute" />
 
+        <Spinner
+            android:id="@+id/beatsPerMinuteSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/beatsPerMinuteSeekBar"
-        android:layout_gravity="center_horizontal"
-        android:max="300"
-        android:progress="60"
-        android:indeterminate="false" />
+
 
     <Switch
         android:layout_width="match_parent"
@@ -44,13 +46,6 @@
         android:checked="false"
         android:textOn="1200 Hz"
         android:textOff="1000 Hz" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-    </LinearLayout>
 
 
     <LinearLayout

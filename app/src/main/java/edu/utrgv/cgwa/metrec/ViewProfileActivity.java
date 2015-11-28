@@ -15,10 +15,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ViewProfileActivity extends AppCompatActivity implements ProfileFragment.OnFragmentInteractionListener {
+public class ViewProfileActivity extends AppCompatActivity {
     private static final String TAG = "ViewProfile";
     private Toolbar mToolbar;
-    private int mProfileID;
+    private long mProfileID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class ViewProfileActivity extends AppCompatActivity implements ProfileFra
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        mProfileID = intent.getIntExtra("profileID", -1);
+        mProfileID = intent.getLongExtra("profileID", -1);
         if (mProfileID == -1) {
             Log.d(TAG, "Attempt to view a profile, but no profile ID given in intent.");
         } else {
@@ -41,7 +41,6 @@ public class ViewProfileActivity extends AppCompatActivity implements ProfileFra
             ft.add(R.id.container, frag);
             ft.commit();
         }
-
 
         ProfileManager manager = new ProfileManager(this);
         DbProfileTable.ProfileEntry profile = manager.getProfileEntryByProfileID(mProfileID);
@@ -62,12 +61,5 @@ public class ViewProfileActivity extends AppCompatActivity implements ProfileFra
 
         TextView samplesPerSecond = (TextView) findViewById(R.id.metronomepulseprofilesamplespersecond);
         samplesPerSecond.setText("Samples per second: " + profile.samplesPerSecond());
-    }
-
-
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }

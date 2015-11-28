@@ -1,7 +1,6 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,12 +10,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class ViewTimeSeriesActivity extends AppCompatActivity implements TimeSeriesFragment.OnFragmentInteractionListener {
+public class ViewTimeSeriesActivity extends AppCompatActivity {
     private static final String TAG = "ViewProfile";
     private static TimeSeriesFragment mFragment;
     private Toolbar mToolbar;
+    private long mProfileID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,22 +30,37 @@ public class ViewTimeSeriesActivity extends AppCompatActivity implements TimeSer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        int profileID = intent.getIntExtra("profileID", -1);
-        if (profileID == -1) {
+        mProfileID = intent.getLongExtra("profileID", -1);
+        if (mProfileID == -1) {
             Log.d(TAG, "Attempt to view a time series, but no profile ID given in intent.");
         } else {
             Log.d(TAG, "Adding time series fragment");
-            mFragment = TimeSeriesFragment.newInstance(profileID);
+            mFragment = TimeSeriesFragment.newInstance(mProfileID);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, mFragment);
             ft.commit();
         }
-    }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
+        ProfileManager manager = new ProfileManager(this);
+        DbProfileTable.ProfileEntry profile = manager.getProfileEntryByProfileID(mProfileID);
 
+        // Update the pulse period text
+        TextView tv = (TextView) findViewById(R.id.metronomepulseprofileperiod);
+        tv.setText("Computed period: " + profile.computedPeriod() + " (s)");
+
+        // Update the beats per minute box
+        TextView bpm = (TextView) findViewById(R.id.metronomepulseprofilebpm);
+        bpm.setText("Beats per minute: " + profile.beatsPerMinute());
+
+        TextView date = (TextView) findViewById(R.id.metronomepulseprofiledate);
+        date.setText("Date: " + profile.date());
+
+        TextView time = (TextView) findViewById(R.id.metronomepulseprofiletime);
+        time.setText("Time: " + profile.time());
+
+        TextView samplesPerSecond = (TextView) findViewById(R.id.metronomepulseprofilesamplespersecond);
+        samplesPerSecond.setText("Samples per second: " + profile.samplesPerSecond());
     }
 
     @Override

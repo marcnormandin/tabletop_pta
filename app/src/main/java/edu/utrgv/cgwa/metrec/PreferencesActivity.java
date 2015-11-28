@@ -6,9 +6,6 @@ import android.preference.PreferenceManager;
 
 
 public class PreferencesActivity extends Activity {
-
-    private static String TAG = "PreferencesActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

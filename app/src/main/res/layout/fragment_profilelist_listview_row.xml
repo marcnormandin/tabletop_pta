@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="100dp"
+    android:layout_width="match_parent" android:layout_height="128dp"
     android:descendantFocusability="blocksDescendants"
-    android:padding="5dp">
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,28 +55,35 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="ERROR"
         android:id="@+id/listview_row_bpm"
+        android:paddingLeft="16dp"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/listview_row_button_profile"
-        android:layout_toEndOf="@+id/listview_row_button_profile"
-        android:paddingLeft="16dp"/>
+        android:layout_centerHorizontal="true" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/checkBox"
-        android:layout_alignBottom="@+id/listview_row_bpm"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:id="@+id/listview_row_button_delete"
         android:src="@android:drawable/ic_delete"
-        android:layout_alignTop="@+id/listview_row_bpm"
-        android:layout_toLeftOf="@+id/checkBox"
-        android:layout_toStartOf="@+id/checkBox" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="FREQ"
+        android:id="@+id/listview_row_frequency"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/listview_row_button_delete"
+        android:layout_toStartOf="@+id/listview_row_button_delete" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/accent_color"></LinearLayout>
 
 
 </RelativeLayout>

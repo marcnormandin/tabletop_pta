@@ -1,6 +1,5 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,23 +8,29 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import edu.utrgv.cgwa.metrec.R;
-
-public class BuiltinMetronomeActivity extends Activity {
+public class BuiltinMetronomeActivity extends AppCompatActivity {
     private final String TAG = "BuiltinMetronome";
 
     BuiltinMetronomeService mService;
     boolean mBound = false;
 
-    private SeekBar skbpm, skv;
+    private Toolbar mToolbar;
+
+    private SeekBar skv;
+    private Spinner mBPM;
     private Switch sf;
 
     private Property pbpm, pf, pv;
@@ -44,59 +49,26 @@ public class BuiltinMetronomeActivity extends Activity {
 
         setContentView(R.layout.activity_builtinmetronome);
 
+        mToolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = new Intent(this, BuiltinMetronomeService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        setupSeekbarBPM(savedInstanceState);
+        setupSpinnerBPM(savedInstanceState);
         setupSwitchFrequency(savedInstanceState);
         setupSeekbarVolume(savedInstanceState);
 
 
         if (savedInstanceState != null) {
-            skbpm.setProgress( savedInstanceState.getInt("bpm"));
+            mBPM.setSelection(savedInstanceState.getInt("bpm_position", 0));
             skv.setProgress( savedInstanceState.getInt("volume"));
         } else {
-            skbpm.setProgress( convertNumberToProgress(pbpm, pbpm.initial) );
-            skv.setProgress( convertNumberToProgress(pv, pv.initial) );
+            mBPM.setSelection(0);
+            skv.setProgress(convertNumberToProgress(pv, pv.initial));
         }
-    }
-
-    private void setupSeekbarBPM(Bundle savedInstanceState) {
-        pbpm = new Property();
-        pbpm.min = 10;
-        pbpm.max = 240;
-        pbpm.numDivisions = 230;
-        pbpm.initial = 120;
-
-        // Beats per minute SeekBar
-        skbpm=(SeekBar) findViewById(R.id.beatsPerMinuteSeekBar);
-        skbpm.setMax(pbpm.numDivisions);
-
-        skbpm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                final int bpm = (int) convertProgressToNumber(pbpm.min, pbpm.max, progress, pbpm.numDivisions);
-
-                if (mService != null) {
-                    mService.setBeatsPerMinute(bpm);
-                }
-
-                // Update the text
-                TextView tv = (TextView) findViewById(R.id.textBeatsPerMinute);
-                tv.setText("Beats per minute: " + bpm);
-            }
-        });
     }
 
     private void setupSwitchFrequency(Bundle savedInstanceState) {
@@ -142,6 +114,29 @@ public class BuiltinMetronomeActivity extends Activity {
         if(mService != null) {
             mService.setFrequency(mode);
         }
+    }
+
+    private void setupSpinnerBPM(Bundle savedInstanceState) {
+        mBPM = (Spinner) findViewById(R.id.beatsPerMinuteSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.beats_per_minute, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mBPM.setAdapter(adapter);
+        mBPM.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Get the value
+                int bpm = Integer.parseInt((String) mBPM.getSelectedItem());
+                if (mService != null) {
+                    mService.setBeatsPerMinute(bpm);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void setupSeekbarVolume(Bundle savedInstanceState) {
@@ -204,14 +199,13 @@ public class BuiltinMetronomeActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        final SeekBar skbpm=(SeekBar) findViewById(R.id.beatsPerMinuteSeekBar);
-        outState.putInt("bpm", skbpm.getProgress());
-
         final Switch sf=(Switch) findViewById(R.id.frequencySwitch);
         outState.putBoolean("frequency_checked", sf.isChecked());
 
         final SeekBar skv=(SeekBar) findViewById(R.id.volumeSeekBar);
         outState.putInt("volume", skv.getProgress());
+
+        outState.putInt("bpm_position", mBPM.getSelectedItemPosition());
     }
 
     @Override
@@ -268,7 +262,8 @@ public class BuiltinMetronomeActivity extends Activity {
         }
 
         // Beats per minute
-        final int bpm = (int) convertProgressToNumber(pbpm.min, pbpm.max, skbpm.getProgress(), pbpm.numDivisions);
+        String s = (String) mBPM.getSelectedItem();
+        final int bpm = Integer.parseInt(s);
         mService.setBeatsPerMinute(bpm);
 
         // Frequency

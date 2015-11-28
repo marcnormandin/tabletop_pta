@@ -9,7 +9,9 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CompoundButton;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -30,9 +32,10 @@ public class MetronomePresenter {
     private MetronomeModel mMetronome;
     private MetronomeFragment mFragment;
 
+    private boolean mRecorded = false;
+
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
-    //private static final int MAX_PLOT_POINTS = 8000;
 
 
     public MetronomePresenter(MetronomeFragment frag, String filenamePrefix) {
@@ -87,10 +90,63 @@ public class MetronomePresenter {
 
         PreloadViews pl = new PreloadViews();
         pl.execute();
+
+        setupSwitchFrequency();
+    }
+
+    private double mFrequency;
+
+    private void setFrequency(double frequency) {
+        mFrequency = frequency;
+    }
+
+    private double getFrequency() {
+        return mFrequency;
+    }
+
+    private void setupSwitchFrequency() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mFragment.getActivity());
+        final double modeA = Double.parseDouble(sp.getString("mode_a_frequency", "900"));
+        final double modeB = Double.parseDouble(sp.getString("mode_b_frequency", "1200"));
+
+        // Frequency SeekBar
+        Switch sf = (Switch) mFragment.getActivity().findViewById(R.id.frequencySwitch);
+        sf.setTextOn(modeB + "Hz");
+        sf.setTextOff(modeA + "Hz");
+
+        sf.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isChecked()) {
+                    // mode A
+                    setFrequency(modeB);
+                } else {
+                    // mode B
+                    setFrequency(modeA);
+                }
+            }
+        });
+
+        double mode;
+        if (sf.isChecked()) {
+            mode = modeB;
+        } else {
+            mode = modeA;
+        }
+
+        setFrequency(mode);
     }
 
     public void close() {
         mMetronome.close();
+    }
+
+    public void buttonClicked() {
+        if (mRecorded) {
+            play();
+        } else {
+            record();
+        }
     }
 
     public void record() {
@@ -100,6 +156,7 @@ public class MetronomePresenter {
         final int sampleRate = Integer.parseInt(sp.getString("samplerate", "8000"));
         final double desiredRuntime = Double.parseDouble(sp.getString("pulserecordingduration", "8.0"));
 
+
         class NewRecordingAsync extends AsyncTask<Void, String, Void> {
             private ProgressDialog mProgress = null;
             private double mBeatsPerMinute = 0;
@@ -108,23 +165,12 @@ public class MetronomePresenter {
             protected void onPreExecute() {
                 mProgress = ProgressDialog.show(mFragment.getActivity(), "Working...", "Please wait");
 
-                Button btnRec = (Button) mFragment.getView().findViewById(R.id.btnRecord);
+                Button btnRec = (Button) mFragment.getView().findViewById(R.id.btnMain);
                 btnRec.setEnabled(false);
                 btnRec.setText("Recording...");
 
-                Button btnPlay = (Button) mFragment.getView().findViewById(R.id.btnPlay);
-                btnPlay.setEnabled(false);
-
-                EditText bpm = (EditText) mFragment.getView().findViewById(R.id.editBPM);
-                try {
-                    mBeatsPerMinute = Double.parseDouble(bpm.getText().toString());
-                }
-                catch (NumberFormatException e) {
-                    Log.d(TAG, "ERROR! Invalid number of beats per minute in the edit box!");
-                    mBeatsPerMinute = 120;
-                    // Fixme
-                    // This should make a pop-up and set the bpm to a good value
-                }
+                Spinner bpm = (Spinner) mFragment.getView().findViewById(R.id.beatsPerMinuteSpinner);
+                mBeatsPerMinute = Double.parseDouble((String)bpm.getSelectedItem());
             }
 
             @Override
@@ -149,6 +195,7 @@ public class MetronomePresenter {
                 values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_BEATS_PER_MINUTE, mMetronome.getPulseProfile().bpm);
                 values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_COMPUTED_PERIOD, mMetronome.getPulseProfile().T);
                 values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_SAMPLES_PER_SECOND, mMetronome.getTimeSeries().getSampleRate());
+                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_FREQUENCY, getFrequency());
                 long newRowId = db.insert(DbProfileTable.ProfileEntry.TABLE_NAME, "null", values);
 
                 return null;
@@ -161,12 +208,11 @@ public class MetronomePresenter {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                Button btnRec = (Button) mFragment.getView().findViewById(R.id.btnRecord);
+                Button btnRec = (Button) mFragment.getView().findViewById(R.id.btnMain);
                 btnRec.setEnabled(true);
-                btnRec.setText("Record");
+                btnRec.setText("Play");
+                mRecorded = true;
 
-                Button btnPlay = (Button) mFragment.getView().findViewById(R.id.btnPlay);
-                btnPlay.setEnabled(true);
 
                 refreshTimeseriesView();
                 refreshProfileView();
@@ -367,10 +413,16 @@ public class MetronomePresenter {
                 tv.setText("Best period: T = " + mPF.T + " (s)");
             }
 
-            // Update the beats per minute box
-            EditText bpm = (EditText) mFragment.getView().findViewById(R.id.editBPM);
+            // Update the beats per minute spinner
+            Spinner bpm = (Spinner) mFragment.getView().findViewById(R.id.beatsPerMinuteSpinner);
             if (mPF != null) {
-                bpm.setText(""+mPF.bpm);
+                // We need to find the array index for the profiles BPM
+                for (int i = 0; i < bpm.getCount(); i++) {
+                    if (Integer.parseInt((String)bpm.getItemAtPosition(i)) == mPF.bpm) {
+                        // i is the correct index
+                        bpm.setSelection(i);
+                    }
+                }
             }
         }
 

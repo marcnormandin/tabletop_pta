@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -25,7 +23,7 @@ public class ProfileFragmentPresenter {
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public ProfileFragmentPresenter(ProfileFragment frag, int profileID) {
+    public ProfileFragmentPresenter(ProfileFragment frag, long profileID) {
         mFragment = frag;
         ProfileManager manager = new ProfileManager(frag.getActivity());
         DbProfileTable.ProfileEntry entry = manager.getProfileEntryByProfileID(profileID);
