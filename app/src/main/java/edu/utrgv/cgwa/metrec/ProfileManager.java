@@ -1,13 +1,16 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 public class ProfileManager {
     private DbHelper mHelper = null;
+    private static final String TAG = "ProfileManager";
 
-    public ProfileManager(Activity activity) {
-        mHelper = new DbHelper(activity);
+    public ProfileManager(Context context) {
+        mHelper = new DbHelper(context);
     }
 
     public int getNumProfiles() {
@@ -31,6 +34,14 @@ public class ProfileManager {
         cursor.close();
 
         return profile;
+    }
+
+    public void deleteProfileEntryByProfileID(long profileID) {
+        final String SQL = "DELETE FROM " + DbProfileTable.ProfileEntry.TABLE_NAME
+                + " WHERE _ID = " + profileID;
+        Log.d(TAG, "Deleting Profile with _ID = " + profileID + " from the database.");
+
+        mHelper.getWritableDatabase().execSQL(SQL);
     }
 
     public DbProfileTable.ProfileEntry getProfileEntryByProfileID(int profileID) {

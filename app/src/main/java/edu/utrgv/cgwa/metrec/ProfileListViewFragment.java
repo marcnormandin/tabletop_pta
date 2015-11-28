@@ -1,30 +1,24 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
+import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * A fragment representing a list of Items.
@@ -47,90 +41,89 @@ public class ProfileListViewFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private ListView mListView;
+    private RecyclerView mProfileList;
+    private LinearLayoutManager mLayoutManager;
 
-    private class ProfileListAdapter extends BaseAdapter {
-        private LayoutInflater mInflater = null;
+    private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+        private LayoutInflater mInflater;
+        private ProfileManager mManager;
 
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        private ProfileManager mManager = null;
-
-        public ProfileListAdapter(Activity activity) {
-            //mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mInflater = activity.getLayoutInflater();
-            mManager = new ProfileManager(activity);
+        public MyAdapter(Context context) {
+            mInflater = LayoutInflater.from(context);
+            mManager = new ProfileManager(context);
         }
 
         @Override
-        public int getCount() {
-            Log.d(TAG, "getCount() called");
-            final int count = mManager.getNumProfiles();
-            Log.d(TAG, "There are " + count + " profiles in the database");
-
-            return count;
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View rowView = mInflater.inflate(R.layout.fragment_profilelist_listview_row, parent, false);
+            MyViewHolder holder = new MyViewHolder(rowView);
+            return holder;
         }
 
         @Override
-        public Object getItem(int position) {
-            return position;
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
+            DbProfileTable.ProfileEntry data = mManager.getProfileEntryByPosition(position);
+            holder.date.setText(data.date());
+            holder.time.setText(data.time());
+            holder.bpm.setText(""+data.beatsPerMinute());
+
+            holder.buttonTimeSeries.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onDisplayTimeSeriesClicked(position);
+                }
+            });
+
+            holder.buttonProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onDisplayProfileClicked(position);
+                }
+            });
+
+            holder.profileID = data.id();
+
+            holder.buttonDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteProfile(position, holder.profileID);
+                }
+            });
         }
 
         @Override
-        public long getItemId(int position) {
-            return position;
+        public int getItemCount() {
+            return mManager.getNumProfiles();
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                // We are not reusing a view, so we need to create a new one
-                convertView = mInflater.inflate(R.layout.fragment_profilelist_listview_row, null);
-            }
-
-            DbProfileTable.ProfileEntry profile = mManager.getProfileEntryByPosition(position);
-
-            TextView tv = (TextView) convertView.findViewById(R.id.listview_row_date);
-            tv.setText(profile.date());
-
-            TextView tv2 = (TextView) convertView.findViewById(R.id.listview_row_time);
-            tv2.setText(profile.time());
-
-            ImageButton button = (ImageButton) convertView.findViewById(R.id.listview_row_button_profile);
-            button.setOnClickListener(mProfileButtonListener);
-
-            ImageButton button2 = (ImageButton) convertView.findViewById(R.id.listview_row_button_timeseries);
-            button2.setOnClickListener(mTimeSeriesButtonListener);
-
-            TextView tv3 = (TextView) convertView.findViewById(R.id.listview_row_bpm);
-            tv3.setText("BPM: " + profile.beatsPerMinute());
-
-            return convertView;
+        public void deleteProfile(int position, long profileID) {
+            mManager.deleteProfileEntryByProfileID(profileID);
+            //notifyItemRemoved(position);
+            notifyDataSetChanged();
         }
     }
 
-    Button.OnClickListener mProfileButtonListener = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final int position = mListView.getPositionForView(v);
-            if (position != ListView.INVALID_POSITION) {
-                mListener.onDisplayProfileClicked(position);
-            }
-        }
-    };
+    private static class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView time, date, bpm;
+        public ImageButton buttonTimeSeries, buttonProfile, buttonDelete;
 
-    Button.OnClickListener mTimeSeriesButtonListener = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final int position = mListView.getPositionForView(v);
-            if (position != ListView.INVALID_POSITION) {
-                mListener.onDisplayTimeSeriesClicked(position);
-            }
+        public long profileID;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+
+            time = (TextView) itemView.findViewById(R.id.listview_row_time);
+            date = (TextView) itemView.findViewById(R.id.listview_row_date);
+            bpm  = (TextView) itemView.findViewById(R.id.listview_row_bpm);
+            buttonTimeSeries = (ImageButton) itemView.findViewById(R.id.listview_row_button_timeseries);
+            buttonProfile = (ImageButton) itemView.findViewById(R.id.listview_row_button_profile);
+            buttonDelete = (ImageButton) itemView.findViewById(R.id.listview_row_button_delete);
+
+            profileID = -1;
         }
-    };
+
+
+    }
 
     // TODO: Rename and change types of parameters
     public static ProfileListViewFragment newInstance(String param1, String param2) {
@@ -167,18 +160,9 @@ public class ProfileListViewFragment extends Fragment {
         Log.d(TAG, "Creating the listview");
 
         // Find the list view
-        mListView = (ListView) rootView.findViewById(R.id.listView);
-        mListView.setAdapter(new ProfileListAdapter(getActivity()));
-        mListView.setChoiceMode(mListView.CHOICE_MODE_MULTIPLE);
-
-        // Set the listener
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "Full Profile selected", Toast.LENGTH_SHORT);
-            }
-        });
-
+        mProfileList = (RecyclerView) rootView.findViewById(R.id.profilelist);
+        mProfileList.setAdapter(new MyAdapter(getActivity()));
+        mProfileList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return rootView;
     }
@@ -202,7 +186,7 @@ public class ProfileListViewFragment extends Fragment {
 
     /*
     public void onDeleteSelectedProfiles() {
-        SparseBooleanArray checkedItemPositions = mListView.getCheckedItemPositions();
+        SparseBooleanArray checkedItemPositions = mProfileList.getCheckedItemPositions();
         if (checkedItemPositions != null) {
             Log.d(TAG, "There are " + checkedItemPositions.size() + " items to delete.");
             for (int i = 0; i < checkedItemPositions.size(); i++) {
