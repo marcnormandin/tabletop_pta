@@ -11,9 +11,22 @@ public class BaseModel {
     private String mFilenamePrefix;
     private PCMSoundSystem mPCMSoundSystem = null;
     private TimeSeries mTimeSeries = null;
+    private ProgressListener mProgressListener = null;
+
+    public interface ProgressListener {
+        void onRecordingStarted();
+        void onRecordingFinished();
+
+        void onTimeSeriesStart();
+        void onTimeSeriesFinished();
+    }
 
     public BaseModel(String filenamePrefix) {
         mFilenamePrefix = filenamePrefix;
+    }
+
+    public void setProgressListener(ProgressListener listener) {
+        mProgressListener = listener;
     }
 
     public void close() {
@@ -77,6 +90,10 @@ public class BaseModel {
     }
 
     protected void newTimeSeries() {
+        if (mProgressListener != null) {
+            mProgressListener.onTimeSeriesStart();
+        }
+
         // Careful if mPCMSoundSystem is null
         final int sampleRate = mPCMSoundSystem.getSampleRate(); // WARNING
 
@@ -95,9 +112,18 @@ public class BaseModel {
 
         mTimeSeries = new TimeSeries(samplet, data);
         mTimeSeries.saveToFile(getFilenameTS());
+
+        if (mProgressListener != null) {
+            mProgressListener.onTimeSeriesFinished();
+        }
     }
 
     public void newRecording(int sampleRate, double desiredRuntime) {
+
+        if (mProgressListener != null) {
+            mProgressListener.onRecordingStarted();
+        }
+
         if (mPCMSoundSystem != null) {
             if (mPCMSoundSystem.isRecording()) {
                 mPCMSoundSystem.stopRecording();
@@ -132,6 +158,10 @@ public class BaseModel {
         }
 
         mPCMSoundSystem.stopRecording();
+
+        if (mProgressListener != null) {
+            mProgressListener.onRecordingFinished();
+        }
 
         newTimeSeries();
     }

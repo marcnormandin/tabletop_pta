@@ -157,9 +157,50 @@ public class NewProfileActivityPresenter {
         final double desiredRuntime = Double.parseDouble(sp.getString("pulserecordingduration", "8.0"));
 
 
-        class NewRecordingAsync extends AsyncTask<Void, String, Void> {
+        class NewRecordingAsync extends AsyncTask<Void, String, Void>
+        implements BaseModel.ProgressListener, ProfileModel.ProfileProgressListener {
             private ProgressDialog mProgress = null;
             private double mBeatsPerMinute = 0;
+
+            @Override
+            public void onProfileComputationStarted() {
+                publishProgress("Computing pulse profile...");
+            }
+
+            @Override
+            public void onProfileComputationFinished() {
+                publishProgress("Pulse profile computed!");
+            }
+
+            @Override
+            public void onSelfCorrelationStarted() {
+                publishProgress("Computing self-correlation...");
+            }
+
+            @Override
+            public void onSelfCorrelationFinished() {
+                publishProgress("Self-correlation computed!");
+            }
+
+            @Override
+            public void onRecordingStarted() {
+                publishProgress("Recording audio...");
+            }
+
+            @Override
+            public void onRecordingFinished() {
+                publishProgress("Recording audio has ended!");
+            }
+
+            @Override
+            public void onTimeSeriesStart() {
+                publishProgress("Processing time series...");
+            }
+
+            @Override
+            public void onTimeSeriesFinished() {
+                publishProgress("Time series processed!");
+            }
 
             @Override
             protected void onPreExecute() {
@@ -171,12 +212,17 @@ public class NewProfileActivityPresenter {
 
                 Spinner bpm = (Spinner) mFragment.getView().findViewById(R.id.beatsPerMinuteSpinner);
                 mBeatsPerMinute = Double.parseDouble((String)bpm.getSelectedItem());
+
+                mMetronome.setProgressListener(this);
+                mMetronome.setProfileProgressListener(this);
             }
 
             @Override
             protected Void doInBackground(Void... params) {
                 publishProgress("Recording sound + computing");
                 mMetronome.newRecording(sampleRate, desiredRuntime, mBeatsPerMinute);
+
+                publishProgress("Saving results in the database.");
 
                 // Save the data into the database
                 DbHelper mDbHelper = new DbHelper(mFragment.getContext());
@@ -198,6 +244,7 @@ public class NewProfileActivityPresenter {
                 values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_FREQUENCY, getFrequency());
                 long newRowId = db.insert(DbProfileTable.ProfileEntry.TABLE_NAME, "null", values);
 
+                publishProgress("Results saved to database!");
                 return null;
             }
 

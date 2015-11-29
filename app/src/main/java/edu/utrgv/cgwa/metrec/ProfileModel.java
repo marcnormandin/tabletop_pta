@@ -17,6 +17,19 @@ public class ProfileModel extends BaseModel {
 
     private TimeSeries mSelfCorrelation = null;
 
+    private ProfileProgressListener mProfileProgressListener = null;
+
+    public interface ProfileProgressListener {
+        void onProfileComputationStarted();
+        void onProfileComputationFinished();
+        void onSelfCorrelationStarted();
+        void onSelfCorrelationFinished();
+    }
+
+    public void setProfileProgressListener(ProfileProgressListener listener) {
+        mProfileProgressListener = listener;
+    }
+
     public ProfileModel(String filenamePrefix) {
         super(filenamePrefix);
     }
@@ -83,15 +96,24 @@ public class ProfileModel extends BaseModel {
 
     public void newRecording(int sampleRate, double desiredRuntime, double beatsPerMinute) {
         super.newRecording(sampleRate, desiredRuntime);
+
         newProfile(beatsPerMinute);
     }
 
     private void newProfile(double beatsPerMinute) {
         Log.d(TAG, "Calculating profile with beats-per-minute = " + beatsPerMinute);
 
+        if (mProfileProgressListener != null) {
+            mProfileProgressListener.onProfileComputationStarted();
+        }
+
         // Get the folded time series
         mPulseProfile = Routines.calpulseprofile(getTimeSeries(), beatsPerMinute);
         mPulseProfile.saveToFile(getFilenamePF());
+
+        if (mProfileProgressListener != null) {
+            mProfileProgressListener.onProfileComputationFinished();
+        }
 
         newSelfCorrelation();
     }
@@ -99,6 +121,10 @@ public class ProfileModel extends BaseModel {
     // Fixme
     // This was written as a fast check of correlate
     public void newSelfCorrelation() {
+        if (mProfileProgressListener != null) {
+            mProfileProgressListener.onSelfCorrelationStarted();
+        }
+
         TimeSeries ts = getTimeSeries();
         PulseProfile pf = getPulseProfile();
 
@@ -109,5 +135,9 @@ public class ProfileModel extends BaseModel {
 
         mSelfCorrelation = new TimeSeries( ts.h, correlation );
         mSelfCorrelation.saveToFile( getFilenameCorr() );
+
+        if (mProfileProgressListener != null) {
+            mProfileProgressListener.onSelfCorrelationFinished();
+        }
     }
 }
