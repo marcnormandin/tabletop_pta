@@ -1,5 +1,17 @@
 package edu.utrgv.cgwa.tabletoppta;
 
+import android.util.Log;
+
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.MaxIter;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.univariate.BrentOptimizer;
+import org.apache.commons.math3.optim.univariate.SearchInterval;
+import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
+import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
+
 import ca.uol.aig.fftpack.Complex1D;
 import ca.uol.aig.fftpack.RealDoubleFFT;
 
@@ -126,7 +138,23 @@ public class Routines {
     }
 
 
+    static private class MyUnivariateFunction implements UnivariateFunction {
+        private TimeSeries mTimeSeries;
+        private TimeSeries mTemplate;
+        private double mNorm;
 
+        public MyUnivariateFunction(TimeSeries ts, TimeSeries template, double norm) {
+            mTimeSeries = ts;
+            mTemplate = template;
+            mNorm = norm;
+        }
+
+        @Override
+        public double value(double tau) {
+            Log.d("brent eval", "tau = " + tau);
+            return correlate(tau, new TimeSeries(mTimeSeries), new TimeSeries(mTemplate), mNorm);
+        }
+    }
 
 
     /*
@@ -158,15 +186,6 @@ public class Routines {
                 C = N * deltaF * np.fft.ifft(ytilde * np.conj(ptilde))
         norm = np.real(1/sum(deltaF * ptilde * np.conj(ptilde)))
         C = np.real(norm*C) # take real part to avoid imaginary round-off components
-
-        # START DEBUG SECTION
-        # plot correlation time series
-        if DEBUG:
-                plt.figure()
-                plt.plot(ts[:,0], ts[:,1], '-b', ts[:,0], C, '-r')
-                plt.xlabel('time (sec)')
-                plt.legend(['time series', 'correlation'], 'best')
-                # END DEBUG SECTION
 
         # find location of max correlation for reference pulse TOA
                 ind0 = np.argmax(C)
@@ -236,22 +255,6 @@ public class Routines {
         else:
         Ahat[ii] = correlate(tauhat[ii], ts, template, norm)
 
-        # START DEBUG SECTION
-        if DEBUG:
-                # plot data and correlation around max
-        plt.figure()
-                plt.plot(ts[indices,0], C[indices], '-*r', ts[indices,0], ts[indices,1], '-*b')
-                plt.axhline(y = template[0,1], color='k') # starting value of pulse template
-                TOAexp = t0 + (ii+1-n0)*Tp;
-        plt.axvline(x = TOAexp, color='b')
-                plt.axvline(x = tauhat[ii], color='r')
-                plt.xlabel('time (sec)')
-                plt.ylabel('correlation')
-                plt.legend(['correlation', 'time series'], 'best')
-        print tauhat[ii]-TOAexp
-        #input('type any key to continue')
-        # END DEBUG SECTION
-
         # error estimate for TOAs (based on correlation curve)
         # basically, we can determine the max of the correlation to +/- 0.5 deltaT;
         # multiply by 1/sqrt(Ahat(ii)) to increase error bar for small correlations
@@ -277,8 +280,8 @@ public class Routines {
         double fNyq = 1.0 / (2.0 * deltaT); // Nyquist frequency
 
         // Magic number
-        double Tcorr = 4e-4;
-        int m = (int) Math.floor( Tcorr / deltaT );
+        final double Tcorr = 4e-4;
+        final int m = (int) Math.floor( Tcorr / deltaT ); // Number of indices less than a correlation peak
 
         RealDoubleFFT transform = new RealDoubleFFT(N);
 
@@ -287,7 +290,6 @@ public class Routines {
 
         Complex1D Fp = new Complex1D();
         transform.ft(template.h, Fp);
-
 
         // C = N * deltaF * np.fft.ifft(ytilde * np.conj(ptilde))
         Complex1D temp = new Complex1D();
@@ -305,28 +307,62 @@ public class Routines {
         double[] C = new double[N];
         transform.bt(temp, C);
 
+        // Compute the normalization
+        // norm=np.real(1/sum(deltaF*ptilde*np.conj(ptilde)))
+        double psum = 0.0;
+        for (int i = 0; i < Fp.x.length; i++) {
+            psum += Fp.x[i]*Fp.x[i] + Fp.y[i]*Fp.y[i];
+        }
+        double norm = 1.0 / (deltaF * psum);
+
         // correlate data (maxima give TOAs)
         // normalization implies that values of C at maxima are estimates of pulse amplitudes
-        for (int i = 0; i < C.length; i++) {
-            C[i] /= Math.pow(transform.norm_factor, 1.5);
-            //C[i] *= transform.norm_factor; // Not sure if this works
-        }
-        // norm=np.real(1/sum(deltaF*ptilde*np.conj(ptilde)))
         // C=np.real(norm*C)
+        for (int i = 0; i < C.length; i++) {
+            //C[i] /= Math.pow(transform.norm_factor, 1.5);
+            C[i] *= norm;
+        }
 
         // find location of max correlation for reference pulse TOA
         int ind0 = Utility.argmax(C);
         double C0 = C[ind0];
 
         // use brent's method to find max
+        // search in a small region around expected arrival time
         int indices[] = null;
         if (ind0 - m < 0) {
+            // Left of peak is before the time origin
             indices = Utility.range(0, ind0 + m + 1);
         } else if (ind0 + m > C.length) {
+            // Right of the peak is after the time series
             indices = Utility.range(ind0 - m, C.length);
         } else{
+            // Peak is fully within the time series (the nominal case)
             indices = Utility.range(ind0 - m, ind0 + m + 1);
         }
+
+        // brack = (ts[indices[0],0], ts[ind0,0], ts[indices[-1],0])
+        MyUnivariateFunction func = new MyUnivariateFunction(ts, template, -norm);
+        final double rel = 1.0e-7;
+        final double abs = 1.0e-7;
+        //final double tol = 1.0e-7;
+        final int maxIterations = 500;
+        BrentOptimizer brentOptimizer = new BrentOptimizer(rel, abs);
+        final double lo = ts.t[indices[0]];
+        final double init = ts.t[ind0]; // initial
+        final double hi = ts.t[indices[indices.length-1]];
+        SearchInterval brack = new SearchInterval(lo,hi,init);
+        UnivariatePointValuePair pair = brentOptimizer.optimize(new UnivariateObjectiveFunction(func),
+                brack, GoalType.MINIMIZE, new MaxIter(maxIterations), new MaxEval(maxIterations));
+        Log.d("BRENT", "guess best tau = " + init);
+        Log.d("BRENT", "brent best tau = " + pair.getPoint());
+
+        // https://commons.apache.org/proper/commons-math/apidocs/org/apache/commons/math3/optim/univariate/BrentOptimizer.html
+
+        // Fixme Check if the time series is modified by the Fourier transform
+
+        // t0 = opt.brent(correlate, (ts, template, -norm), brack, 1e-07, 0, 500)
+        // A0 = correlate(t0, ts, template, norm)
 
         return C;
     }
