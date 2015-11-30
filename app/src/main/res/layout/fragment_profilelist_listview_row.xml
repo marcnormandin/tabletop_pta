@@ -40,7 +40,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="fitXY"
-        android:src="@drawable/icon_profile"
+        android:src="@drawable/icon_pulse"
         android:background="@null"
         android:id="@+id/listview_row_button_profile"
         android:adjustViewBounds="true"
