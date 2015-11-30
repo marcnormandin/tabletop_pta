@@ -16,7 +16,7 @@ import com.github.mikephil.charting.charts.LineChart;
 
 public class NewProfileActivityFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "NewProfileFragment";
-    private static final String ARG_FILENAME = "filename";
+    private static final String ARG_FILENAME_PREFIX = "filenamePrefix";
     private NewProfileActivityPresenter mPresenter;
 
     /*
@@ -66,7 +66,7 @@ public class NewProfileActivityFragment extends Fragment implements View.OnClick
     public static NewProfileActivityFragment newInstance(String filename) {
         NewProfileActivityFragment fragment = new NewProfileActivityFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_FILENAME, filename);
+        args.putString(ARG_FILENAME_PREFIX, filename);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,7 +77,7 @@ public class NewProfileActivityFragment extends Fragment implements View.OnClick
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mPresenter = new NewProfileActivityPresenter(this, getArguments().getString(ARG_FILENAME));
+            mPresenter = new NewProfileActivityPresenter(this, getArguments().getString(ARG_FILENAME_PREFIX));
         } else {
             Log.d(TAG, "Fragment created without filename for the presenter");
         }

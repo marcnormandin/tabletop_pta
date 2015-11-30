@@ -10,21 +10,70 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ProfileListFragment extends Fragment {
     private static final String TAG = "ProfileListFragment";
     private OnFragmentInteractionListener mListener;
     private RecyclerView mProfileList;
+    private MyAdapter mAdapter;
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         private LayoutInflater mInflater;
         private ProfileManager mManager;
+        private Checked mChecked;
+
+        private class Checked {
+            private ArrayList<Boolean> mSelected;
+
+            public Checked(final int numCheckboxes) {
+                mSelected = new ArrayList<>();
+                for (int i = 0; i < numCheckboxes; i++) {
+                    mSelected.add(Boolean.FALSE);
+                }
+            }
+
+            public boolean get(int position) {
+                return mSelected.get(position);
+            }
+
+            public void set(int position, boolean checked) {
+                mSelected.set(position, checked);
+            }
+
+            public void remove(int position) {
+                mSelected.remove(position);
+            }
+
+            public long size() {
+                return mSelected.size();
+            }
+        }
 
         public MyAdapter(Context context) {
             mInflater = LayoutInflater.from(context);
             mManager = new ProfileManager(context);
+            mChecked = new Checked(mManager.getNumProfiles());
+        }
+
+        public ArrayList<Long> getSelectedProfileIDs() {
+            ArrayList<Long> selectedProfileIDs = new ArrayList<>();
+
+            for (int i = 0; i < mChecked.size(); i++) {
+                if (mChecked.get(i)) {
+                    // The checked object keeps track of positions, not profileIDs,
+                    // so we need to convert from positions to profileIDs.
+                    long profileID = mManager.getEntryByPosition(i).profileID();
+                    selectedProfileIDs.add(profileID);
+                }
+            }
+            return selectedProfileIDs;
         }
 
         @Override
@@ -45,8 +94,8 @@ public class ProfileListFragment extends Fragment {
 
             holder.date.setText(data.date());
             holder.time.setText(data.time());
-            holder.bpm.setText(""+data.beatsPerMinute());
-            holder.frequency.setText(""+data.frequency());
+            holder.bpm.setText("" + data.beatsPerMinute());
+            holder.frequency.setText("" + data.frequency());
 
             holder.buttonTimeSeries.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -62,11 +111,15 @@ public class ProfileListFragment extends Fragment {
                 }
             });
 
-            holder.buttonDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteProfile(position, holder.profileID);
-                }
+            // Fixme This causes a null-pointer exception
+            //holder.checkbox.setChecked( mChecked.get(position) );
+            holder.checkbox.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       CheckBox cb = (CheckBox) v;
+                       mChecked.set(position, cb.isChecked());
+                       mListener.onCheckboxChanged(position, holder.profileID, holder.audioID, cb.isChecked());
+                   }
             });
         }
 
@@ -77,6 +130,7 @@ public class ProfileListFragment extends Fragment {
 
         public void deleteProfile(int position, long profileID) {
             mManager.deleteEntryByID(profileID);
+            mChecked.remove(position);
             //notifyItemRemoved(position);
             notifyDataSetChanged();
         }
@@ -84,7 +138,8 @@ public class ProfileListFragment extends Fragment {
 
     private static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView time, date, bpm, frequency;
-        public ImageButton buttonTimeSeries, buttonProfile, buttonDelete;
+        public ImageButton buttonTimeSeries, buttonProfile;
+        public CheckBox checkbox;
 
         public long audioID, profileID;
 
@@ -97,7 +152,7 @@ public class ProfileListFragment extends Fragment {
             frequency = (TextView) itemView.findViewById(R.id.listview_row_frequency);
             buttonTimeSeries = (ImageButton) itemView.findViewById(R.id.listview_row_button_timeseries);
             buttonProfile = (ImageButton) itemView.findViewById(R.id.listview_row_button_profile);
-            buttonDelete = (ImageButton) itemView.findViewById(R.id.listview_row_button_delete);
+            checkbox = (CheckBox) itemView.findViewById(R.id.listview_row_checkbox);
 
             audioID = -1;
             profileID = -1;
@@ -111,6 +166,14 @@ public class ProfileListFragment extends Fragment {
     public ProfileListFragment() {
     }
 
+    public long[] getSelectedProfileIDs() {
+        ArrayList<Long> profileIDs = mAdapter.getSelectedProfileIDs();
+        long[] ids = new long[profileIDs.size()];
+        for (int i = 0; i < profileIDs.size(); i++) {
+            ids[i] = profileIDs.get(i);
+        }
+        return ids;
+    }
 
     @Nullable
     @Override
@@ -121,7 +184,9 @@ public class ProfileListFragment extends Fragment {
 
         // Find the list view
         mProfileList = (RecyclerView) rootView.findViewById(R.id.profilelist);
-        mProfileList.setAdapter(new MyAdapter(getActivity()));
+
+        mAdapter = new MyAdapter(getActivity());
+        mProfileList.setAdapter(mAdapter);
         mProfileList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return rootView;
@@ -145,8 +210,8 @@ public class ProfileListFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onDisplayProfileClicked(final long position);
-        void onDisplayTimeSeriesClicked(final long position);
+        void onDisplayProfileClicked(final long profileID);
+        void onDisplayTimeSeriesClicked(final long audioID);
+        void onCheckboxChanged(final int position, final long audioID, final long profileID, final boolean isChecked);
     }
-
 }

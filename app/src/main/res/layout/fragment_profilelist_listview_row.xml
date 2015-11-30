@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="128dp"
+    android:layout_width="match_parent" android:layout_height="96dp"
     android:descendantFocusability="blocksDescendants"
     android:paddingBottom="10dp"
     android:paddingTop="10dp">
@@ -59,15 +59,6 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
-
-    <ImageButton
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:id="@+id/listview_row_button_delete"
-        android:src="@android:drawable/ic_delete"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,15 +66,24 @@
         android:text="FREQ"
         android:id="@+id/listview_row_frequency"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/listview_row_button_delete"
-        android:layout_toStartOf="@+id/listview_row_button_delete" />
+        android:layout_toLeftOf="@+id/listview_row_time"
+        android:layout_toStartOf="@+id/listview_row_time" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/listview_row_checkbox"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/accent_color"></LinearLayout>
+        android:background="@color/accent_color"
+        android:id="@+id/linearLayout"></LinearLayout>
 
 
 </RelativeLayout>

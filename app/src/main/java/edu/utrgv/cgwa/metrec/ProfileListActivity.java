@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 public class ProfileListActivity extends AppCompatActivity implements ProfileListFragment.OnFragmentInteractionListener {
@@ -35,6 +36,12 @@ public class ProfileListActivity extends AppCompatActivity implements ProfileLis
         Intent intent = new Intent(this, ViewTimeSeriesActivity.class);
         intent.putExtra(TimeSeriesFragment.ARG_AUDIOID, audioID);
         startActivity(intent);
+    }
+
+    @Override
+    public void onCheckboxChanged(final int position, final long audioID, final long profileID, final boolean isChecked) {
+        Toast.makeText(this, "Position (" + position + "), AudioID (" + audioID
+                + "), ProfileID (" + profileID + "),  checked = " + isChecked, Toast.LENGTH_SHORT).show();
     }
 
     @Override

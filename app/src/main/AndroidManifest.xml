@@ -20,7 +20,6 @@
         android:label="@string/app_name"
         android:logo="@drawable/ic_logo_wide"
         android:theme="@style/AppTheme" >
-
         <activity
             android:name=".HomeScreenActivity"
             android:label="Tabletop PTA" >
@@ -84,6 +83,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.utrgv.cgwa.metrec.HomeScreenActivity" />
+        </activity>
+        <activity
+            android:name=".SelectProfilesActivity"
+            android:label="Select profile(s) below"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 

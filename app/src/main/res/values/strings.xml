@@ -41,5 +41,6 @@
     <string name="title_activity_view_profile">ViewProfileActivity</string>
     <string name="title_activity_view_time_series">ViewTimeSeriesActivity</string>
     <string name="title_activity_single_metronome_analysis">SingleMetronomeAnalysisActivity</string>
+    <string name="title_activity_select_profiles">SelectProfilesActivity</string>
 
 </resources>

@@ -11,25 +11,30 @@
     tools:context="edu.utrgv.cgwa.metrec.SingleMetronomeAnalysisActivity">
 
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinnerProfile"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:contextClickable="false" />
+
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Record"
-        android:id="@+id/buttonRecord"
-        android:layout_below="@+id/spinnerProfile"
+        android:text="Select pulse profile"
+        android:id="@+id/buttonSelectProfile"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:onClick="buttonSelectProfile" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Record audio"
+        android:id="@+id/buttonRecordAudio"
+        android:layout_below="@+id/buttonSelectProfile"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/buttonSelectProfile"
+        android:layout_alignEnd="@+id/buttonSelectProfile"
+        android:onClick="buttonRecordAudio" />
 
 
 </RelativeLayout>

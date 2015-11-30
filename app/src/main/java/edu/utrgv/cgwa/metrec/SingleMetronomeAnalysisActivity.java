@@ -1,13 +1,30 @@
 package edu.utrgv.cgwa.metrec;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
+    static public final int PICK_PROFILE_REQUEST = 1;  // The request code
+    private AudioRecordingModel mAudioRecording = null;
+    private long mAudioID = -1;
+    private long mProfileID = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,11 +37,147 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (mAudioID == -1 || mProfileID == -1) {
+                    Snackbar.make(view, "Please set the profile and record audio", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(view, "Analysis started!", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_PROFILE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                long[] ids = data.getLongArrayExtra(SelectProfilesActivity.RESULT_SELECTED_PROFILES);
+
+                if (ids.length != 1) {
+                    Toast.makeText(this, "SELECT ONLY ONE PROFILE!", Toast.LENGTH_LONG).show();
+                } else {
+                    mProfileID = ids[0];
+                    Toast.makeText(this, "Selected profile: " + mProfileID, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    public void buttonSelectProfile(View v) {
+        Intent pickProfileIntent = new Intent(this, SelectProfilesActivity.class);
+        startActivityForResult(pickProfileIntent, PICK_PROFILE_REQUEST);
+    }
+
+    public void buttonRecordAudio(View v) {
+        if (mAudioID == -1) {
+            recordAudio();
+        } else {
+            playAudio();
+        }
+    }
+
+    // Fixme
+    private String getFilenamePrefix() {
+        String uniquePrefix = new SimpleDateFormat("MM-dd-yyyy-hh-mm-ss").format(new Date());
+        String commonPrefix = "/metronome_";
+        String filesDirectory = getFilesDir() + "";
+        String filenamePrefix = filesDirectory + commonPrefix + uniquePrefix;
+
+        return filenamePrefix;
+    }
+
+    public void playAudio() {
+        if (mAudioRecording != null) {
+            AudioRecordingManager manager = new AudioRecordingManager(this);
+            mAudioRecording.playRecording(manager.getEntryByID(mAudioID).samplesPerSecond());
+        }
+    }
+
+    public void recordAudio() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        final int sampleRate = Integer.parseInt(sp.getString("samplerate", "8000"));
+
+        // Fixme The duration should be separate from the pulse profile duration
+        final double desiredRuntime = Double.parseDouble(sp.getString("pulserecordingduration", "8.0"));
+
+        mAudioRecording = new AudioRecordingModel(getFilenamePrefix());
+
+        class NewRecordingAsync extends AsyncTask<Void, String, Void>
+                implements AudioRecordingModel.ProgressListener {
+            private ProgressDialog mProgress = null;
+            private Context mContext;
+
+            public NewRecordingAsync(Context context) {
+                mContext = context;
+            }
+
+            @Override
+            public void onRecordingStarted() {
+                publishProgress("Recording audio...");
+            }
+
+            @Override
+            public void onRecordingFinished() {
+                publishProgress("Recording audio has ended!");
+            }
+
+            @Override
+            public void onTimeSeriesStart() {
+                publishProgress("Processing time series...");
+            }
+
+            @Override
+            public void onTimeSeriesFinished() {
+                publishProgress("Time series processed!");
+            }
+
+            @Override
+            protected void onPreExecute() {
+                mProgress = ProgressDialog.show(mContext, "Working...", "Please wait");
+
+                Button buttonRecord  = (Button) findViewById(R.id.buttonRecordAudio);
+                buttonRecord.setText("Recording audio...");
+                buttonRecord.setEnabled(false);
+
+                mAudioRecording.setProgressListener(this);
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                mAudioRecording.newRecording(sampleRate, desiredRuntime);
+
+                publishProgress("Saving times series to the database...");
+
+                Date date = new Date();
+                String dateString = new SimpleDateFormat("MM-dd-yyyy").format(date);
+                String timeString = new SimpleDateFormat("hh:mm").format(date);
+
+                // Save the time series to the database
+                AudioRecordingManager audioManager = new AudioRecordingManager(mContext);
+                mAudioID = audioManager.addEntry(dateString, timeString, mAudioRecording.getFilenamePrefix(),
+                        mAudioRecording.getFilenamePCM(), mAudioRecording.getFilenameTS(), sampleRate, desiredRuntime);
+
+                publishProgress("All results have been saved to database!");
+                return null;
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                mProgress.setMessage(values[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                Button buttonRecord  = (Button) findViewById(R.id.buttonRecordAudio);
+                buttonRecord.setText("Play recording");
+                buttonRecord.setEnabled(true);
+
+                mProgress.dismiss();
+            }
+        }
+
+        new NewRecordingAsync(this).execute();
+    }
 }
