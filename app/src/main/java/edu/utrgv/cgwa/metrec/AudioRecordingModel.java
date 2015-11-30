@@ -6,8 +6,13 @@ import java.io.File;
 
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
-public class BaseModel {
-    private static final String TAG = "BaseModel";
+/*
+ * This class records audio, saves it to a PCM file,
+ * processing the PCM into a TimeSeries that it saves,
+ * and adds the data to a database.
+ */
+public class AudioRecordingModel {
+    private static final String TAG = "AudioRecordingModel";
     private String mFilenamePrefix;
     private PCMSoundSystem mPCMSoundSystem = null;
     private TimeSeries mTimeSeries = null;
@@ -21,7 +26,7 @@ public class BaseModel {
         void onTimeSeriesFinished();
     }
 
-    public BaseModel(String filenamePrefix) {
+    public AudioRecordingModel(String filenamePrefix) {
         mFilenamePrefix = filenamePrefix;
     }
 

@@ -36,7 +36,13 @@ public class ProfileListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
-            DbProfileTable.ProfileEntry data = mManager.getProfileEntryByPosition(position);
+            DbProfileTable.ProfileEntry data = mManager.getEntryByPosition(position);
+
+            // Fixme
+            // There is not view element for the IDs
+            holder.audioID = data.audioID();
+            holder.profileID = data.profileID();
+
             holder.date.setText(data.date());
             holder.time.setText(data.time());
             holder.bpm.setText(""+data.beatsPerMinute());
@@ -45,18 +51,16 @@ public class ProfileListFragment extends Fragment {
             holder.buttonTimeSeries.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onDisplayTimeSeriesClicked(position);
+                    mListener.onDisplayTimeSeriesClicked(holder.audioID);
                 }
             });
 
             holder.buttonProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onDisplayProfileClicked(position);
+                    mListener.onDisplayProfileClicked(holder.profileID);
                 }
             });
-
-            holder.profileID = data.id();
 
             holder.buttonDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -72,7 +76,7 @@ public class ProfileListFragment extends Fragment {
         }
 
         public void deleteProfile(int position, long profileID) {
-            mManager.deleteProfileEntryByProfileID(profileID);
+            mManager.deleteEntryByID(profileID);
             //notifyItemRemoved(position);
             notifyDataSetChanged();
         }
@@ -82,7 +86,7 @@ public class ProfileListFragment extends Fragment {
         public TextView time, date, bpm, frequency;
         public ImageButton buttonTimeSeries, buttonProfile, buttonDelete;
 
-        public long profileID;
+        public long audioID, profileID;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -95,6 +99,7 @@ public class ProfileListFragment extends Fragment {
             buttonProfile = (ImageButton) itemView.findViewById(R.id.listview_row_button_profile);
             buttonDelete = (ImageButton) itemView.findViewById(R.id.listview_row_button_delete);
 
+            audioID = -1;
             profileID = -1;
         }
     }
@@ -140,8 +145,8 @@ public class ProfileListFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onDisplayProfileClicked(int position);
-        void onDisplayTimeSeriesClicked(int position);
+        void onDisplayProfileClicked(final long position);
+        void onDisplayTimeSeriesClicked(final long position);
     }
 
 }

@@ -33,6 +33,14 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Single Metronome Analysis"
+        android:id="@+id/buttonStartSingleMetronomeAnalysis"
+        android:layout_gravity="center_horizontal"
+        android:onClick="startSingleMetronomeAnalysis"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Visit Official Website"
         android:id="@+id/launchWebsite"
         android:drawableLeft="@android:drawable/ic_menu_info_details"

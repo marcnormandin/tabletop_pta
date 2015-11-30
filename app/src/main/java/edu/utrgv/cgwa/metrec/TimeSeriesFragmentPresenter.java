@@ -16,19 +16,23 @@ import java.util.ArrayList;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class TimeSeriesFragmentPresenter {
-    private final String TAG = "ProfilePresenter";
-    private ProfileModel mMetronome;
+    private final String TAG = "TimeSeriesPresenter";
+    private AudioRecordingModel mAudioRecording;
+    private DbAudioRecordingTable.AudioRecordingEntry mEntry;
     private TimeSeriesFragment mFragment;
+    private final long mAudioID;
 
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public TimeSeriesFragmentPresenter(TimeSeriesFragment frag, long profileID) {
+    public TimeSeriesFragmentPresenter(TimeSeriesFragment frag, final long audioID) {
         mFragment = frag;
-        ProfileManager manager = new ProfileManager(frag.getActivity());
-        DbProfileTable.ProfileEntry entry = manager.getProfileEntryByProfileID(profileID);
-        Log.d(TAG, "Timeseries fragment presenter created for: filenamePrefix = "  + entry.filenamePrefix());
-        mMetronome = new ProfileModel(entry.filenamePrefix());
+        mAudioID = audioID;
+        AudioRecordingManager manager = new AudioRecordingManager(frag.getActivity());
+        mEntry = manager.getEntryByID(mAudioID);
+        mAudioRecording = new AudioRecordingModel(mEntry.filenamePrefix());
+
+        Log.d(TAG, "Timeseries fragment presenter created for: filenamePrefix = "  + mEntry.filenamePrefix());
     }
 
     void onCreateView() {
@@ -48,7 +52,7 @@ public class TimeSeriesFragmentPresenter {
             @Override
             protected Void doInBackground(Void... params) {
                 publishProgress("Reading previous time series");
-                mMetronome.getTimeSeries();
+                mAudioRecording.getTimeSeries();
 
                 return null;
             }
@@ -69,11 +73,11 @@ public class TimeSeriesFragmentPresenter {
     class RefreshTimeSeriesViewAsync extends AsyncTask<Void, Void, Void> {
         private TimeSeries mTS = null;
         private LineChart mLineChart = null;
-        private ProfileModel mMetronome = null;
+        private AudioRecordingModel mAudioRecording = null;
 
-        public RefreshTimeSeriesViewAsync(LineChart lc, ProfileModel metronome) {
+        public RefreshTimeSeriesViewAsync(LineChart lc, AudioRecordingModel audioRecording) {
             mLineChart = lc;
-            mMetronome = metronome;
+            mAudioRecording = audioRecording;
         }
 
         @Override
@@ -127,8 +131,8 @@ public class TimeSeriesFragmentPresenter {
 
         @Override
         protected Void doInBackground(Void... params) {
-            if (mMetronome.hasTimeSeries()) {
-                mTS = mMetronome.getTimeSeries();
+            if (mAudioRecording.hasTimeSeries()) {
+                mTS = mAudioRecording.getTimeSeries();
             }
             return null;
         }
@@ -141,11 +145,10 @@ public class TimeSeriesFragmentPresenter {
         if (plot == null) {
             Log.d(TAG, "plot is null!");
         }
-        new RefreshTimeSeriesViewAsync(plot, mMetronome).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new RefreshTimeSeriesViewAsync(plot, mAudioRecording).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void playSound() {
-        // Fixme
-        mMetronome.playRecording(8000);
+        mAudioRecording.playRecording(mEntry.samplesPerSecond());
     }
 }

@@ -2,6 +2,7 @@ package edu.utrgv.cgwa.metrec;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -14,10 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ViewTimeSeriesActivity extends AppCompatActivity {
-    private static final String TAG = "ViewProfile";
+    private static final String TAG = "ViewTimeSeries";
     private static TimeSeriesFragment mFragment;
     private Toolbar mToolbar;
-    private long mProfileID;
+    private long mAudioID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,37 +31,32 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        mProfileID = intent.getLongExtra("profileID", -1);
-        if (mProfileID == -1) {
-            Log.d(TAG, "Attempt to view a time series, but no profile ID given in intent.");
+        mAudioID = intent.getLongExtra("audioID", -1);
+        if (mAudioID == -1) {
+            Log.d(TAG, "Attempt to view a time series, but no audio ID given in intent.");
         } else {
             Log.d(TAG, "Adding time series fragment");
-            mFragment = TimeSeriesFragment.newInstance(mProfileID);
+            mFragment = TimeSeriesFragment.newInstance(mAudioID);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, mFragment);
             ft.commit();
         }
 
-        ProfileManager manager = new ProfileManager(this);
-        DbProfileTable.ProfileEntry profile = manager.getProfileEntryByProfileID(mProfileID);
+        AudioRecordingManager manager = new AudioRecordingManager(this);
+        DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
 
-        // Update the pulse period text
-        TextView tv = (TextView) findViewById(R.id.metronomepulseprofileperiod);
-        tv.setText("Computed period: " + profile.computedPeriod() + " (s)");
+        TextView date = (TextView) findViewById(R.id.date);
+        date.setText("Date: " + entry.date());
 
-        // Update the beats per minute box
-        TextView bpm = (TextView) findViewById(R.id.metronomepulseprofilebpm);
-        bpm.setText("Beats per minute: " + profile.beatsPerMinute());
+        TextView time = (TextView) findViewById(R.id.time);
+        time.setText("Time: " + entry.time());
 
-        TextView date = (TextView) findViewById(R.id.metronomepulseprofiledate);
-        date.setText("Date: " + profile.date());
+        TextView samplesPerSecond = (TextView) findViewById(R.id.samplespersecond);
+        samplesPerSecond.setText("Samples per second: " + entry.samplesPerSecond());
 
-        TextView time = (TextView) findViewById(R.id.metronomepulseprofiletime);
-        time.setText("Time: " + profile.time());
-
-        TextView samplesPerSecond = (TextView) findViewById(R.id.metronomepulseprofilesamplespersecond);
-        samplesPerSecond.setText("Samples per second: " + profile.samplesPerSecond());
+        TextView durationInSeconds = (TextView) findViewById(R.id.durationinseconds);
+        durationInSeconds.setText("Duration (s): " + entry.durationInSeconds());
     }
 
     @Override

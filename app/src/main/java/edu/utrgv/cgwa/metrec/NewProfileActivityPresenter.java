@@ -1,9 +1,7 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -28,7 +26,7 @@ import edu.utrgv.cgwa.tabletoppta.PulseProfile;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class NewProfileActivityPresenter {
-    private final String TAG = "NewProfileActivityPresenter";
+    private final String TAG = "NewProfilePresenter";
     private ProfileModel mMetronome;
     private NewProfileActivityFragment mFragment;
 
@@ -158,7 +156,7 @@ public class NewProfileActivityPresenter {
 
 
         class NewRecordingAsync extends AsyncTask<Void, String, Void>
-        implements BaseModel.ProgressListener, ProfileModel.ProfileProgressListener {
+        implements AudioRecordingModel.ProgressListener, ProfileModel.ProfileProgressListener {
             private ProgressDialog mProgress = null;
             private double mBeatsPerMinute = 0;
 
@@ -210,8 +208,13 @@ public class NewProfileActivityPresenter {
                 btnRec.setEnabled(false);
                 btnRec.setText("Recording...");
 
+
                 Spinner bpm = (Spinner) mFragment.getView().findViewById(R.id.beatsPerMinuteSpinner);
                 mBeatsPerMinute = Double.parseDouble((String)bpm.getSelectedItem());
+                bpm.setEnabled(false);
+
+                Switch frequency = (Switch) mFragment.getView().findViewById(R.id.frequencySwitch);
+                frequency.setEnabled(false);
 
                 mMetronome.setProgressListener(this);
                 mMetronome.setProfileProgressListener(this);
@@ -222,29 +225,27 @@ public class NewProfileActivityPresenter {
                 publishProgress("Recording sound + computing");
                 mMetronome.newRecording(sampleRate, desiredRuntime, mBeatsPerMinute);
 
-                publishProgress("Saving results in the database.");
+                publishProgress("Saving times series to the database...");
 
-                // Save the data into the database
-                DbHelper mDbHelper = new DbHelper(mFragment.getContext());
-                SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-                ContentValues values = new ContentValues();
-                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_FILENAMEPREFIX, mMetronome.getFilenamePrefix());
                 Date date = new Date();
-
                 String dateString = new SimpleDateFormat("MM-dd-yyyy").format(date);
-                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_DATE, dateString);
-
                 String timeString = new SimpleDateFormat("hh:mm").format(date);
-                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_TIME, timeString);
 
-                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_BEATS_PER_MINUTE, mMetronome.getPulseProfile().bpm);
-                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_COMPUTED_PERIOD, mMetronome.getPulseProfile().T);
-                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_SAMPLES_PER_SECOND, mMetronome.getTimeSeries().getSampleRate());
-                values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_FREQUENCY, getFrequency());
-                long newRowId = db.insert(DbProfileTable.ProfileEntry.TABLE_NAME, "null", values);
+                // Save the time series to the database
+                AudioRecordingManager audioManager = new AudioRecordingManager(mFragment.getContext());
+                long audioID = audioManager.addEntry(dateString, timeString, mMetronome.getFilenamePrefix(),
+                        mMetronome.getFilenamePCM(), mMetronome.getFilenameTS(), sampleRate, desiredRuntime);
 
-                publishProgress("Results saved to database!");
+
+                publishProgress("Saving pulse profile to the database...");
+
+
+                // Save the profile to the database
+                ProfileManager profileManager = new ProfileManager(mFragment.getContext());
+                profileManager.addEntry(audioID, dateString, timeString, mMetronome.getFilenamePrefix(),
+                        (int) mMetronome.getPulseProfile().bpm, mMetronome.getPulseProfile().T, mFrequency);
+
+                publishProgress("All results have been saved to database!");
                 return null;
             }
 

@@ -7,14 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class TimeSeriesFragment extends Fragment {
-    private static final String ARG_PROFILEID = "profileID";
+    public static final String ARG_AUDIOID = "audioID";
 
     private TimeSeriesFragmentPresenter mPresenter;
 
-    public static TimeSeriesFragment newInstance(long profileID) {
+    public static TimeSeriesFragment newInstance(long audioID) {
         TimeSeriesFragment fragment = new TimeSeriesFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_PROFILEID, profileID);
+        args.putLong(ARG_AUDIOID, audioID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -27,8 +27,8 @@ public class TimeSeriesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        long profileID = getArguments().getLong(ARG_PROFILEID, -1);
-        mPresenter = new TimeSeriesFragmentPresenter(this, profileID);
+        long audioID = getArguments().getLong(ARG_AUDIOID, -1);
+        mPresenter = new TimeSeriesFragmentPresenter(this, audioID);
     }
 
     @Override

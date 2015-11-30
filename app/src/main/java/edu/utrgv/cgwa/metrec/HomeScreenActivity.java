@@ -24,6 +24,11 @@ public class HomeScreenActivity extends Activity {
         startActivity(intent);
     }
 
+    public void startSingleMetronomeAnalysis(View view) {
+        Intent intent = new Intent(HomeScreenActivity.this, SingleMetronomeAnalysisActivity.class);
+        startActivity(intent);
+    }
+
     public void launchWebsite(View view) {
         final String url = "http://nanograv.org/outreach/ptademo/";
         Intent intent = new Intent(Intent.ACTION_VIEW);

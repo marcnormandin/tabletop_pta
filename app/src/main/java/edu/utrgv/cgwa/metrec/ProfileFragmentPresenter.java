@@ -26,7 +26,7 @@ public class ProfileFragmentPresenter {
     public ProfileFragmentPresenter(ProfileFragment frag, long profileID) {
         mFragment = frag;
         ProfileManager manager = new ProfileManager(frag.getActivity());
-        DbProfileTable.ProfileEntry entry = manager.getProfileEntryByProfileID(profileID);
+        DbProfileTable.ProfileEntry entry = manager.getEntryByID(profileID);
         Log.d(TAG, "Profile fragment presenter created for: filenamePrefix = "  + entry.filenamePrefix());
         mMetronome = new ProfileModel(entry.filenamePrefix());
     }

@@ -10,7 +10,7 @@ import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 import static edu.utrgv.cgwa.tabletoppta.Routines.caltemplate;
 
-public class ProfileModel extends BaseModel {
+public class ProfileModel extends AudioRecordingModel {
     private static final String TAG = "ProfileModel";
 
     private PulseProfile mPulseProfile = null;

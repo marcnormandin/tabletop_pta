@@ -24,22 +24,16 @@ public class ProfileListActivity extends AppCompatActivity implements ProfileLis
     }
 
     @Override
-    public void onDisplayProfileClicked(int position) {
-        ProfileManager manager = new ProfileManager(this);
-        DbProfileTable.ProfileEntry profile = manager.getProfileEntryByPosition(position);
-
+    public void onDisplayProfileClicked(final long profileID) {
         Intent intent = new Intent(this, ViewProfileActivity.class);
-        intent.putExtra(ProfileFragment.ARG_PROFILEID, profile.id());
+        intent.putExtra(ProfileFragment.ARG_PROFILEID, profileID);
         startActivity(intent);
     }
 
     @Override
-    public void onDisplayTimeSeriesClicked(int position) {
-        ProfileManager manager = new ProfileManager(this);
-        DbProfileTable.ProfileEntry profile = manager.getProfileEntryByPosition(position);
-
+    public void onDisplayTimeSeriesClicked(final long audioID) {
         Intent intent = new Intent(this, ViewTimeSeriesActivity.class);
-        intent.putExtra(ProfileFragment.ARG_PROFILEID, profile.id());
+        intent.putExtra(TimeSeriesFragment.ARG_AUDIOID, audioID);
         startActivity(intent);
     }
 

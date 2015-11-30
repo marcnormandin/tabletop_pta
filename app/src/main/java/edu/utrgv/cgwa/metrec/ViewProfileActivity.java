@@ -1,19 +1,13 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ViewProfileActivity extends AppCompatActivity {
     private static final String TAG = "ViewProfile";
@@ -43,7 +37,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         }
 
         ProfileManager manager = new ProfileManager(this);
-        DbProfileTable.ProfileEntry profile = manager.getProfileEntryByProfileID(mProfileID);
+        DbProfileTable.ProfileEntry profile = manager.getEntryByID(mProfileID);
 
         // Update the pulse period text
         TextView tv = (TextView) findViewById(R.id.metronomepulseprofileperiod);
@@ -58,8 +52,5 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         TextView time = (TextView) findViewById(R.id.metronomepulseprofiletime);
         time.setText("Time: " + profile.time());
-
-        TextView samplesPerSecond = (TextView) findViewById(R.id.metronomepulseprofilesamplespersecond);
-        samplesPerSecond.setText("Samples per second: " + profile.samplesPerSecond());
     }
 }
