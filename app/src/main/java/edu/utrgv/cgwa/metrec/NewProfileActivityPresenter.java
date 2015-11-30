@@ -219,7 +219,8 @@ public class NewProfileActivityPresenter {
                 // Save the time series to the database
                 AudioRecordingManager audioManager = new AudioRecordingManager(mFragment.getContext());
                 long audioID = audioManager.addEntry(dateString, timeString, mMetronome.getFilenamePrefix(),
-                        mMetronome.getFilenamePCM(), mMetronome.getFilenameTS(), sampleRate, desiredRuntime);
+                        mMetronome.getFilenamePCM(), mMetronome.getFilenameTS(), sampleRate, desiredRuntime,
+                        AudioRecordingManager.VALUE_NAME_TAG_PULSE_PROFILE);
 
 
                 publishProgress("Saving pulse profile to the database...");

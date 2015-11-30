@@ -9,6 +9,10 @@ public class AudioRecordingManager {
     private DbHelper mHelper = null;
     private static final String TAG = "AudioRecordingManager";
 
+    public static final String VALUE_NAME_TAG_PULSE_PROFILE = "pulse_profile";
+    public static final String VALUE_NAME_TAG_SINGLE_METRONOME = "single_metronome";
+    public static final String VALUE_NAME_TAG_DOUBLE_METRONOME = "double_metronome";
+
     public AudioRecordingManager(Context context) {
         mHelper = new DbHelper(context);
     }
@@ -28,7 +32,8 @@ public class AudioRecordingManager {
                          final String filenamePCM,
                          final String filenameTS,
                          final int samplesPerSecond,
-                         final double durationInSeconds) {
+                         final double durationInSeconds,
+                         final String tag) {
 
         ContentValues values = new ContentValues();
 
@@ -39,6 +44,7 @@ public class AudioRecordingManager {
         values.put(DbAudioRecordingTable.AudioRecordingEntry.COLUMN_NAME_FILENAME_TS, filenameTS);
         values.put(DbAudioRecordingTable.AudioRecordingEntry.COLUMN_NAME_SAMPLES_PER_SECOND, samplesPerSecond);
         values.put(DbAudioRecordingTable.AudioRecordingEntry.COLUMN_NAME_DURATION_IN_SECONDS, durationInSeconds);
+        values.put(DbAudioRecordingTable.AudioRecordingEntry.COLUMN_NAME_TAG, tag);
 
 
         long audioID = mHelper.getWritableDatabase().insert(DbAudioRecordingTable.AudioRecordingEntry.TABLE_NAME, "null", values);
@@ -95,8 +101,11 @@ public class AudioRecordingManager {
         int durationIndex = cursor.getColumnIndex(DbAudioRecordingTable.AudioRecordingEntry.COLUMN_NAME_DURATION_IN_SECONDS);
         double durationInSeconds = cursor.getDouble(durationIndex);
 
+        int tagIndex = cursor.getColumnIndex(DbAudioRecordingTable.AudioRecordingEntry.COLUMN_NAME_TAG);
+        String tag = cursor.getString(tagIndex);
+
         return new DbAudioRecordingTable.AudioRecordingEntry(uniqueIndex, dateString, timeString,
-                filenamePrefix, filenamePCM, filenameTS, samplesPerSecond, durationInSeconds);
+                filenamePrefix, filenamePCM, filenameTS, samplesPerSecond, durationInSeconds, tag);
     }
 
     public void deleteEntryByID(final long id) {

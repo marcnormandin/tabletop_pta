@@ -157,7 +157,8 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
                 // Save the time series to the database
                 AudioRecordingManager audioManager = new AudioRecordingManager(mContext);
                 mAudioID = audioManager.addEntry(dateString, timeString, mAudioRecording.getFilenamePrefix(),
-                        mAudioRecording.getFilenamePCM(), mAudioRecording.getFilenameTS(), sampleRate, desiredRuntime);
+                        mAudioRecording.getFilenamePCM(), mAudioRecording.getFilenameTS(), sampleRate, desiredRuntime,
+                        AudioRecordingManager.VALUE_NAME_TAG_SINGLE_METRONOME);
 
                 publishProgress("All results have been saved to database!");
                 return null;

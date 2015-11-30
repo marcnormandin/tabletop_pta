@@ -1,6 +1,7 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 
 public class DbAudioRecordingTable {
 
@@ -20,7 +21,8 @@ public class DbAudioRecordingTable {
                     AudioRecordingEntry.COLUMN_NAME_FILENAME_PCM + TEXT_TYPE + COMMA_SEP +
                     AudioRecordingEntry.COLUMN_NAME_FILENAME_TS + TEXT_TYPE + COMMA_SEP +
                     AudioRecordingEntry.COLUMN_NAME_SAMPLES_PER_SECOND + TEXT_TYPE  + COMMA_SEP +
-                    AudioRecordingEntry.COLUMN_NAME_DURATION_IN_SECONDS + TEXT_TYPE +
+                    AudioRecordingEntry.COLUMN_NAME_DURATION_IN_SECONDS + TEXT_TYPE + COMMA_SEP +
+                    AudioRecordingEntry.COLUMN_NAME_TAG + TEXT_TYPE +
                     " )";
 
     public static final String SQL_DELETE_ENTRIES =
@@ -35,16 +37,18 @@ public class DbAudioRecordingTable {
         public static final String COLUMN_NAME_FILENAME_TS = "filenameTS";
         public static final String COLUMN_NAME_SAMPLES_PER_SECOND = "samplesPerSecond";
         public static final String COLUMN_NAME_DURATION_IN_SECONDS = "durationInSeconds";
+        public static final String COLUMN_NAME_TAG = "tag";
 
 
         private long mID;
         private String mDate, mTime, mFilenamePrefix, mFilenamePCM, mFilenameTS;
         private int mSamplesPerSecond;
         private double mDurationInSeconds;
+        private String mTag;
 
         public AudioRecordingEntry(long id, String date, String time,
                                    String filenamePrefix, String filenamePCM, String filenameTS,
-                                   int samplesPerSecond, double durationInSeconds) {
+                                   int samplesPerSecond, double durationInSeconds, String tag) {
             mID = id;
             mDate = date;
             mTime = time;
@@ -53,6 +57,7 @@ public class DbAudioRecordingTable {
             mFilenameTS = filenameTS;
             mSamplesPerSecond = samplesPerSecond;
             mDurationInSeconds = durationInSeconds;
+            mTag = tag;
         }
 
         public long id() { return mID; }
@@ -63,5 +68,6 @@ public class DbAudioRecordingTable {
         public String filenameTS() { return mFilenameTS; }
         public int samplesPerSecond() { return mSamplesPerSecond; }
         public double durationInSeconds() { return mDurationInSeconds; }
+        public String tag() { return mTag; }
     }
 }
