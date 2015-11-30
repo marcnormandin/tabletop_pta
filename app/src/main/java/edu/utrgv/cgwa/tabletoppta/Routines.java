@@ -327,44 +327,114 @@ public class Routines {
         int ind0 = Utility.argmax(C);
         double C0 = C[ind0];
 
-        // use brent's method to find max
-        // search in a small region around expected arrival time
-        int indices[] = null;
-        if (ind0 - m < 0) {
-            // Left of peak is before the time origin
-            indices = Utility.range(0, ind0 + m + 1);
-        } else if (ind0 + m > C.length) {
-            // Right of the peak is after the time series
-            indices = Utility.range(ind0 - m, C.length);
-        } else{
-            // Peak is fully within the time series (the nominal case)
-            indices = Utility.range(ind0 - m, ind0 + m + 1);
+        // Values for the reference pulse
+        double t0 = estimatePeak(ind0, m, ts, template, norm);
+        double A0 = correlate(t0, ts, template, norm);
+
+        // Calculate expected number of pulses
+        // Number of pulses before the reference pulse
+        int N1 = (int) Math.floor(t0/Tp);
+        // Number of pulses after the reference pulse
+        int N2 = (int) Math.floor((ts.t[ts.t.length-1]-t0)/Tp);
+        // Total number of pulses
+        int Np = N1 + N2 + 1;
+        // Reference pulse number
+        int n0 = N1 + 1;
+
+        // Calculate expected indices of TOAs
+        double[] expected_double = Utility.linspace((Tp/deltaT)*(1-n0), (Tp/deltaT)*(Np-n0), Np);
+        int[] expected_ind = new int[expected_double.length];
+        for (int i = 0; i < expected_ind.length; i++) {
+            expected_ind[i] = ind0 + (int) Math.round( expected_double[i] );
         }
 
-        // brack = (ts[indices[0],0], ts[ind0,0], ts[indices[-1],0])
+        // Initialize variables
+        double[] tauhat = Utility.zeros(Np);
+        double[] Ahat = Utility.zeros(Np);
+
+        // loop to find measured TOAs and amplitudes
+        for(int i = 0; i < expected_ind.length; i++) {
+            int expected = expected_ind[i];
+
+            // search in a small region around expected arrival time
+            //int[] indices = getIndicies(expected, m, ts.t.length);
+
+            // Fixme This seems odd
+            //idx = indices[0] + np.argmax(C[indices])
+
+            tauhat[i] = estimatePeak(expected, m, ts, template, norm);
+            Ahat[i] = correlate(tauhat[i], ts, template, norm);
+        }
+
+        /*
+        // error estimate for TOAs (based on correlation curve)
+        // basically, we can determine the max of the correlation to +/- 0.5 deltaT;
+        // multiply by 1/sqrt(Ahat(ii)) to increase error bar for small correlations
+
+        ////Ahat_max = np.max(Ahat) // nan is max (which i don't want)
+        Ahat_max = max(Ahat)
+
+        error_tauhat = np.zeros(len(tauhat))
+        for ii in range(0, len(tauhat)):
+        error_tauhat[ii] = 0.5*deltaT/np.sqrt(Ahat[ii])
+
+        // assign output variables (only TOAs and their uncertainties needed)
+        measuredTOAs = tauhat
+        uncertainties = error_tauhat
+
+        return measuredTOAs, uncertainties, n0
+        */
+        return tauhat;
+    }
+
+    private static int[] getIndicies(int centerIndex, int halfIndexWidth, int maxIndex) {
+        // Fixme
+        // maxIndex should be the length
+        // search in a small region around expected arrival time
+        int indices[] = null;
+        if (centerIndex - halfIndexWidth < 0) {
+            // Left of peak is before the time origin
+            indices = Utility.range(0, centerIndex + halfIndexWidth + 1);
+        } else if (centerIndex + halfIndexWidth > maxIndex) {
+            // Right of the peak is after the time series
+            indices = Utility.range(centerIndex - halfIndexWidth, maxIndex);
+        } else {
+            // Peak is fully within the time series (the nominal case)
+            indices = Utility.range(centerIndex - halfIndexWidth, centerIndex + halfIndexWidth + 1);
+        }
+
+        return indices;
+    }
+
+    private static double estimatePeak(int centerIndex, int halfIndexWidth, TimeSeries ts, TimeSeries template, double norm) {
+        // Get the range for Brent
+        int indices[] = getIndicies(centerIndex, halfIndexWidth, ts.t.length);
+
+        // The objective function
         MyUnivariateFunction func = new MyUnivariateFunction(ts, template, -norm);
+
+        // Setup the optimizer
+        // https://commons.apache.org/proper/commons-math/apidocs/org/apache/commons/math3/optim/univariate/BrentOptimizer.html
         final double rel = 1.0e-7;
         final double abs = 1.0e-7;
-        //final double tol = 1.0e-7;
-        final int maxIterations = 500;
         BrentOptimizer brentOptimizer = new BrentOptimizer(rel, abs);
+
+        // Create and run the optimization
+        final int maxIterations = 500;
         final double lo = ts.t[indices[0]];
-        final double init = ts.t[ind0]; // initial
+        final double init = ts.t[centerIndex]; // initial
         final double hi = ts.t[indices[indices.length-1]];
         SearchInterval brack = new SearchInterval(lo,hi,init);
         UnivariatePointValuePair pair = brentOptimizer.optimize(new UnivariateObjectiveFunction(func),
                 brack, GoalType.MINIMIZE, new MaxIter(maxIterations), new MaxEval(maxIterations));
+
+        // Report the results
         Log.d("BRENT", "guess best tau = " + init);
         Log.d("BRENT", "brent best tau = " + pair.getPoint());
 
-        // https://commons.apache.org/proper/commons-math/apidocs/org/apache/commons/math3/optim/univariate/BrentOptimizer.html
+        double optimizedTime = pair.getPoint();
 
-        // Fixme Check if the time series is modified by the Fourier transform
-
-        // t0 = opt.brent(correlate, (ts, template, -norm), brack, 1e-07, 0, 500)
-        // A0 = correlate(t0, ts, template, norm)
-
-        return C;
+        return optimizedTime;
     }
 
     /*

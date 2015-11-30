@@ -120,6 +120,7 @@ public class NewProfileActivityFragment extends Fragment implements View.OnClick
         plotProfile.setNoDataTextDescription("You need to compute a profile.");
         plotProfile.setBackgroundColor(Color.WHITE);
         plotProfile.setDrawGridBackground(false);
+        plotProfile.setDrawMarkerViews(false);
         plotProfile.setVisibleXRangeMaximum(500);
         
         Button btnRec = (Button)rootView.findViewById(R.id.btnMain);

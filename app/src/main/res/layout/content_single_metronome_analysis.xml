@@ -29,12 +29,22 @@
         android:layout_height="wrap_content"
         android:text="Record audio"
         android:id="@+id/buttonRecordAudio"
-        android:layout_below="@+id/buttonSelectProfile"
+        android:layout_below="@id/buttonSelectProfile"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/buttonSelectProfile"
-        android:layout_alignEnd="@+id/buttonSelectProfile"
+        android:layout_alignRight="@id/buttonSelectProfile"
+        android:layout_alignEnd="@id/buttonSelectProfile"
         android:onClick="buttonRecordAudio" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/container"
+        android:background="@color/primary_color"
+        android:layout_below="@id/buttonRecordAudio">
+
+    </LinearLayout>
 
 
 </RelativeLayout>

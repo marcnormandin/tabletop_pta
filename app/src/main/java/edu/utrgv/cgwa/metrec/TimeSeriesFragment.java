@@ -2,11 +2,13 @@ package edu.utrgv.cgwa.metrec;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class TimeSeriesFragment extends Fragment {
+    private static final String TAG = "TimeSeriesFragment";
     public static final String ARG_AUDIOID = "audioID";
 
     private TimeSeriesFragmentPresenter mPresenter;
@@ -40,10 +42,14 @@ public class TimeSeriesFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPresenter.onCreateView();
+        if (mPresenter != null) {
+            mPresenter.onCreateView();
+        }
     }
 
     public void playSound() {
-        mPresenter.playSound();
+        if (mPresenter != null) {
+            mPresenter.playSound();
+        }
     }
 }

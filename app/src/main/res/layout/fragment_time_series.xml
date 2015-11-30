@@ -4,7 +4,7 @@
     android:orientation="vertical">
 
         <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/metronomepulseprofiletimeseries"
+            android:id="@+id/charttimeseries"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

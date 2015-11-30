@@ -28,11 +28,12 @@ public class TimeSeriesFragmentPresenter {
     public TimeSeriesFragmentPresenter(TimeSeriesFragment frag, final long audioID) {
         mFragment = frag;
         mAudioID = audioID;
+
         AudioRecordingManager manager = new AudioRecordingManager(frag.getActivity());
         mEntry = manager.getEntryByID(mAudioID);
         mAudioRecording = new AudioRecordingModel(mEntry.filenamePrefix());
 
-        Log.d(TAG, "Timeseries fragment presenter created for: filenamePrefix = "  + mEntry.filenamePrefix());
+        Log.d(TAG, "Timeseries fragment presenter created for: filenamePrefix = " + mEntry.filenamePrefix());
     }
 
     void onCreateView() {
@@ -139,16 +140,21 @@ public class TimeSeriesFragmentPresenter {
     }
 
     public void refreshTimeseriesView() {
-        Log.d(TAG, "refreshing metronome timeseries view");
+        Log.d(TAG, "refreshing timeseries view");
 
-        LineChart plot = (LineChart) mFragment.getView().findViewById(R.id.metronomepulseprofiletimeseries);
+        LineChart plot = (LineChart) mFragment.getView().findViewById(R.id.charttimeseries);
         if (plot == null) {
-            Log.d(TAG, "plot is null!");
+            Log.d(TAG, "Error: Linechart is null");
+        } else {
+            new RefreshTimeSeriesViewAsync(plot, mAudioRecording).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
-        new RefreshTimeSeriesViewAsync(plot, mAudioRecording).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void playSound() {
-        mAudioRecording.playRecording(mEntry.samplesPerSecond());
+        if (mAudioRecording != null) {
+            mAudioRecording.playRecording(mEntry.samplesPerSecond());
+        } else {
+            Log.d(TAG, "Error: Attempt to play sound on null audio recording!");
+        }
     }
 }

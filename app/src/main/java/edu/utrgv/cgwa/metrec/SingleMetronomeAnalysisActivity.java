@@ -4,13 +4,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -20,11 +24,21 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
+import edu.utrgv.cgwa.tabletoppta.PulseProfile;
+import edu.utrgv.cgwa.tabletoppta.Routines;
+import edu.utrgv.cgwa.tabletoppta.TimeSeries;
+
+public class SingleMetronomeAnalysisActivity extends AppCompatActivity implements ViewPulseOverlay.OnFragmentInteractionListener {
+    static private final String TAG = "SingleMetronomeActivity";
     static public final int PICK_PROFILE_REQUEST = 1;  // The request code
     private AudioRecordingModel mAudioRecording = null;
     private long mAudioID = -1;
     private long mProfileID = -1;
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +55,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
                     Snackbar.make(view, "Please set the profile and record audio", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 } else {
-                    Snackbar.make(view, "Analysis started!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    runAnalysisButton();
                 }
             }
         });
@@ -180,5 +193,72 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         }
 
         new NewRecordingAsync(this).execute();
+    }
+
+    public PulseProfile getPulseProfile() {
+        ProfileManager manager = new ProfileManager(this);
+        DbProfileTable.ProfileEntry entry = manager.getEntryByID(mProfileID);
+        ProfileModel model = new ProfileModel(entry.filenamePrefix());
+        // Fixme We should load the pulse profile directly from file using the stored filename
+        return model.getPulseProfile();
+    }
+
+    public void runAnalysisButton() {
+        final Context context = this;
+
+        class AnalysisAsync extends AsyncTask<Void, String, Void> {
+            private ProgressDialog mProgress;
+
+            @Override
+            protected void onPreExecute() {
+                mProgress = ProgressDialog.show(context, "Performing analysis", "Please be patient");
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                mProgress.dismiss();
+
+                // Add the viewing fragment
+
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                mProgress.setMessage(values[0]);
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                double[] tauhat = runAnalysis();
+
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.add(R.id.container, ViewPulseOverlay.newInstance(mAudioID, mProfileID, tauhat));
+                ft.commit();
+
+                return null;
+            }
+        }
+
+        new AnalysisAsync().execute();
+    }
+    public double[] runAnalysis() {
+        // Pulse profile to be extended as the template
+        PulseProfile pulseProfile = getPulseProfile();
+
+        // Audio recording as the time series
+        TimeSeries singleMovingMetronome = mAudioRecording.getTimeSeries();
+
+        // Create the template
+        TimeSeries template = Routines.caltemplate(pulseProfile, singleMovingMetronome);
+
+        double[] tauhat = Routines.calmeasuredTOAs(singleMovingMetronome, template, pulseProfile.T);
+
+        // Output the results
+        for (int i = 0; i < tauhat.length; i++) {
+            Log.d(TAG, "tauhat(" + i + ") = " + tauhat[i]);
+        }
+
+        return tauhat;
     }
 }
