@@ -151,11 +151,36 @@ public class Routines {
 
         @Override
         public double value(double tau) {
-            Log.d("brent eval", "tau = " + tau);
             return correlate(tau, new TimeSeries(mTimeSeries), new TimeSeries(mTemplate), mNorm);
         }
     }
 
+    static public class CalMeasuredTOAsResult {
+        private double[] mMeasuredTOAs;
+        private double[] mUncertainties;
+        private int mN0;
+        private double[] mExpectedTOAs;
+        private double[] mResiduals;
+
+        public CalMeasuredTOAsResult(double[] measuredTOAs, double[] uncertainties, int n0, double[] expectedTOAs) {
+            mMeasuredTOAs = measuredTOAs;
+            mUncertainties = uncertainties;
+            mN0 = n0;
+            mExpectedTOAs = expectedTOAs;
+
+            mResiduals = new double[mMeasuredTOAs.length];
+            for (int i = 0; i < mMeasuredTOAs.length; i++) {
+                mResiduals[i] = mMeasuredTOAs[i] - mExpectedTOAs[i];
+            }
+        }
+
+        public double[] measuredTOAs() { return mMeasuredTOAs; }
+        public double[] uncertainties() { return mUncertainties; }
+        public int n0() { return mN0; }
+        public int numPulses() { return mMeasuredTOAs.length; }
+        public double[] expectedTOAs() { return mExpectedTOAs; }
+        public double[] residuals() { return mResiduals; }
+    }
 
     /*
     def calmeasuredTOAs(ts, template, Tp):
@@ -273,7 +298,7 @@ public class Routines {
         return measuredTOAs, uncertainties, n0
     */
 
-    public static double[] calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp) {
+    public static CalMeasuredTOAsResult calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp) {
         int N = ts.t.length;
         double deltaT = ts.t[1] - ts.t[0];
         double deltaF = 1.0 / (N * deltaT); // Sampling frequency
@@ -366,25 +391,22 @@ public class Routines {
             Ahat[i] = correlate(tauhat[i], ts, template, norm);
         }
 
-        /*
         // error estimate for TOAs (based on correlation curve)
         // basically, we can determine the max of the correlation to +/- 0.5 deltaT;
         // multiply by 1/sqrt(Ahat(ii)) to increase error bar for small correlations
+        //double Ahat_max = Utility.maxabs(Ahat); // The 'abs' shouldn't matter
+        double[] error_tauhat = Utility.zeros(tauhat.length);
+        for (int i = 0; i < tauhat.length; i++) {
+            error_tauhat[i] = 0.5 * deltaT / Math.sqrt(Ahat[i]);
+        }
 
-        ////Ahat_max = np.max(Ahat) // nan is max (which i don't want)
-        Ahat_max = max(Ahat)
+        // MARC: Save time and compute the expected time of arrivals here
+        double[] expectedTOA = new double[Np];
+        for (int i = 0; i < expectedTOA.length; i++) {
+            expectedTOA[i] = ts.t[expected_ind[i]];
+        }
 
-        error_tauhat = np.zeros(len(tauhat))
-        for ii in range(0, len(tauhat)):
-        error_tauhat[ii] = 0.5*deltaT/np.sqrt(Ahat[ii])
-
-        // assign output variables (only TOAs and their uncertainties needed)
-        measuredTOAs = tauhat
-        uncertainties = error_tauhat
-
-        return measuredTOAs, uncertainties, n0
-        */
-        return tauhat;
+        return new CalMeasuredTOAsResult(tauhat, error_tauhat, n0, expectedTOA);
     }
 
     private static int[] getIndicies(int centerIndex, int halfIndexWidth, int maxIndex) {
@@ -467,8 +489,9 @@ public class Routines {
         return residuals, errorbars
      */
 
-
-
+    static public void calresiduals(CalMeasuredTOAsResult d) {
+        // not needed
+    }
 
 
 

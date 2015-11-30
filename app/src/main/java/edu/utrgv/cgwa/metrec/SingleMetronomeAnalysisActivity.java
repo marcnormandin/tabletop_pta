@@ -229,11 +229,11 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity implement
 
             @Override
             protected Void doInBackground(Void... params) {
-                double[] tauhat = runAnalysis();
+                Routines.CalMeasuredTOAsResult result = runAnalysis();
 
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.container, ViewPulseOverlay.newInstance(mAudioID, mProfileID, tauhat));
+                ft.add(R.id.container, ViewPulseOverlay.newInstance(mAudioID, mProfileID, result.measuredTOAs()));
                 ft.commit();
 
                 return null;
@@ -242,7 +242,8 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity implement
 
         new AnalysisAsync().execute();
     }
-    public double[] runAnalysis() {
+
+    public Routines.CalMeasuredTOAsResult runAnalysis() {
         // Pulse profile to be extended as the template
         PulseProfile pulseProfile = getPulseProfile();
 
@@ -252,13 +253,8 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity implement
         // Create the template
         TimeSeries template = Routines.caltemplate(pulseProfile, singleMovingMetronome);
 
-        double[] tauhat = Routines.calmeasuredTOAs(singleMovingMetronome, template, pulseProfile.T);
+        Routines.CalMeasuredTOAsResult result = Routines.calmeasuredTOAs(singleMovingMetronome, template, pulseProfile.T);
 
-        // Output the results
-        for (int i = 0; i < tauhat.length; i++) {
-            Log.d(TAG, "tauhat(" + i + ") = " + tauhat[i]);
-        }
-
-        return tauhat;
+        return result;
     }
 }
