@@ -65,8 +65,6 @@ public class NewProfileActivityPresenter {
                 mMetronome.getTimeSeries();
                 publishProgress("Reading previous pulse profile");
                 mMetronome.getPulseProfile();
-                publishProgress("Reading previous self-correlation series");
-                mMetronome.getSelfCorrelation();
 
                 return null;
             }
@@ -78,9 +76,6 @@ public class NewProfileActivityPresenter {
 
                 mProgressDialog.setMessage("Drawing pulse profile plot");
                 refreshProfileView();
-
-                mProgressDialog.setMessage("Drawing self-correlation plot");
-                refreshSelfCorrelationView();
 
                 mProgressDialog.dismiss();
             }
@@ -171,16 +166,6 @@ public class NewProfileActivityPresenter {
             }
 
             @Override
-            public void onSelfCorrelationStarted() {
-                publishProgress("Computing self-correlation...");
-            }
-
-            @Override
-            public void onSelfCorrelationFinished() {
-                publishProgress("Self-correlation computed!");
-            }
-
-            @Override
             public void onRecordingStarted() {
                 publishProgress("Recording audio...");
             }
@@ -264,7 +249,6 @@ public class NewProfileActivityPresenter {
 
                 refreshTimeseriesView();
                 refreshProfileView();
-                refreshSelfCorrelationView();
 
                 mProgress.dismiss();
             }
@@ -357,83 +341,6 @@ public class NewProfileActivityPresenter {
             Log.d(TAG, "plot is null!");
         }
         new RefreshTimeSeriesViewAsync(plot, mMetronome).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    // Fixme
-    class RefreshSelfCorrelationViewAsync extends AsyncTask<Void, Void, Void> {
-        private TimeSeries mTS = null;
-        private LineChart mLineChart = null;
-        private ProfileModel mMetronome = null;
-
-        public RefreshSelfCorrelationViewAsync(LineChart lc, ProfileModel metronome) {
-            mLineChart = lc;
-            mMetronome = metronome;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if(mTS == null) {
-                return;
-            }
-
-            int count = mTS.t.length;
-            // Fixme
-            if (count > MAX_PLOT_POINTS) {
-                count = MAX_PLOT_POINTS;
-            }
-
-            ArrayList<String> mXVals = new ArrayList<String>();
-            for (int i = 0; i < count; i++) {
-                mXVals.add(mTS.t[i] + "");
-            }
-
-            ArrayList<Entry> yVals = new ArrayList<Entry>();
-
-            for (int i = 0; i < count; i++) {
-                float val = (float) mTS.h[i];
-                yVals.add(new Entry(val, i));
-            }
-
-            // create a dataset and give it a type
-            LineDataSet set1 = new LineDataSet(yVals, "Volume");
-            set1.setColor(Color.GREEN);
-            set1.setLineWidth(1f);
-            set1.setDrawCircles(false);
-            set1.setDrawValues(false);
-
-            ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
-            dataSets.add(set1); // add the datasets
-
-            // create a data object with the datasets
-            LineData mLineData = new LineData(mXVals, dataSets);
-
-            mLineChart.setData(mLineData);
-
-            // update the axes
-            XAxis xaxis = mLineChart.getXAxis();
-            xaxis.setValues(mXVals);
-
-            mLineChart.notifyDataSetChanged();
-            mLineChart.invalidate();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            if (mMetronome.hasSelfCorrelation()) {
-                mTS = mMetronome.getSelfCorrelation();
-            }
-            return null;
-        }
-    }
-
-    public void refreshSelfCorrelationView() {
-        Log.d(TAG, "refreshing metronome self-correlation view");
-
-        LineChart plot = (LineChart) mFragment.getView().findViewById(R.id.metronomeselfcorrelation);
-        if (plot == null) {
-            Log.d(TAG, "plot is null!");
-        }
-        new RefreshSelfCorrelationViewAsync(plot, mMetronome).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 

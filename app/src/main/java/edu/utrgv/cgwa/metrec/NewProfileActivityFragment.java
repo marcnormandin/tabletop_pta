@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,14 +12,14 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
+
 
 public class NewProfileActivityFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "NewProfileActivityFragment";
+    private static final String TAG = "NewProfileFragment";
     private static final String ARG_FILENAME = "filename";
     private NewProfileActivityPresenter mPresenter;
 
+    /*
     private static class MyChartGestureListener implements OnChartGestureListener {
         @Override
         public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
@@ -62,6 +61,7 @@ public class NewProfileActivityFragment extends Fragment implements View.OnClick
             Log.d(TAG, "Chart translated: (" + dX + ", " + dY + ")");
         }
     }
+    */
 
     public static NewProfileActivityFragment newInstance(String filename) {
         NewProfileActivityFragment fragment = new NewProfileActivityFragment();
@@ -105,7 +105,9 @@ public class NewProfileActivityFragment extends Fragment implements View.OnClick
 
         plotTimeSeries.setDrawMarkerViews(false);
         plotTimeSeries.setVisibleXRangeMaximum(10);
-        plotTimeSeries.setOnChartGestureListener( new MyChartGestureListener());
+
+        // Fixme Implement this later
+        //plotTimeSeries.setOnChartGestureListener( new MyChartGestureListener());
 
         // Manage the profile plot
         LineChart plotProfile = (LineChart) rootView.findViewById(R.id.metronomepulseprofilefoldedseries);
@@ -118,23 +120,8 @@ public class NewProfileActivityFragment extends Fragment implements View.OnClick
         plotProfile.setNoDataTextDescription("You need to compute a profile.");
         plotProfile.setBackgroundColor(Color.WHITE);
         plotProfile.setDrawGridBackground(false);
-
         plotProfile.setVisibleXRangeMaximum(500);
-
-
-        // Manage the self correlation plot
-        LineChart plotSelfCorrelation = (LineChart) rootView.findViewById(R.id.metronomeselfcorrelation);
-        if (plotSelfCorrelation == null) {
-            Log.d(TAG, "chart not found");
-            return rootView;
-        }
-
-        plotSelfCorrelation.setDescription("");
-        plotSelfCorrelation.setNoDataTextDescription("You need to make a recording.");
-        plotSelfCorrelation.setBackgroundColor(Color.WHITE);
-        plotSelfCorrelation.setDrawGridBackground(false);
-
-
+        
         Button btnRec = (Button)rootView.findViewById(R.id.btnMain);
         btnRec.setOnClickListener(this);
 
