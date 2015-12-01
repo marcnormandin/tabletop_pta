@@ -33,6 +33,7 @@ public class TimeSeries {
         return (int) Math.round( 1.0 / (this.t[1] - this.t[0]) );
     }
 
+    // Fixme This is slow!
     public void saveToFile(String filename) {
         DataOutputStream os = null;
         try {

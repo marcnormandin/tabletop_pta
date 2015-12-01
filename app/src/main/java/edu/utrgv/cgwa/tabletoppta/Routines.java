@@ -12,6 +12,12 @@ import org.apache.commons.math3.optim.univariate.SearchInterval;
 import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
 
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+
 import ca.uol.aig.fftpack.Complex1D;
 import ca.uol.aig.fftpack.RealDoubleFFT;
 
@@ -169,6 +175,16 @@ public class Routines {
             mExpectedTOAs = expectedTOAs;
 
             mResiduals = new double[mMeasuredTOAs.length];
+            computeResiduals();
+        }
+
+        public CalMeasuredTOAsResult(final String filename) {
+            loadFromFile(filename);
+            mResiduals = new double[mMeasuredTOAs.length];
+            computeResiduals();
+        }
+
+        private void computeResiduals() {
             for (int i = 0; i < mMeasuredTOAs.length; i++) {
                 mResiduals[i] = mMeasuredTOAs[i] - mExpectedTOAs[i];
             }
@@ -180,6 +196,94 @@ public class Routines {
         public int numPulses() { return mMeasuredTOAs.length; }
         public double[] expectedTOAs() { return mExpectedTOAs; }
         public double[] residuals() { return mResiduals; }
+
+
+        private void loadFromFile(String filename) {
+            try {
+                RandomAccessFile rFile = new RandomAccessFile(filename, "rw");
+
+                // Get the common length of the arrays
+                int len = rFile.readInt();
+
+                // Get N0
+                mN0 = rFile.readInt();
+
+                FileChannel inChannel = rFile.getChannel();
+
+                // Allocate the two arrays
+                this.mMeasuredTOAs = new double[len];
+                this.mExpectedTOAs = new double[len];
+                this.mUncertainties = new double[len];
+
+                // Allocate a buffer for the size of one array
+                final int desiredSized = len * Double.SIZE / Byte.SIZE;
+                ByteBuffer buf_in = ByteBuffer.allocate(desiredSized);
+                if (buf_in.capacity() != desiredSized) {
+                    // Fixme
+                }
+
+                // Read in mMeasuredTOAs
+                inChannel.read(buf_in);
+                buf_in.flip();
+                buf_in.asDoubleBuffer().get(this.mMeasuredTOAs);
+                buf_in.clear();
+
+                // Read in mExpectedTOAs
+                inChannel.read(buf_in);
+                buf_in.flip();
+                buf_in.asDoubleBuffer().get(this.mExpectedTOAs);
+                buf_in.clear();
+
+                // Read in mUncertainties
+                inChannel.read(buf_in);
+                buf_in.flip();
+                buf_in.asDoubleBuffer().get(this.mUncertainties);
+                buf_in.clear();
+
+                inChannel.close();
+
+            } catch (Exception e) {
+                // Fixme
+            }
+            finally {
+                // Fixme
+            }
+        }
+
+        // Fixme This is slow
+        public void saveToFile(String filename) {
+            DataOutputStream os = null;
+            try {
+                os = new DataOutputStream(new FileOutputStream(filename));
+
+                // Write the common length of the arrays
+                os.writeInt(mMeasuredTOAs.length);
+
+                // Write N0
+                os.writeInt(mN0);
+
+                // Write mMeasuredTOAs
+                for (int i = 0; i < mMeasuredTOAs.length; i++) {
+                    os.writeDouble(mMeasuredTOAs[i]);
+                }
+
+                // Write mExpectedTOAs
+                for (int i = 0; i < mExpectedTOAs.length; i++) {
+                    os.writeDouble(mExpectedTOAs[i]);
+                }
+
+                // Write mResiduals
+                for (int i = 0; i < mResiduals.length; i++) {
+                    os.writeDouble(mResiduals[i]);
+                }
+
+                os.close();
+            } catch (Exception e) {
+                // Fixme
+            } finally {
+                // Fixme
+            }
+        }
     }
 
     /*

@@ -92,6 +92,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity implement
     }
 
     // Fixme
+    // This is hackish
     private String getFilenamePrefix() {
         String uniquePrefix = new SimpleDateFormat("MM-dd-yyyy-hh-mm-ss").format(new Date());
         String commonPrefix = "/metronome_";
@@ -229,11 +230,24 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity implement
 
             @Override
             protected Void doInBackground(Void... params) {
+                // Perform the long computation and get the result
                 Routines.CalMeasuredTOAsResult result = runAnalysis();
 
+                // Save the result to a unique filename
+                String filenameResult = getFilenamePrefix() + ".sar";
+                result.saveToFile(filenameResult);
+
+                // Save the analysis results in the database
+                Date date = new Date();
+                String dateString = new SimpleDateFormat("MM-dd-yyyy").format(date);
+                String timeString = new SimpleDateFormat("hh:mm").format(date);
+                SingleMetronomeAnalysisManager manager = new SingleMetronomeAnalysisManager(context);
+                long analysisID = manager.addEntry(mAudioID, mProfileID, dateString, timeString, filenameResult, "");
+
+                // Show the fragment
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.container, ViewPulseOverlay.newInstance(mAudioID, mProfileID, result.measuredTOAs()));
+                ft.add(R.id.container, ViewPulseOverlay.newInstance(analysisID));
                 ft.commit();
 
                 return null;

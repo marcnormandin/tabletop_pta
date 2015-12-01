@@ -3,6 +3,7 @@ package edu.utrgv.cgwa.metrec;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,16 +23,15 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 
 import edu.utrgv.cgwa.tabletoppta.PulseProfile;
+import edu.utrgv.cgwa.tabletoppta.Routines;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class ViewPulseOverlay extends Fragment {
     private static final String TAG = "ViewPulseOverlay";
-    private static final String ARG_AUDIO_ID = "audioID";
-    private static final String ARG_PROFILE_ID = "profileID";
-    private static final String ARG_PULSE_TIMES = "pulseTimes";
+    private static final String ARG_ANALYSIS_ID = "audioID";
 
-    private long mAudioID = -1;
-    private long mProfileID = -1;
+    private long mAnalysisID = -1;
+
     private double[] mPulseTimes = null;
 
     private Spinner mPulseSpinner = null;
@@ -45,12 +45,10 @@ public class ViewPulseOverlay extends Fragment {
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public static ViewPulseOverlay newInstance(final long audioID, final long profileID, double[] pulseTimes) {
+    public static ViewPulseOverlay newInstance(final long analysisID) {
         ViewPulseOverlay fragment = new ViewPulseOverlay();
         Bundle args = new Bundle();
-        args.putLong(ARG_AUDIO_ID, audioID);
-        args.putLong(ARG_PROFILE_ID, profileID);
-        args.putDoubleArray(ARG_PULSE_TIMES, pulseTimes);
+        args.putLong(ARG_ANALYSIS_ID, analysisID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,35 +61,48 @@ public class ViewPulseOverlay extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mAudioID = getArguments().getLong(ARG_AUDIO_ID);
-            mProfileID = getArguments().getLong(ARG_PROFILE_ID);
-            mPulseTimes = getArguments().getDoubleArray(ARG_PULSE_TIMES);
+            mAnalysisID = getArguments().getLong(ARG_ANALYSIS_ID);
         }
-
-        // Create a thread since accessing the database takes too long
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AudioRecordingManager audioManager = new AudioRecordingManager(getActivity());
-                DbAudioRecordingTable.AudioRecordingEntry audioEntry = audioManager.getEntryByID(mAudioID);
-                mTimeSeries = new AudioRecordingModel(audioEntry.filenamePrefix()).getTimeSeries();
-
-                ProfileManager profileManager = new ProfileManager(getActivity());
-                DbProfileTable.ProfileEntry profileEntry = profileManager.getEntryByID(mProfileID);
-                mPulseProfile = new ProfileModel(profileEntry.filenamePrefix()).getPulseProfile();
-            }
-        });
-        t.start();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_view_pulse_overlay, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_view_pulse_overlay, container, false);
 
-        setupSpinner(rootView);
-        setupLineChart(rootView);
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                // Get the analysis record
+                SingleMetronomeAnalysisManager analysisManager = new SingleMetronomeAnalysisManager(getActivity());
+                DbSingleMetronomeAnalysisTable.Entry analysisEntry = analysisManager.getEntryByID(mAnalysisID);
+
+                // Load the analysis result from file
+                Routines.CalMeasuredTOAsResult analysisResult = new Routines.CalMeasuredTOAsResult(analysisEntry.filenameResult());
+                mPulseTimes = analysisResult.measuredTOAs();
+
+                // Get the audio record
+                final long audioID = analysisEntry.audioID();
+                AudioRecordingManager audioManager = new AudioRecordingManager(getActivity());
+                DbAudioRecordingTable.AudioRecordingEntry audioEntry = audioManager.getEntryByID(audioID);
+                mTimeSeries = new AudioRecordingModel(audioEntry.filenamePrefix()).getTimeSeries();
+
+                // Get the pulse profile record
+                final long profileID = analysisEntry.profileID();
+                ProfileManager profileManager = new ProfileManager(getActivity());
+                DbProfileTable.ProfileEntry profileEntry = profileManager.getEntryByID(profileID);
+                mPulseProfile = new ProfileModel(profileEntry.filenamePrefix()).getPulseProfile();
+                
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                setupSpinner(rootView);
+                setupLineChart(rootView);
+            }
+        }).execute();
 
         return rootView;
     }
