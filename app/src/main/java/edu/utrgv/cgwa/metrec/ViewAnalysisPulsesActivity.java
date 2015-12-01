@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
 
-public class ViewAnalysisActivity extends AppCompatActivity {
+public class ViewAnalysisPulsesActivity extends AppCompatActivity {
     private static final String TAG = "ViewAnalysis";
     public static final String ARG_ANALYSIS_ID = "analysisID";
 
@@ -31,7 +31,7 @@ public class ViewAnalysisActivity extends AppCompatActivity {
             Log.d(TAG, "Attempt to view an analysis, but no analysis ID given in intent.");
         } else {
             Log.d(TAG, "Adding pulse overlay fragment");
-            ViewPulseOverlayFragment frag = ViewPulseOverlayFragment.newInstance(mAnalysisID);
+            AnalysisPulseOverlayFragment frag = AnalysisPulseOverlayFragment.newInstance(mAnalysisID);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, frag);

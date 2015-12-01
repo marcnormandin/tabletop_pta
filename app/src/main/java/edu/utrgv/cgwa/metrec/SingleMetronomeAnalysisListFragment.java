@@ -108,6 +108,13 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
                     mListener.onViewPulseOverlayClicked(position, holder.analysisID);
                 }
             });
+
+            holder.viewResiduals.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onViewResidualsClicked(position, holder.analysisID);
+                }
+            });
         }
 
         @Override
@@ -128,7 +135,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
     private static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView time, date;
         public CheckBox checkbox;
-        public Button viewPulses;
+        public Button viewPulses, viewResiduals;
         public long analysisID;
 
         public MyViewHolder(View itemView) {
@@ -138,6 +145,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
             date = (TextView) itemView.findViewById(R.id.listview_row_date);
             checkbox = (CheckBox) itemView.findViewById(R.id.listview_row_checkbox);
             viewPulses = (Button) itemView.findViewById(R.id.buttonViewPulses);
+            viewResiduals = (Button) itemView.findViewById(R.id.buttonViewResiduals);
 
             analysisID = -1;
         }
@@ -192,5 +200,6 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
     public interface OnFragmentInteractionListener {
         void onCheckboxChanged(final int position, final long analysisID, final boolean isChecked);
         void onViewPulseOverlayClicked(final int position, final long analysisID);
+        void onViewResidualsClicked(final int position, final long analysisID);
     }
 }

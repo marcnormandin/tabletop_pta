@@ -97,8 +97,12 @@
             android:parentActivityName=".HomeScreenActivity" >
         </activity>
         <activity
-            android:name=".ViewAnalysisActivity"
+            android:name=".ViewAnalysisPulsesActivity"
             android:label="Measured Pulses"
+            android:parentActivityName=".SingleMetronomeAnalysisListActivity" >
+        </activity>
+        <activity android:name=".ViewAnalysisResidualsActivity"
+            android:label="Residuals"
             android:parentActivityName=".SingleMetronomeAnalysisListActivity">
         </activity>
     </application>

@@ -1,8 +1,6 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,7 +24,7 @@ import edu.utrgv.cgwa.tabletoppta.PulseProfile;
 import edu.utrgv.cgwa.tabletoppta.Routines;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
-public class ViewPulseOverlayFragment extends Fragment {
+public class AnalysisPulseOverlayFragment extends Fragment {
     private static final String TAG = "ViewPulseOverlay";
     private static final String ARG_ANALYSIS_ID = "audioID";
 
@@ -43,15 +41,15 @@ public class ViewPulseOverlayFragment extends Fragment {
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public static ViewPulseOverlayFragment newInstance(final long analysisID) {
-        ViewPulseOverlayFragment fragment = new ViewPulseOverlayFragment();
+    public static AnalysisPulseOverlayFragment newInstance(final long analysisID) {
+        AnalysisPulseOverlayFragment fragment = new AnalysisPulseOverlayFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_ANALYSIS_ID, analysisID);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public ViewPulseOverlayFragment() {
+    public AnalysisPulseOverlayFragment() {
         // Required empty public constructor
     }
 

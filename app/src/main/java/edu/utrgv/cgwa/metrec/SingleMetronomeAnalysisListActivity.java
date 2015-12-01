@@ -30,8 +30,15 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity imple
 
     @Override
     public void onViewPulseOverlayClicked(int position, long analysisID) {
-        Intent intent = new Intent(this, ViewAnalysisActivity.class);
-        intent.putExtra(ViewAnalysisActivity.ARG_ANALYSIS_ID, analysisID);
+        Intent intent = new Intent(this, ViewAnalysisPulsesActivity.class);
+        intent.putExtra(ViewAnalysisPulsesActivity.ARG_ANALYSIS_ID, analysisID);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onViewResidualsClicked(int position, long analysisID) {
+        Intent intent = new Intent(this, ViewAnalysisResidualsActivity.class);
+        intent.putExtra(ViewAnalysisResidualsActivity.ARG_ANALYSIS_ID, analysisID);
         startActivity(intent);
     }
 

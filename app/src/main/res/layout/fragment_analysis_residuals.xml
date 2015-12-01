@@ -3,12 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.utrgv.cgwa.metrec.AnalysisPulseOverlayFragment">
-
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinnerPulseNumber" />
+    tools:context="edu.utrgv.cgwa.metrec.AnalysisResidualsFragment">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/charttimeseries"

@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -239,7 +238,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
                 // Show the fragment
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.container, ViewPulseOverlayFragment.newInstance(analysisID));
+                ft.add(R.id.container, AnalysisPulseOverlayFragment.newInstance(analysisID));
                 ft.commit();
 
                 return null;
