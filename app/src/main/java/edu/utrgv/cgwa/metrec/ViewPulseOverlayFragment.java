@@ -26,7 +26,7 @@ import edu.utrgv.cgwa.tabletoppta.PulseProfile;
 import edu.utrgv.cgwa.tabletoppta.Routines;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
-public class ViewPulseOverlay extends Fragment {
+public class ViewPulseOverlayFragment extends Fragment {
     private static final String TAG = "ViewPulseOverlay";
     private static final String ARG_ANALYSIS_ID = "audioID";
 
@@ -40,20 +40,18 @@ public class ViewPulseOverlay extends Fragment {
     private TimeSeries mTimeSeries = null;
     private PulseProfile mPulseProfile = null;
 
-    private OnFragmentInteractionListener mListener;
-
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public static ViewPulseOverlay newInstance(final long analysisID) {
-        ViewPulseOverlay fragment = new ViewPulseOverlay();
+    public static ViewPulseOverlayFragment newInstance(final long analysisID) {
+        ViewPulseOverlayFragment fragment = new ViewPulseOverlayFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_ANALYSIS_ID, analysisID);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public ViewPulseOverlay() {
+    public ViewPulseOverlayFragment() {
         // Required empty public constructor
     }
 
@@ -93,7 +91,7 @@ public class ViewPulseOverlay extends Fragment {
                 ProfileManager profileManager = new ProfileManager(getActivity());
                 DbProfileTable.ProfileEntry profileEntry = profileManager.getEntryByID(profileID);
                 mPulseProfile = new ProfileModel(profileEntry.filenamePrefix()).getPulseProfile();
-                
+
                 return null;
             }
 
@@ -239,34 +237,4 @@ public class ViewPulseOverlay extends Fragment {
         mLineChart.setDrawGridBackground(true);
         mLineChart.setDrawMarkerViews(false);
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mListener = (OnFragmentInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
-
 }

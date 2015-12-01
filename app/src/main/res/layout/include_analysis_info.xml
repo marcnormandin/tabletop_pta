@@ -7,31 +7,17 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/metronomepulseprofiledate"
+        android:id="@+id/analysisdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Date"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/metronomepulseprofiletime"
+        android:id="@+id/analysistime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Time"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/metronomepulseprofilebpm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Beats per minute"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/metronomepulseprofileperiod"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Period"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

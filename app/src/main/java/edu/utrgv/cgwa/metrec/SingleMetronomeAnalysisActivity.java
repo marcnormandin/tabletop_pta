@@ -14,11 +14,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -28,17 +25,12 @@ import edu.utrgv.cgwa.tabletoppta.PulseProfile;
 import edu.utrgv.cgwa.tabletoppta.Routines;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
-public class SingleMetronomeAnalysisActivity extends AppCompatActivity implements ViewPulseOverlay.OnFragmentInteractionListener {
+public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
     static private final String TAG = "SingleMetronomeActivity";
     static public final int PICK_PROFILE_REQUEST = 1;  // The request code
     private AudioRecordingModel mAudioRecording = null;
     private long mAudioID = -1;
     private long mProfileID = -1;
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,7 +239,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity implement
                 // Show the fragment
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.container, ViewPulseOverlay.newInstance(analysisID));
+                ft.add(R.id.container, ViewPulseOverlayFragment.newInstance(analysisID));
                 ft.commit();
 
                 return null;

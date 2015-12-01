@@ -32,6 +32,14 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Analyses"
+        android:id="@+id/buttonAnalyses"
+        android:onClick="viewSingleMetronomeAnalyses"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Single Metronome Analysis"
         android:id="@+id/buttonStartSingleMetronomeAnalysis"
         android:layout_gravity="center_horizontal"

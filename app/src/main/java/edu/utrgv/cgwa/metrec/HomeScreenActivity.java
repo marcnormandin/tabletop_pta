@@ -24,6 +24,11 @@ public class HomeScreenActivity extends Activity {
         startActivity(intent);
     }
 
+    public void viewSingleMetronomeAnalyses(View view) {
+        Intent intent = new Intent(HomeScreenActivity.this, SingleMetronomeAnalysisListActivity.class);
+        startActivity(intent);
+    }
+
     public void startSingleMetronomeAnalysis(View view) {
         Intent intent = new Intent(HomeScreenActivity.this, SingleMetronomeAnalysisActivity.class);
         startActivity(intent);

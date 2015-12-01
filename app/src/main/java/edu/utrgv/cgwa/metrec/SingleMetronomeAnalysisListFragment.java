@@ -1,0 +1,196 @@
+package edu.utrgv.cgwa.metrec;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.Fragment {
+    private static final String TAG = "AnalysisListFragment";
+    private OnFragmentInteractionListener mListener;
+    private RecyclerView mAnalysisList;
+    private MyAdapter mAdapter;
+
+    private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+        private LayoutInflater mInflater;
+        private SingleMetronomeAnalysisManager mManager;
+        private Checked mChecked;
+
+        private class Checked {
+            private ArrayList<Boolean> mSelected;
+
+            public Checked(final int numCheckboxes) {
+                mSelected = new ArrayList<>();
+                for (int i = 0; i < numCheckboxes; i++) {
+                    mSelected.add(Boolean.FALSE);
+                }
+            }
+
+            public boolean get(int position) {
+                return mSelected.get(position);
+            }
+
+            public void set(int position, boolean checked) {
+                mSelected.set(position, checked);
+            }
+
+            public void remove(int position) {
+                mSelected.remove(position);
+            }
+
+            public long size() {
+                return mSelected.size();
+            }
+        }
+
+        public MyAdapter(Context context) {
+            mInflater = LayoutInflater.from(context);
+            mManager = new SingleMetronomeAnalysisManager(context);
+            mChecked = new Checked(mManager.getNumRecords());
+        }
+
+        public ArrayList<Long> getSelectedIDs() {
+            ArrayList<Long> ids = new ArrayList<>();
+
+            for (int i = 0; i < mChecked.size(); i++) {
+                if (mChecked.get(i)) {
+                    // The checked object keeps track of positions, not ids,
+                    // so we need to convert from positions to ids.
+                    long analysisID = mManager.getEntryByPosition(i).id();
+                    ids.add(analysisID);
+                }
+            }
+            return ids;
+        }
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View rowView = mInflater.inflate(R.layout.fragment_single_metronome_analysis_listview_row, parent, false);
+            MyViewHolder holder = new MyViewHolder(rowView);
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
+            DbSingleMetronomeAnalysisTable.Entry entry = mManager.getEntryByPosition(position);
+
+            // Fixme
+            // There is not view element for the IDs
+            holder.analysisID = entry.id();
+
+            holder.date.setText(entry.date());
+            holder.time.setText(entry.time());
+
+            // Fixme This causes a null-pointer exception
+            //holder.checkbox.setChecked( mChecked.get(position) );
+            holder.checkbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckBox cb = (CheckBox) v;
+                    mChecked.set(position, cb.isChecked());
+                    mListener.onCheckboxChanged(position, holder.analysisID, cb.isChecked());
+                }
+            });
+
+            holder.viewPulses.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onViewPulseOverlayClicked(position, holder.analysisID);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mManager.getNumRecords();
+        }
+
+        /*
+        public void deleteProfile(int position, long analysisID) {
+            mManager.deleteEntryByID(analysisID);
+            mChecked.remove(position);
+            //notifyItemRemoved(position);
+            notifyDataSetChanged();
+        }
+        */
+    }
+
+    private static class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView time, date;
+        public CheckBox checkbox;
+        public Button viewPulses;
+        public long analysisID;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+
+            time = (TextView) itemView.findViewById(R.id.listview_row_time);
+            date = (TextView) itemView.findViewById(R.id.listview_row_date);
+            checkbox = (CheckBox) itemView.findViewById(R.id.listview_row_checkbox);
+            viewPulses = (Button) itemView.findViewById(R.id.buttonViewPulses);
+
+            analysisID = -1;
+        }
+    }
+
+    public SingleMetronomeAnalysisListFragment() {
+    }
+
+    public long[] getSelectedIDs() {
+        ArrayList<Long> idsa = mAdapter.getSelectedIDs();
+        long[] ids = new long[idsa.size()];
+        for (int i = 0; i < idsa.size(); i++) {
+            ids[i] = idsa.get(i);
+        }
+        return ids;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_single_metronome_analysis_listview, container, false);
+
+        Log.d(TAG, "Creating the listview");
+
+        // Find the list view
+        mAnalysisList = (RecyclerView) rootView.findViewById(R.id.analtsislist);
+
+        mAdapter = new MyAdapter(getActivity());
+        mAnalysisList.setAdapter(mAdapter);
+        mAnalysisList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        return rootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onCheckboxChanged(final int position, final long analysisID, final boolean isChecked);
+        void onViewPulseOverlayClicked(final int position, final long analysisID);
+    }
+}

@@ -14,7 +14,7 @@ public class SingleMetronomeAnalysisManager {
         mHelper = new DbHelper(context);
     }
 
-    public int getNumRecordings() {
+    public int getNumRecords() {
         final String SQL = "SELECT Count(*) FROM " + DbSingleMetronomeAnalysisTable.Entry.TABLE_NAME;
         Cursor cursor = mHelper.getReadableDatabase().rawQuery(SQL, null);
         cursor.moveToFirst();
