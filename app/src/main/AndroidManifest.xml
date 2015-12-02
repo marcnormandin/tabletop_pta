@@ -14,8 +14,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_logo"
@@ -24,7 +22,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".HomeScreenActivity"
-            android:label="Tabletop PTA" >
+            android:label="Nanograv Tabletop PTA" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -80,11 +78,11 @@
         <activity
             android:name=".SingleMetronomeAnalysisActivity"
             android:label="Single Metronome Analysis"
-            android:parentActivityName=".HomeScreenActivity"
+            android:parentActivityName=".SingleMetronomeAnalysisListActivity"
             android:theme="@style/AppTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.utrgv.cgwa.metrec.HomeScreenActivity" />
+                android:value="edu.utrgv.cgwa.metrec.SingleMetronomeAnalysisListActivity" />
         </activity>
         <activity
             android:name=".SelectProfilesActivity"

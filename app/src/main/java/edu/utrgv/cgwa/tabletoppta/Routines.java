@@ -11,6 +11,7 @@ import org.apache.commons.math3.optim.univariate.BrentOptimizer;
 import org.apache.commons.math3.optim.univariate.SearchInterval;
 import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -167,6 +168,7 @@ public class Routines {
         private int mN0;
         private double[] mExpectedTOAs;
         private double[] mResiduals;
+        private double[] mDetrendedResiduals;
 
         public CalMeasuredTOAsResult(double[] measuredTOAs, double[] uncertainties, int n0, double[] expectedTOAs) {
             mMeasuredTOAs = measuredTOAs;
@@ -174,20 +176,29 @@ public class Routines {
             mN0 = n0;
             mExpectedTOAs = expectedTOAs;
 
-            mResiduals = new double[mMeasuredTOAs.length];
             computeResiduals();
+            computeDetrendedResiduals();
         }
 
         public CalMeasuredTOAsResult(final String filename) {
             loadFromFile(filename);
-            mResiduals = new double[mMeasuredTOAs.length];
             computeResiduals();
+            computeDetrendedResiduals();
         }
 
         private void computeResiduals() {
+            mResiduals = new double[mMeasuredTOAs.length];
             for (int i = 0; i < mMeasuredTOAs.length; i++) {
                 mResiduals[i] = mMeasuredTOAs[i] - mExpectedTOAs[i];
             }
+        }
+
+        private void computeDetrendedResiduals() {
+            mDetrendedResiduals = new double[mResiduals.length];
+            for (int i = 0; i < mResiduals.length; i++) {
+                mDetrendedResiduals[i] = mResiduals[i];
+            }
+            mDetrendedResiduals = detrend(mMeasuredTOAs, mDetrendedResiduals);
         }
 
         public double[] measuredTOAs() { return mMeasuredTOAs; }
@@ -196,6 +207,7 @@ public class Routines {
         public int numPulses() { return mMeasuredTOAs.length; }
         public double[] expectedTOAs() { return mExpectedTOAs; }
         public double[] residuals() { return mResiduals; }
+        public double[] detrendedResiduals() { return mDetrendedResiduals; }
 
 
         private void loadFromFile(String filename) {
@@ -825,9 +837,28 @@ public class Routines {
     dts[:,1] = ts[:,1] - fit
 
     return dts, b, m
-
-
 */
+
+    // Source: http://excerptsworld.blogspot.com/2011/06/how-to-remove-line-trend-in-java.html
+    public static double[] detrend(double[] x, double[] y) {
+        if (x.length != y.length)
+            throw new IllegalArgumentException("The x and y data elements needs to be of the same length");
+
+        SimpleRegression regression = new SimpleRegression();
+
+        for (int i = 0; i < x.length; i++) {
+            regression.addData(x[i], y[i]);
+        }
+
+        double slope = regression.getSlope();
+        double intercept = regression.getIntercept();
+
+        for (int i = 0; i < x.length; i++) {
+            //y -= intercept + slope * x
+            y[i] -= intercept + (x[i] * slope);
+        }
+        return y;
+    }
 
     /*
     def errsinusoid(p, t, y, err):

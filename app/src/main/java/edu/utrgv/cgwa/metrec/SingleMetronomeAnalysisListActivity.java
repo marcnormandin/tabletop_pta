@@ -54,10 +54,8 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity imple
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_new:
-                /*
-                Intent intent = new Intent(this, NewProfileActivity.class);
+                Intent intent = new Intent(this, SingleMetronomeAnalysisActivity.class);
                 startActivity(intent);
-                */
                 return true;
         }
         return false;

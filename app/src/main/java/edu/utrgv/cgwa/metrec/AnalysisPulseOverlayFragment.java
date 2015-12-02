@@ -30,6 +30,7 @@ public class AnalysisPulseOverlayFragment extends Fragment {
 
     private long mAnalysisID = -1;
 
+    private Routines.CalMeasuredTOAsResult mAnalysisResult = null;
     private double[] mPulseTimes = null;
 
     private Spinner mPulseSpinner = null;
@@ -75,8 +76,8 @@ public class AnalysisPulseOverlayFragment extends Fragment {
                 DbSingleMetronomeAnalysisTable.Entry analysisEntry = analysisManager.getEntryByID(mAnalysisID);
 
                 // Load the analysis result from file
-                Routines.CalMeasuredTOAsResult analysisResult = new Routines.CalMeasuredTOAsResult(analysisEntry.filenameResult());
-                mPulseTimes = analysisResult.measuredTOAs();
+                mAnalysisResult = new Routines.CalMeasuredTOAsResult(analysisEntry.filenameResult());
+                mPulseTimes = mAnalysisResult.measuredTOAs();
 
                 // Get the audio record
                 final long audioID = analysisEntry.audioID();
@@ -103,21 +104,41 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         return rootView;
     }
 
-    public void displayPulse(double pulseTime) {
+    public void displayPulse(final int pulseNumber) {
         if(mTimeSeries == null) {
             return;
         }
 
-        // The number of points to display
-        int count = mPulseProfile.ts.t.length;
-        // Fixme
+        double dt = 1.0 / mTimeSeries.getSampleRate();
+
+        // Measured pulse time
+        double measuredPulseTime = mAnalysisResult.measuredTOAs()[pulseNumber];
+
+        // Get the closest time index for the measured pulse time
+        int measuredStartIndex = (int) Math.round(measuredPulseTime / dt);
+
+        // Expected pulse time
+        double expectedPulseTime = mAnalysisResult.expectedTOAs()[pulseNumber];
+
+        // Get the closest time index for the expected pulse time
+        int expectedStartIndex = (int) Math.round(expectedPulseTime / dt);
+
+        // Pick the start time with the smallest index so that
+        // both pulses can be drawn
+        int startIndex = -1;
+        int count = -1;
+
+        if (expectedStartIndex < measuredStartIndex) {
+            startIndex = expectedStartIndex;
+            count = (measuredStartIndex - expectedStartIndex) + mPulseProfile.ts.t.length;
+        } else {
+            startIndex = measuredStartIndex;
+            count = (expectedStartIndex - measuredStartIndex) + mPulseProfile.ts.t.length;
+        }
+
         if (count > MAX_PLOT_POINTS) {
             count = MAX_PLOT_POINTS;
         }
-
-        // Get the closest time index for the pulseTime
-        double dt = 1.0 / mTimeSeries.getSampleRate();
-        int startIndex = (int) Math.round(pulseTime / dt);
 
         // If the pulse goes outside of the time series, we need to
         // readjust the count
@@ -161,25 +182,54 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         audioSet.setDrawValues(false);
 
 
-        // Pulse series
-        ArrayList<Entry> pulseVals = new ArrayList<Entry>();
+        // Measured pulse series
+        ArrayList<Entry> measuredVals = new ArrayList<Entry>();
         for (int i = 0; i < count; i++) {
-            float val = (float) mPulseProfile.ts.h[i];
-            pulseVals.add(new Entry(val, i));
+            int timeIndex = startIndex + i;
+            if ((timeIndex < measuredStartIndex)
+                    || (timeIndex >= (measuredStartIndex+mPulseProfile.ts.t.length))) {
+                measuredVals.add(new Entry(0.0f, i));
+            } else {
+                float val = (float) mPulseProfile.ts.h[timeIndex-measuredStartIndex];
+                measuredVals.add(new Entry(val, i));
+            }
         }
 
         // create the pulse dataset and give it a type
-        LineDataSet pulseSet = new LineDataSet(pulseVals, "Pulse");
-        pulseSet.setColor(Color.RED);
-        pulseSet.setLineWidth(1f);
-        pulseSet.setDrawCircles(false);
-        pulseSet.setDrawValues(false);
+        LineDataSet measuredSet = new LineDataSet(measuredVals, "Measured");
+        measuredSet.setColor(Color.RED);
+        measuredSet.setLineWidth(1f);
+        measuredSet.setDrawCircles(false);
+        measuredSet.setDrawValues(false);
+
+
+        // Expected pulse series
+        ArrayList<Entry> expectedVals = new ArrayList<Entry>();
+        for (int i = 0; i < count; i++) {
+            int timeIndex = startIndex + i;
+            if ((timeIndex < expectedStartIndex)
+                    || (timeIndex >= (expectedStartIndex+mPulseProfile.ts.t.length))) {
+                expectedVals.add(new Entry(0.0f, i));
+            } else {
+                float val = (float) mPulseProfile.ts.h[timeIndex-expectedStartIndex];
+                expectedVals.add(new Entry(val, i));
+            }
+        }
+
+        // create the pulse dataset and give it a type
+        LineDataSet expectedSet = new LineDataSet(expectedVals, "Expected");
+        expectedSet.setColor(Color.GREEN);
+        expectedSet.setLineWidth(1f);
+        expectedSet.setDrawCircles(false);
+        expectedSet.setDrawValues(false);
+
 
 
         // Add the datasets for display
         ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
         dataSets.add(audioSet);
-        dataSets.add(pulseSet);
+        dataSets.add(measuredSet);
+        dataSets.add(expectedSet);
 
         // create a data object with the datasets
         LineData mLineData = new LineData(timeVals, dataSets);
@@ -214,7 +264,7 @@ public class AnalysisPulseOverlayFragment extends Fragment {
                 // Get the value
                 double pulseTime = (Double) mPulseSpinner.getSelectedItem();
 
-                displayPulse(pulseTime);
+                displayPulse(mPulseSpinner.getSelectedItemPosition());
 
                 Log.d(TAG, "Selected pulsetime = " + pulseTime);
             }

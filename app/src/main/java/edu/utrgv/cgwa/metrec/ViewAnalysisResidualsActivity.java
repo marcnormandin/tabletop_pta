@@ -9,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
 
+import edu.utrgv.cgwa.tabletoppta.Routines;
+
 public class ViewAnalysisResidualsActivity extends AppCompatActivity {
     private static final String TAG = "ViewResiduals";
     public static final String ARG_ANALYSIS_ID = "analysisID";
@@ -40,12 +42,19 @@ public class ViewAnalysisResidualsActivity extends AppCompatActivity {
 
             SingleMetronomeAnalysisManager manager = new SingleMetronomeAnalysisManager(this);
             DbSingleMetronomeAnalysisTable.Entry entry = manager.getEntryByID(mAnalysisID);
+            Routines.CalMeasuredTOAsResult result = new Routines.CalMeasuredTOAsResult(entry.filenameResult());
 
             TextView date = (TextView) findViewById(R.id.analysisdate);
-            date.setText("Date: " + entry.date());
+            date.setText("" + entry.date());
 
             TextView time = (TextView) findViewById(R.id.analysistime);
-            time.setText("Time: " + entry.time());
+            time.setText("" + entry.time());
+
+            TextView referencePulseNumber = (TextView) findViewById(R.id.analysisreferencepulsenumber);
+            referencePulseNumber.setText("" + result.n0());
+
+            TextView numPulses = (TextView) findViewById(R.id.analysisnumpulses);
+            numPulses.setText("" + result.numPulses());
         }
     }
 }

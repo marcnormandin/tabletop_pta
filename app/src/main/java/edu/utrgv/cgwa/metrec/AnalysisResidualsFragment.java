@@ -87,7 +87,8 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         }
 
         double[] x = mAnalysisResult.measuredTOAs();
-        double[] y = mAnalysisResult.residuals();
+        double[] residuals = mAnalysisResult.residuals();
+        double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
 
         // The number of points to display
         int count = x.length;
@@ -103,22 +104,40 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         }
 
         // Residual series
-        ArrayList<Entry> yVals = new ArrayList<Entry>();
+        ArrayList<Entry> residualsVals = new ArrayList<Entry>();
         for (int i = 0; i < count; i++) {
-            float val = (float) y[i];
-            yVals.add(new Entry(val, i));
+            float val = (float) residuals[i];
+            residualsVals.add(new Entry(val, i));
         }
 
         // create the audio dataset and give it a type
-        LineDataSet residualsSet = new LineDataSet(yVals, "Residuals");
-        residualsSet.setColor(Color.RED);
+        LineDataSet residualsSet = new LineDataSet(residualsVals, "Residuals");
+        residualsSet.setColor(Color.GRAY);
+        residualsSet.setCircleColor(Color.DKGRAY);
         residualsSet.setLineWidth(0f);
         residualsSet.setDrawCircles(true);
         residualsSet.setDrawValues(false);
 
+        // Detrended Residual series
+        ArrayList<Entry> detrendedResidualsVals = new ArrayList<Entry>();
+        for (int i = 0; i < count; i++) {
+            float val = (float) detrendedResiduals[i];
+            detrendedResidualsVals.add(new Entry(val, i));
+        }
+
+        // create the audio dataset and give it a type
+        LineDataSet detrendedResidualsSet = new LineDataSet(detrendedResidualsVals, "Detrended residuals");
+        detrendedResidualsSet.setColor(Color.BLUE);
+        detrendedResidualsSet.setCircleColor(Color.RED);
+        detrendedResidualsSet.setLineWidth(0f);
+        detrendedResidualsSet.setDrawCircles(true);
+        detrendedResidualsSet.setDrawValues(false);
+
+
         // Add the datasets for display
         ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
         dataSets.add(residualsSet);
+        dataSets.add(detrendedResidualsSet);
 
         // create a data object with the datasets
         LineData mLineData = new LineData(xVals, dataSets);
