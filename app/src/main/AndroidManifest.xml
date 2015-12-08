@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_logo"
@@ -99,9 +101,20 @@
             android:label="Measured Pulses"
             android:parentActivityName=".SingleMetronomeAnalysisListActivity" >
         </activity>
-        <activity android:name=".ViewAnalysisResidualsActivity"
+        <activity
+            android:name=".ViewAnalysisResidualsActivity"
             android:label="Residuals"
-            android:parentActivityName=".SingleMetronomeAnalysisListActivity">
+            android:parentActivityName=".SingleMetronomeAnalysisListActivity" >
+        </activity>
+        <activity
+            android:name=".AudioRecordListActivity"
+            android:label="Audio Recordings"
+            android:parentActivityName=".HomeScreenActivity" >
+        </activity>
+        <activity
+            android:name=".SelectAudioRecordActivity"
+            android:label="@string/title_activity_select_audio_record"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 

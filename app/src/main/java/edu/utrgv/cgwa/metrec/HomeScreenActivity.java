@@ -27,6 +27,11 @@ public class HomeScreenActivity extends AppCompatActivity {
         HomeScreenActivity.this.startActivity(intent);
     }
 
+    public void viewAudioRecordings(View view) {
+        Intent intent = new Intent(HomeScreenActivity.this, AudioRecordListActivity.class);
+        startActivity(intent);
+    }
+
     public void viewProfiles(View view) {
         Intent intent = new Intent(HomeScreenActivity.this, ProfileListActivity.class);
         startActivity(intent);

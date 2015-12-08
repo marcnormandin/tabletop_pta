@@ -112,7 +112,7 @@ public class AudioRecordingModel {
         double[] samplet = new double[data.length];
 
         for (int i = 0; i < samplet.length; i++) {
-            samplet[i] = (((float)i)/(sampleRate));
+            samplet[i] = (((double)i)/(1.0*sampleRate));
         }
 
         mTimeSeries = new TimeSeries(samplet, data);

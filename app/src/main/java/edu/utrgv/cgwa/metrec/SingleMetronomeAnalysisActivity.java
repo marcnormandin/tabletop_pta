@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioRecord;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,6 +28,7 @@ import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
     static private final String TAG = "SingleMetronomeActivity";
     static public final int PICK_PROFILE_REQUEST = 1;  // The request code
+    static public final int PICK_AUDIO_RECORD_REQUEST = 2;  // The request code
     private AudioRecordingModel mAudioRecording = null;
     private long mAudioID = -1;
     private long mProfileID = -1;
@@ -66,6 +68,17 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
                     Toast.makeText(this, "Selected profile: " + mProfileID, Toast.LENGTH_LONG).show();
                 }
             }
+        } else if (requestCode == PICK_AUDIO_RECORD_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                long[] ids = data.getLongArrayExtra(SelectAudioRecordActivity.RESULT_SELECTED_AUDIO_RECORDS);
+                if (ids.length != 1) {
+                    Toast.makeText(this, "SELECT ONLY ONE AUDIO RECORD!", Toast.LENGTH_LONG).show();
+                } else {
+                    mAudioID = ids[0];
+                    Toast.makeText(this, "Selected audio record: " + mAudioID, Toast.LENGTH_LONG).show();
+                    loadAudioRecording();
+                }
+            }
         }
     }
 
@@ -74,12 +87,9 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         startActivityForResult(pickProfileIntent, PICK_PROFILE_REQUEST);
     }
 
-    public void buttonRecordAudio(View v) {
-        if (mAudioID == -1) {
-            recordAudio();
-        } else {
-            playAudio();
-        }
+    public void buttonSelectAudioRecord(View v) {
+        Intent pickAudioRecordIntent = new Intent(this, SelectAudioRecordActivity.class);
+        startActivityForResult(pickAudioRecordIntent, PICK_AUDIO_RECORD_REQUEST);
     }
 
     // Fixme
@@ -93,13 +103,13 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         return filenamePrefix;
     }
 
-    public void playAudio() {
-        if (mAudioRecording != null) {
-            AudioRecordingManager manager = new AudioRecordingManager(this);
-            mAudioRecording.playRecording(manager.getEntryByID(mAudioID).samplesPerSecond());
-        }
+    private void loadAudioRecording() {
+        AudioRecordingManager manager = new AudioRecordingManager(this);
+        DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
+        mAudioRecording = new AudioRecordingModel(entry.filenamePrefix());
     }
 
+    /*
     public void recordAudio() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         final int sampleRate = Integer.parseInt(sp.getString("samplerate", "8000"));
@@ -185,7 +195,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         }
 
         new NewRecordingAsync(this).execute();
-    }
+    }*/
 
     public PulseProfile getPulseProfile() {
         ProfileManager manager = new ProfileManager(this);
@@ -195,6 +205,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         return model.getPulseProfile();
     }
 
+    // This is called when both an audio record and a pulse profile have been selected
     public void runAnalysisButton() {
         final Context context = this;
 

@@ -10,12 +10,11 @@
         layout="@layout/app_bar"/>
 
     <ImageView
-        android:layout_width="199dp"
-        android:layout_height="168dp"
+        android:layout_width="134dp"
+        android:layout_height="129dp"
         android:id="@+id/imageView2"
         android:src="@drawable/table"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.55" />
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:layout_width="match_parent"
@@ -24,6 +23,14 @@
         android:id="@+id/buttonMetronome"
         android:drawableLeft="@android:drawable/ic_lock_silent_mode_off"
         android:onClick="startBuiltinMetronomeActivity"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Audio"
+        android:id="@+id/btnAudioRecordings"
+        android:layout_gravity="center_horizontal"
+        android:onClick="viewAudioRecordings" />
 
     <Button
         android:layout_width="match_parent"

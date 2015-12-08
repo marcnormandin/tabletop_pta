@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.utrgv.cgwa.tabletoppta.TimeSeries;
+
 public class ViewTimeSeriesActivity extends AppCompatActivity {
     private static final String TAG = "ViewTimeSeries";
     private static TimeSeriesFragment mFragment;
@@ -42,6 +44,12 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
             ft.add(R.id.container, mFragment);
             ft.commit();
         }
+
+        /*
+        if (TimeSeries.test(getFilesDir() + "/timeseries.test") == false) {
+            Log.d(TAG, "ERROR: TIME SERIES READ AND WRITE ARE NOT CONSISTENT!");
+        }*/
+
 
         AudioRecordingManager manager = new AudioRecordingManager(this);
         DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);

@@ -26,7 +26,7 @@ public class TimeSeries {
     }
 
     public TimeSeries(String filename) {
-        loadFromFile(filename);
+        loadFromFileFast(filename);
     }
 
     public int getSampleRate() {
@@ -82,7 +82,7 @@ public class TimeSeries {
         }
     }
 
-    private void loadFromFile(String filename) {
+    private void loadFromFileFast(String filename) {
         try {
             RandomAccessFile rFile = new RandomAccessFile(filename, "rw");
 
@@ -126,7 +126,7 @@ public class TimeSeries {
 
 
     // This tests whether or not this class saves and loads its data from file correctly
-    static boolean timeSeriesReadWriteCorrectly(String filename) {
+    static public boolean test(String filename) {
         int N = 8000 * 8;
         double[] t = new double[N];
         double[] h = new double[N];

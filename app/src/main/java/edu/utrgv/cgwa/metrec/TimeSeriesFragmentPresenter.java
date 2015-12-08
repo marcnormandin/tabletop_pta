@@ -128,6 +128,22 @@ public class TimeSeriesFragmentPresenter {
 
             mLineChart.notifyDataSetChanged();
             mLineChart.invalidate();
+
+            // Debug
+            boolean triggered = false;
+            int i = 0;
+            for (i = 0; i < MAX_PLOT_POINTS; i++) {
+                if (mTS.h[i] >= 10000) {
+                    triggered = true;
+                    break;
+                }
+            }
+
+            if (triggered) {
+                for (int j = i; j-i < 1000 && j < MAX_PLOT_POINTS; j++) {
+                    Log.d(TAG, "t[" + j + "]: " + mTS.h[j]);
+                }
+            }
         }
 
         @Override

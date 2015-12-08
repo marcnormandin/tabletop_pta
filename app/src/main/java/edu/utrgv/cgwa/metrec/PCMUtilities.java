@@ -23,14 +23,16 @@ public class PCMUtilities {
         }
     }
 
+    // PCM File is (LOW, HIGH), (LOW, HIGH), (LOW, HIGH)
     // convert two bytes to one double in the range -1 to 1
-    private static double bytesToDouble(byte firstByte, byte secondByte) {
-        // convert two bytes to one short (little endian)
-        short s = (short) ((secondByte << 8) | firstByte);
+    private static double bytesToDouble(byte lowByte, byte highByte) {
+        // convert two bytes to one short (big endian)
+        short s = (short) ((highByte << 8) | lowByte);
         // convert to range from -1 to (just below) 1
         return s;
     }
 
+    // PCM File is (LOW, HIGH), (LOW, HIGH), (LOW, HIGH)
     public static double[] readFileIntoArray(String fileName) {
         byte[] wav = null;
         try {
@@ -48,6 +50,7 @@ public class PCMUtilities {
         int i=0;
         int pos = 0;
         while (pos < length) {
+            // PCM File is (LOW, HIGH), (LOW, HIGH), (LOW, HIGH)
             data[i] = bytesToDouble(wav[pos], wav[pos + 1]);
             pos += 2;
             i++;

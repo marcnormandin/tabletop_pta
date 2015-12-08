@@ -8,13 +8,6 @@
         android:id="@+id/app_bar"
         layout="@layout/app_bar"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="212dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/pulsar"
-        android:layout_gravity="center_horizontal" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -43,10 +43,15 @@ public class PCMSoundSystem {
     public void startRecording() {
         int bufferSizeWanted = BufferElements2Rec * BytesPerElement;
         int bufferSizeMin = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE, RECORDER_IN_CHANNELS, RECORDER_AUDIO_ENCODING);
+        /*
         int bufferSize = bufferSizeWanted;
+
+
         if (bufferSizeWanted < bufferSizeMin) {
             bufferSize = bufferSizeMin;
-        }
+        }*/
+        // Fixme HACK
+        final int bufferSize = 2 * bufferSizeMin;
 
         mRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_IN_CHANNELS,
@@ -61,7 +66,7 @@ public class PCMSoundSystem {
         isRecording = true;
         recordingThread = new Thread(new Runnable() {
             public void run() {
-                writeAudioDataToFile();
+                writeAudioDataToFile(bufferSize);
             }
         }, "AudioRecorder Thread");
         recordingThread.start();
@@ -109,10 +114,12 @@ public class PCMSoundSystem {
         }
     }
 
-    private void writeAudioDataToFile() {
+    // bufferSize is the size of the buffer in bytes
+    private void writeAudioDataToFile(int bufferSize) {
         // Write the output audio in byte
         String filePath = getFileName();
-        short sData[] = new short[BufferElements2Rec];
+        //short sData[] = new short[BufferElements2Rec];
+        short sData[] = new short[bufferSize/2];
 
         Log.d(TAG, "recording to " + filePath);
 
@@ -124,10 +131,10 @@ public class PCMSoundSystem {
         }
 
         while (isRecording) {
-            mRecord.read(sData, 0, BufferElements2Rec);
+            int numShortsRead = mRecord.read(sData, 0, bufferSize/2);
             try {
-                byte bData[] = short2byte(sData);
-                os.write(bData, 0, BufferElements2Rec * BytesPerElement);
+                byte bData[] = short2byte(sData, numShortsRead);
+                os.write(bData, 0, bData.length);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -144,12 +151,16 @@ public class PCMSoundSystem {
     // byte is 8 bits
     // in RAM high byte first (called big-endian format).
     // http://www.java-samples.com/showtutorial.php?tutorialid=260
-    private static byte[] short2byte(short[] sData) {
-        int shortArrsize = sData.length;
+    //
+    // This write to file
+    // (LOW, HIGH) (LOW, HIGH), (LOW, HIGH), ...
+    private static byte[] short2byte(short[] sData, int numShortsRead) {
+        int shortArrsize = numShortsRead; //sData.length;
         byte[] bytes = new byte[shortArrsize * 2];
         for (int i = 0; i < shortArrsize; i++) {
             bytes[i * 2] = (byte) (sData[i] & 0x00FF);
-            bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
+            //Original: bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
+            bytes[(i * 2) + 1] = (byte) ((sData[i] & 0xFF00) >> 8);
             sData[i] = 0;
         }
         return bytes;
