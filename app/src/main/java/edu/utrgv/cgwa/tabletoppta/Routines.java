@@ -469,7 +469,8 @@ public class Routines {
         double C0 = C[ind0];
 
         // Values for the reference pulse
-        double t0 = estimatePeak(ind0, m, ts, template, norm);
+        int indices[] = getIndicies(ind0, m, ts.t.length);
+        double t0 = estimatePeak(ind0, indices, ts, template, norm);
         double A0 = correlate(t0, ts, template, norm);
 
         // Calculate expected number of pulses
@@ -498,12 +499,15 @@ public class Routines {
             int expected = expected_ind[i];
 
             // search in a small region around expected arrival time
-            //int[] indices = getIndicies(expected, m, ts.t.length);
+            indices = getIndicies(expected, m, ts.t.length);
 
-            // Fixme This seems odd
-            //idx = indices[0] + np.argmax(C[indices])
+            double[] subC = new double[indices.length];
+            for (int j = 0; j < subC.length; j++) {
+                subC[j] = C[indices[j]];
+            }
+            int idx = indices[0] + Utility.argmax(subC);
 
-            tauhat[i] = estimatePeak(expected, m, ts, template, norm);
+            tauhat[i] = estimatePeak(idx, indices, ts, template, norm);
             Ahat[i] = correlate(tauhat[i], ts, template, norm);
         }
 
@@ -544,10 +548,7 @@ public class Routines {
         return indices;
     }
 
-    private static double estimatePeak(int centerIndex, int halfIndexWidth, TimeSeries ts, TimeSeries template, double norm) {
-        // Get the range for Brent
-        int indices[] = getIndicies(centerIndex, halfIndexWidth, ts.t.length);
-
+    private static double estimatePeak(int initialIndex, int[] indices, TimeSeries ts, TimeSeries template, double norm) {
         // The objective function
         MyUnivariateFunction func = new MyUnivariateFunction(ts, template, -norm);
 
@@ -560,7 +561,7 @@ public class Routines {
         // Create and run the optimization
         final int maxIterations = 500;
         final double lo = ts.t[indices[0]];
-        final double init = ts.t[centerIndex]; // initial
+        final double init = ts.t[initialIndex]; //ts.t[centerIndex]; // initial
         final double hi = ts.t[indices[indices.length-1]];
         SearchInterval brack = new SearchInterval(lo,hi,init);
         UnivariatePointValuePair pair = brentOptimizer.optimize(new UnivariateObjectiveFunction(func),

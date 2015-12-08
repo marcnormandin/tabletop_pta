@@ -140,6 +140,10 @@ public class PCMSoundSystem {
     }
 
     //convert short to byte
+    // short is 16bits
+    // byte is 8 bits
+    // in RAM high byte first (called big-endian format).
+    // http://www.java-samples.com/showtutorial.php?tutorialid=260
     private static byte[] short2byte(short[] sData) {
         int shortArrsize = sData.length;
         byte[] bytes = new byte[shortArrsize * 2];
