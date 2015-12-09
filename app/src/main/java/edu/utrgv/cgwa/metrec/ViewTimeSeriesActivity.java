@@ -1,10 +1,12 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
@@ -82,7 +86,36 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
                 Toast.makeText(this, "Playing recording", Toast.LENGTH_LONG).show();
                 mFragment.playSound();
                 return true;
+            case R.id.action_share_audio_file:
+                shareAudioFile();
+                return true;
         }
         return false;
+    }
+
+    private void shareAudioFile() {
+        Intent ei = new Intent(android.content.Intent.ACTION_SEND);
+        ei.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { "normandin.utb@gmail.com" });
+        ei.putExtra(android.content.Intent.EXTRA_SUBJECT, "Tabletop PTA Sound Recording (AudioID: " + mAudioID + ")");
+        ei.putExtra(android.content.Intent.EXTRA_TEXT, "The attached screenshot was taken of the Tabletop PTA phone app.");
+        ei.setType("message/rfc822");
+        //ei.setType("image/png");
+
+        // Get the PCM filename
+        AudioRecordingManager manager = new AudioRecordingManager(this);
+        DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
+        String fullPathAndFilename = entry.filenamePCM();
+        int n = fullPathAndFilename.lastIndexOf("/");
+        String filename = fullPathAndFilename.substring(n);
+        File file = new File(this.getFilesDir(), filename);
+        Log.d(TAG, "Sharing audio file: " + file);
+
+        Uri uri = FileProvider.getUriForFile(this, "edu.utrgv.cgwa.metrec.fileprovider", file);
+
+
+        // Add it to the intent
+        ei.putExtra(Intent.EXTRA_STREAM, uri);
+
+        startActivity(Intent.createChooser(ei, "Send audio recording..."));
     }
 }

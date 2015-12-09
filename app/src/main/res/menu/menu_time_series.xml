@@ -9,4 +9,11 @@
         android:icon="@android:drawable/ic_media_play"
         android:title="Play audio"/>
 
+    <item
+        android:id="@+id/action_share_audio_file"
+        app:showAsAction="always"
+        android:orderInCategory="200"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="Share audio"/>
+
 </menu>

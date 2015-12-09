@@ -110,8 +110,7 @@ public class ViewAnalysisPulsesActivity extends AppCompatActivity {
     private File saveScreenshot(Bitmap screenshot) {
         String filename = Environment.getExternalStorageDirectory()
                 + File.separator + "Pictures/screenshot.png";
-        //String filename = "screenshot.png";
-        //File file = new File(getFilesDir(), filename);
+
         File file = new File(filename);
         FileOutputStream out = null;
         try {
