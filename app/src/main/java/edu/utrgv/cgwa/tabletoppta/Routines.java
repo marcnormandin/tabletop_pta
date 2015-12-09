@@ -23,6 +23,7 @@ import ca.uol.aig.fftpack.Complex1D;
 import ca.uol.aig.fftpack.RealDoubleFFT;
 
 public class Routines {
+    private static final String TAG = "Routines";
     public static PulseProfile calpulseprofile(TimeSeries ts, double bpm) {
         // calculated pulse period
         double Tp = calpulseperiod(ts, 60 / bpm);
@@ -170,14 +171,24 @@ public class Routines {
         private double[] mResiduals;
         private double[] mDetrendedResiduals;
 
-        public CalMeasuredTOAsResult(double[] measuredTOAs, double[] uncertainties, int n0, double[] expectedTOAs) {
+        private double[] mCorrelation;
+        private int mInd0;
+
+        public CalMeasuredTOAsResult(double[] measuredTOAs, double[] uncertainties, int n0, double[] expectedTOAs,
+                                     double[] correlationArray, int ind0) {
             mMeasuredTOAs = measuredTOAs;
             mUncertainties = uncertainties;
             mN0 = n0;
             mExpectedTOAs = expectedTOAs;
 
+            mCorrelation = correlationArray;
+            mInd0 = ind0;
+
             computeResiduals();
             computeDetrendedResiduals();
+
+            Log.d("CREATED RESULT", "Corrleation array length = " + mCorrelation.length);
+
         }
 
         public CalMeasuredTOAsResult(final String filename) {
@@ -208,7 +219,8 @@ public class Routines {
         public double[] expectedTOAs() { return mExpectedTOAs; }
         public double[] residuals() { return mResiduals; }
         public double[] detrendedResiduals() { return mDetrendedResiduals; }
-
+        public double[] correlation() { return mCorrelation; }
+        public int ind0() { return mInd0; }
 
         private void loadFromFile(String filename) {
             try {
@@ -216,9 +228,16 @@ public class Routines {
 
                 // Get the common length of the arrays
                 int len = rFile.readInt();
+                Log.d("LOADING RESULT FILE", "LEN ARRAYS = " + len);
 
                 // Get N0
                 mN0 = rFile.readInt();
+
+                // Get IND0
+                mInd0 = rFile.readInt();
+
+                // Get correlation size
+                int lengthCorrelation = rFile.readInt();
 
                 FileChannel inChannel = rFile.getChannel();
 
@@ -226,12 +245,15 @@ public class Routines {
                 this.mMeasuredTOAs = new double[len];
                 this.mExpectedTOAs = new double[len];
                 this.mUncertainties = new double[len];
+                this.mCorrelation = new double[lengthCorrelation];
+
+                Log.d("LOADING RESULT FILE", "LEN CORRELATION = " + mCorrelation.length);
 
                 // Allocate a buffer for the size of one array
                 final int desiredSized = len * Double.SIZE / Byte.SIZE;
                 ByteBuffer buf_in = ByteBuffer.allocate(desiredSized);
                 if (buf_in.capacity() != desiredSized) {
-                    // Fixme
+                    Log.d(TAG, "ERROR! Buffer capacity is not desired capacity. The logic will be wrong.");
                 }
 
                 // Read in mMeasuredTOAs
@@ -251,6 +273,22 @@ public class Routines {
                 buf_in.flip();
                 buf_in.asDoubleBuffer().get(this.mUncertainties);
                 buf_in.clear();
+
+                Log.d("LOADING FROM FILE", "Correlation array length = " + mCorrelation.length);
+
+
+                // Allocate a buffer for the size of one array
+                final int desiredSizeda = lengthCorrelation * Double.SIZE / Byte.SIZE;
+                ByteBuffer buf_ina = ByteBuffer.allocate(desiredSizeda);
+                if (buf_ina.capacity() != desiredSizeda) {
+                    Log.d(TAG, "ERROR! Buffer capacity (for correlation array) is not desired capacity. The logic will be wrong.");
+                }
+
+                // Read in mCorrelation
+                inChannel.read(buf_ina);
+                buf_ina.flip();
+                buf_ina.asDoubleBuffer().get(this.mCorrelation);
+                buf_ina.clear();
 
                 inChannel.close();
 
@@ -274,6 +312,12 @@ public class Routines {
                 // Write N0
                 os.writeInt(mN0);
 
+                // Write IND0
+                os.writeInt(mInd0);
+
+                // Write the length of the correlation array
+                os.writeInt(mCorrelation.length);
+
                 // Write mMeasuredTOAs
                 for (int i = 0; i < mMeasuredTOAs.length; i++) {
                     os.writeDouble(mMeasuredTOAs[i]);
@@ -287,6 +331,14 @@ public class Routines {
                 // Write mResiduals
                 for (int i = 0; i < mResiduals.length; i++) {
                     os.writeDouble(mResiduals[i]);
+                }
+
+                Log.d("SAVING TO FILE", "Correlation array length = " + mCorrelation.length);
+
+
+                // Write mCorrelation
+                for (int i = 0; i < mCorrelation.length; i++) {
+                    os.writeDouble(mCorrelation[i]);
                 }
 
                 os.close();
@@ -464,6 +516,8 @@ public class Routines {
             C[i] *= norm;
         }
 
+        Log.d(TAG, "Correlation array (BEFORE) length = " + C.length);
+
         // find location of max correlation for reference pulse TOA
         int ind0 = Utility.argmax(C);
         double C0 = C[ind0];
@@ -526,8 +580,11 @@ public class Routines {
             expectedTOA[i] = ts.t[expected_ind[i]];
         }
 
-        return new CalMeasuredTOAsResult(tauhat, error_tauhat, n0, expectedTOA);
+        Log.d(TAG, "Correlation array (AFTER) length = " + C.length);
+
+        return new CalMeasuredTOAsResult(tauhat, error_tauhat, n0, expectedTOA, C, ind0);
     }
+
 
     private static int[] getIndicies(int centerIndex, int halfIndexWidth, int maxIndex) {
         // Fixme

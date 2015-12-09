@@ -30,8 +30,6 @@
         android:layout_below="@id/buttonSelectProfile"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@id/buttonSelectProfile"
-        android:layout_alignEnd="@id/buttonSelectProfile"
         android:onClick="buttonSelectAudioRecord" />
 
     <LinearLayout
@@ -43,6 +41,17 @@
         android:layout_below="@id/buttonSelectAudioRecord">
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create New Recording"
+        android:id="@+id/buttonNewRecording"
+        android:layout_below="@+id/buttonSelectProfile"
+        android:layout_toRightOf="@+id/buttonSelectAudioRecord"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="buttonNewRecording"/>
 
 
 </RelativeLayout>

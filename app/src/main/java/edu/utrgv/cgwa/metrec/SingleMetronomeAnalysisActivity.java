@@ -53,6 +53,8 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        updateGUI();
     }
 
     @Override
@@ -80,6 +82,8 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
                 }
             }
         }
+
+        updateGUI();
     }
 
     public void buttonSelectProfile(View v) {
@@ -109,8 +113,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         mAudioRecording = new AudioRecordingModel(entry.filenamePrefix());
     }
 
-    /*
-    public void recordAudio() {
+    public void buttonNewRecording(View v) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         final int sampleRate = Integer.parseInt(sp.getString("samplerate", "8000"));
 
@@ -152,7 +155,7 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
             protected void onPreExecute() {
                 mProgress = ProgressDialog.show(mContext, "Working...", "Please wait");
 
-                Button buttonRecord  = (Button) findViewById(R.id.buttonRecordAudio);
+                Button buttonRecord  = (Button) findViewById(R.id.buttonNewRecording);
                 buttonRecord.setText("Recording audio...");
                 buttonRecord.setEnabled(false);
 
@@ -186,8 +189,8 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                Button buttonRecord  = (Button) findViewById(R.id.buttonRecordAudio);
-                buttonRecord.setText("Play recording");
+                Button buttonRecord  = (Button) findViewById(R.id.buttonNewRecording);
+                buttonRecord.setText("Create New Recording");
                 buttonRecord.setEnabled(true);
 
                 mProgress.dismiss();
@@ -195,7 +198,26 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         }
 
         new NewRecordingAsync(this).execute();
-    }*/
+    }
+
+    private void updateGUI() {
+        if (mAudioID != -1) {
+            ((Button) findViewById(R.id.buttonSelectAudioRecord)).setText("AudioID (" + mAudioID + ") loaded");
+        } else {
+            ((Button) findViewById(R.id.buttonSelectAudioRecord)).setText("Select Audio Recording");
+
+        }
+
+        if (mProfileID != -1) {
+            ProfileManager pm = new ProfileManager(this);
+            DbProfileTable.ProfileEntry entry = pm.getEntryByID(mProfileID);
+            long profileAudioID = entry.audioID();
+            ((Button) findViewById(R.id.buttonSelectProfile)).setText("ProfileID (" + mProfileID + ") AudioID ("
+                    + profileAudioID + ") loaded");
+        } else {
+            ((Button) findViewById(R.id.buttonSelectProfile)).setText("Select Pulse Profile");
+        }
+    }
 
     public PulseProfile getPulseProfile() {
         ProfileManager manager = new ProfileManager(this);

@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -111,17 +112,21 @@ public class AnalysisPulseOverlayFragment extends Fragment {
 
         double dt = 1.0 / mTimeSeries.getSampleRate();
 
+
+
+
         // Measured pulse time
         double measuredPulseTime = mAnalysisResult.measuredTOAs()[pulseNumber];
-
         // Get the closest time index for the measured pulse time
         int measuredStartIndex = (int) Math.round(measuredPulseTime / dt);
 
+
+
         // Expected pulse time
         double expectedPulseTime = mAnalysisResult.expectedTOAs()[pulseNumber];
-
         // Get the closest time index for the expected pulse time
         int expectedStartIndex = (int) Math.round(expectedPulseTime / dt);
+
 
         // Pick the start time with the smallest index so that
         // both pulses can be drawn
@@ -182,6 +187,28 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         audioSet.setDrawValues(false);
 
 
+
+        // Correlation series
+        ArrayList<Entry> correlationVals = new ArrayList<Entry>();
+        double[] correlation = mAnalysisResult.correlation();
+        double maxCorrelation = correlation[mAnalysisResult.ind0()];
+        Log.d(TAG, "Correlation array (PLOTTING) length = " + correlation.length);
+
+        for (int i = 0; i < count; i++) {
+            int timeIndex = startIndex + i;
+            float val = (float) (correlation[timeIndex] / maxCorrelation);
+            correlationVals.add(new Entry(val, i));
+        }
+
+        // create the correlation dataset and give it a type
+        LineDataSet correlationSet = new LineDataSet(correlationVals, "Correlation");
+        correlationSet.setColor(Color.MAGENTA);
+        correlationSet.setLineWidth(2f);
+        correlationSet.setDrawCircles(false);
+        correlationSet.setDrawValues(false);
+
+
+
         // Measured pulse series
         ArrayList<Entry> measuredVals = new ArrayList<Entry>();
         for (int i = 0; i < count; i++) {
@@ -202,6 +229,14 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         measuredSet.setDrawCircles(false);
         measuredSet.setDrawValues(false);
 
+        /*
+        LimitLine ll1 = new LimitLine(mTimeSeries[], "Upper Limit");
+        ll1.setLineWidth(4f);
+        ll1.enableDashedLine(10f, 10f, 0f);
+        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        ll1.setTextSize(10f);
+        ll1.setTypeface(tf);
+*/
 
         // Expected pulse series
         ArrayList<Entry> expectedVals = new ArrayList<Entry>();
@@ -219,7 +254,7 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         // create the pulse dataset and give it a type
         LineDataSet expectedSet = new LineDataSet(expectedVals, "Expected");
         expectedSet.setColor(Color.GREEN);
-        expectedSet.setLineWidth(1f);
+        expectedSet.setLineWidth(2f);
         expectedSet.setDrawCircles(false);
         expectedSet.setDrawValues(false);
 
@@ -230,6 +265,7 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         dataSets.add(audioSet);
         dataSets.add(measuredSet);
         dataSets.add(expectedSet);
+        dataSets.add(correlationSet);
 
         // create a data object with the datasets
         LineData mLineData = new LineData(timeVals, dataSets);
