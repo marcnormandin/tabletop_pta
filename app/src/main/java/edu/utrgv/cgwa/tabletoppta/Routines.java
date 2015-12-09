@@ -840,8 +840,8 @@ public class Routines {
                     i = nunique - (n - nunique) - 1;
                 }
             }
-            double aR = Math.cos(2*Math.PI*f[i]*tau);
-            double aI = Math.sin(2*Math.PI*f[i]*tau);
+            double aR = Math.cos(2.0*Math.PI*f[i]*tau);
+            double aI = Math.sin(2.0*Math.PI*f[i]*tau);
             double bR = Fx.x[i];
             double bI = conjFactor * Fx.y[i];
             double cR = Fy.x[i];
