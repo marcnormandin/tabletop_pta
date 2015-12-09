@@ -121,29 +121,40 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         int measuredStartIndex = (int) Math.round(measuredPulseTime / dt);
 
 
+        Log.d(TAG, "Measured pulse time: " + measuredPulseTime);
 
         // Expected pulse time
         double expectedPulseTime = mAnalysisResult.expectedTOAs()[pulseNumber];
         // Get the closest time index for the expected pulse time
         int expectedStartIndex = (int) Math.round(expectedPulseTime / dt);
 
+        Log.d(TAG, "Expected pulse time: " + expectedPulseTime);
 
         // Pick the start time with the smallest index so that
         // both pulses can be drawn
         int startIndex = -1;
         int count = -1;
+        int paddingLeft = 100; // number of samples before the measured/expected indicies
 
         if (expectedStartIndex < measuredStartIndex) {
-            startIndex = expectedStartIndex;
-            count = (measuredStartIndex - expectedStartIndex) + mPulseProfile.ts.t.length;
+            startIndex = expectedStartIndex - paddingLeft;
+            if (startIndex < 0) {
+                startIndex = 0;
+            }
+
+            count = (measuredStartIndex - expectedStartIndex) + mPulseProfile.ts.t.length + paddingLeft;
         } else {
-            startIndex = measuredStartIndex;
-            count = (expectedStartIndex - measuredStartIndex) + mPulseProfile.ts.t.length;
+            startIndex = measuredStartIndex - paddingLeft;
+            if (startIndex < 0) {
+                startIndex = 0;
+            }
+            count = (expectedStartIndex - measuredStartIndex) + mPulseProfile.ts.t.length + paddingLeft;
         }
 
         if (count > MAX_PLOT_POINTS) {
             count = MAX_PLOT_POINTS;
         }
+
 
         // If the pulse goes outside of the time series, we need to
         // readjust the count
@@ -229,14 +240,16 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         measuredSet.setDrawCircles(false);
         measuredSet.setDrawValues(false);
 
-        /*
-        LimitLine ll1 = new LimitLine(mTimeSeries[], "Upper Limit");
-        ll1.setLineWidth(4f);
-        ll1.enableDashedLine(10f, 10f, 0f);
-        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        ll1.setTextSize(10f);
-        ll1.setTypeface(tf);
-*/
+        // Measured pulse time (Show a vertical bar)
+        //LimitLine llMeasured = new LimitLine((float)measuredPulseTime, "Measured Pulse Time");
+        //LimitLine llMeasured = new LimitLine((float)(measuredStartIndex-startIndex), "Measured Pulse Time");
+        LimitLine llMeasured = new LimitLine((float)(measuredPulseTime / dt - startIndex), "Measured Pulse Time");
+        llMeasured.setLineWidth(2f);
+        llMeasured.enableDashedLine(10f, 10f, 0f);
+        llMeasured.setLabel("");
+        llMeasured.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        llMeasured.setTextSize(10f);
+        llMeasured.setLineColor(Color.RED);
 
         // Expected pulse series
         ArrayList<Entry> expectedVals = new ArrayList<Entry>();
@@ -258,6 +271,17 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         expectedSet.setDrawCircles(false);
         expectedSet.setDrawValues(false);
 
+        // Expected pulse time (Show a vertical bar)
+        //LimitLine llExpected = new LimitLine((float)expectedPulseTime, "Expected Pulse Time");
+        //LimitLine llExpected = new LimitLine(100.0f, "Expected Pulse Time");
+        //LimitLine llExpected = new LimitLine((float)(expectedStartIndex-startIndex), "Expected Pulse Time");
+        LimitLine llExpected = new LimitLine((float)(expectedPulseTime/dt - startIndex), "Expected Pulse Time");
+        llExpected.setLineWidth(2f);
+        llExpected.enableDashedLine(10f, 10f, 0f);
+        llExpected.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        llExpected.setLabel("");
+        llExpected.setTextSize(10f);
+        llExpected.setLineColor(Color.GREEN);
 
 
         // Add the datasets for display
@@ -277,6 +301,10 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         // update the axes
         XAxis xaxis = mLineChart.getXAxis();
         xaxis.setValues(timeVals);
+        xaxis.removeAllLimitLines();
+        xaxis.addLimitLine(llExpected);
+        xaxis.addLimitLine(llMeasured);
+
 
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();

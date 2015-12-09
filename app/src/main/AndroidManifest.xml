@@ -98,7 +98,7 @@
         </activity>
         <activity
             android:name=".ViewAnalysisPulsesActivity"
-            android:label="Measured Pulses"
+            android:label="Pulse Analysis"
             android:parentActivityName=".SingleMetronomeAnalysisListActivity" >
         </activity>
         <activity
