@@ -3,6 +3,8 @@ package edu.utrgv.cgwa.metrec;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class PCMUtilities {
     private static byte[] readFileIntoByteArray(String filePath) throws IOException
@@ -25,11 +27,18 @@ public class PCMUtilities {
 
     // PCM File is (LOW, HIGH), (LOW, HIGH), (LOW, HIGH)
     // convert two bytes to one double in the range -1 to 1
-    private static double bytesToDouble(byte lowByte, byte highByte) {
+    private static short bytesToShort(byte lowByte, byte highByte) {
         // convert two bytes to one short (big endian)
-        short s = (short) ((highByte << 8) | lowByte);
+        //short s = (short) ((highByte << 8) | lowByte);
+        // Credit: http://stackoverflow.com/questions/736815/2-bytes-to-short-java
+        ByteBuffer bb = ByteBuffer.allocate(2);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        bb.put(lowByte);
+        bb.put(highByte);
+
         // convert to range from -1 to (just below) 1
-        return s;
+        //return s;
+        return bb.getShort(0);
     }
 
     // PCM File is (LOW, HIGH), (LOW, HIGH), (LOW, HIGH)
@@ -51,7 +60,7 @@ public class PCMUtilities {
         int pos = 0;
         while (pos < length) {
             // PCM File is (LOW, HIGH), (LOW, HIGH), (LOW, HIGH)
-            data[i] = bytesToDouble(wav[pos], wav[pos + 1]);
+            data[i] = (double) bytesToShort(wav[pos], wav[pos + 1]);
             pos += 2;
             i++;
         }
