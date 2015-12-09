@@ -611,12 +611,12 @@ public class Routines {
 
         // Setup the optimizer
         // https://commons.apache.org/proper/commons-math/apidocs/org/apache/commons/math3/optim/univariate/BrentOptimizer.html
-        final double rel = 1.0e-7;
-        final double abs = 1.0e-7;
+        final double rel = 1.0e-15;
+        final double abs = 1.0e-15;
         BrentOptimizer brentOptimizer = new BrentOptimizer(rel, abs);
 
         // Create and run the optimization
-        final int maxIterations = 500;
+        final int maxIterations = 1000;
         final double lo = ts.t[indices[0]];
         final double init = ts.t[initialIndex]; //ts.t[centerIndex]; // initial
         final double hi = ts.t[indices[indices.length-1]];
@@ -626,7 +626,9 @@ public class Routines {
 
         // Report the results
         Log.d("BRENT", "guess best tau = " + init);
+        Log.d("BRENT", "lower bound = " + lo);
         Log.d("BRENT", "brent best tau = " + pair.getPoint());
+        Log.d("BRENT", "upper bound = " + hi);
 
         double optimizedTime = pair.getPoint();
 
