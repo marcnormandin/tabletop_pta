@@ -3,7 +3,6 @@ package edu.utrgv.cgwa.tabletoppta;
 import android.util.Log;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.optim.ConvergenceChecker;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
@@ -467,10 +466,12 @@ public class Routines {
     */
 
     public static CalMeasuredTOAsResult calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp) {
+        boolean useBrent = false;
+
         int N = ts.t.length;
         double deltaT = ts.t[1] - ts.t[0];
         double deltaF = 1.0 / (N * deltaT); // Sampling frequency
-        double fNyq = 1.0 / (2.0 * deltaT); // Nyquist frequency
+        //double fNyq = 1.0 / (2.0 * deltaT); // Nyquist frequency
 
         // Magic number
         final double Tcorr = 4e-4;
@@ -524,8 +525,13 @@ public class Routines {
 
         // Values for the reference pulse
         int indices[] = getIndicies(ind0, m, ts.t.length);
-        double t0 = estimatePeak(ind0, indices, ts, template, norm);
-        double A0 = correlate(t0, ts, template, norm);
+        double t0;
+        if (useBrent) {
+            t0 = estimatePeak(ind0, indices, ts, template, norm);
+        } else {
+            t0 = ts.t[ind0];
+        }
+        //double A0 = correlate(t0, ts, template, norm);
 
         // Calculate expected number of pulses
         // Number of pulses before the reference pulse
@@ -561,8 +567,14 @@ public class Routines {
             }
             int idx = indices[0] + Utility.argmax(subC);
 
-            tauhat[i] = estimatePeak(idx, indices, ts, template, norm);
+            if (useBrent) {
+                tauhat[i] = estimatePeak(idx, indices, ts, template, norm);
+            } else {
+                tauhat[i] = ts.t[idx];
+            }
             Ahat[i] = correlate(tauhat[i], ts, template, norm);
+
+            Log.d(TAG, "Found peak " + (i+1) + " of " + Np + ": tau = " + tauhat[i]);
         }
 
         // error estimate for TOAs (based on correlation curve)
@@ -616,7 +628,7 @@ public class Routines {
         BrentOptimizer brentOptimizer = new BrentOptimizer(rel, abs);
 
         // Create and run the optimization
-        final int maxIterations = 1000;
+        final int maxIterations = 10;
         final double lo = ts.t[indices[0]];
         final double init = ts.t[initialIndex]; //ts.t[centerIndex]; // initial
         final double hi = ts.t[indices[indices.length-1]];
