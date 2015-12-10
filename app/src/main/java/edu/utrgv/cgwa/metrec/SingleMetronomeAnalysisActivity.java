@@ -266,7 +266,9 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
                 String dateString = new SimpleDateFormat("MM-dd-yyyy").format(date);
                 String timeString = new SimpleDateFormat("hh:mm").format(date);
                 SingleMetronomeAnalysisManager manager = new SingleMetronomeAnalysisManager(context);
-                long analysisID = manager.addEntry(mAudioID, mProfileID, dateString, timeString, filenameResult, "");
+                String tag = "";
+                long analysisID = manager.addEntry(mAudioID, mProfileID, dateString, timeString,
+                        filenameResult, result.computationTimeSeconds(), tag);
 
                 // Show the fragment
                 FragmentManager fm = getSupportFragmentManager();

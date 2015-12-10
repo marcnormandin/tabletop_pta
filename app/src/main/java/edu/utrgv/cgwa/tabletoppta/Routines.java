@@ -172,9 +172,10 @@ public class Routines {
 
         private double[] mCorrelation;
         private int mInd0;
+        private double mComputationTimeSeconds;
 
         public CalMeasuredTOAsResult(double[] measuredTOAs, double[] uncertainties, int n0, double[] expectedTOAs,
-                                     double[] correlationArray, int ind0) {
+                                     double[] correlationArray, int ind0, double computationTimeSeconds) {
             mMeasuredTOAs = measuredTOAs;
             mUncertainties = uncertainties;
             mN0 = n0;
@@ -182,6 +183,8 @@ public class Routines {
 
             mCorrelation = correlationArray;
             mInd0 = ind0;
+
+            mComputationTimeSeconds = computationTimeSeconds;
 
             computeResiduals();
             computeDetrendedResiduals();
@@ -220,6 +223,7 @@ public class Routines {
         public double[] detrendedResiduals() { return mDetrendedResiduals; }
         public double[] correlation() { return mCorrelation; }
         public int ind0() { return mInd0; }
+        public double computationTimeSeconds() { return mComputationTimeSeconds; }
 
         private void loadFromFile(String filename) {
             try {
@@ -237,6 +241,9 @@ public class Routines {
 
                 // Get correlation size
                 int lengthCorrelation = rFile.readInt();
+
+                // Get the computation time
+                mComputationTimeSeconds = rFile.readDouble();
 
                 FileChannel inChannel = rFile.getChannel();
 
@@ -316,6 +323,9 @@ public class Routines {
 
                 // Write the length of the correlation array
                 os.writeInt(mCorrelation.length);
+
+                // Write the computation time
+                os.writeDouble(mComputationTimeSeconds);
 
                 // Write mMeasuredTOAs
                 for (int i = 0; i < mMeasuredTOAs.length; i++) {
@@ -466,6 +476,7 @@ public class Routines {
     */
 
     public static CalMeasuredTOAsResult calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp) {
+        final long startTime = System.nanoTime();
         boolean useBrent = false;
 
         int N = ts.t.length;
@@ -594,7 +605,13 @@ public class Routines {
 
         Log.d(TAG, "Correlation array (AFTER) length = " + C.length);
 
-        return new CalMeasuredTOAsResult(tauhat, error_tauhat, n0, expectedTOA, C, ind0);
+        final long endTime = System.nanoTime();
+        double elapsedTimeSeconds = (endTime - startTime);
+        for (int i = 0; i < 9; i++) {
+            elapsedTimeSeconds /= 10.0;
+        }
+
+        return new CalMeasuredTOAsResult(tauhat, error_tauhat, n0, expectedTOA, C, ind0, elapsedTimeSeconds);
     }
 
 

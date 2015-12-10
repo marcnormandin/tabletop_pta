@@ -69,6 +69,9 @@ public class ViewAnalysisPulsesActivity extends AppCompatActivity {
 
             TextView numPulses = (TextView) findViewById(R.id.analysisnumpulses);
             numPulses.setText("" + result.numPulses());
+
+            TextView computationTime = (TextView) findViewById(R.id.computationtimeseconds);
+            computationTime.setText("" + result.computationTimeSeconds());
         }
     }
 

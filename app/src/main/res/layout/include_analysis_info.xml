@@ -71,4 +71,24 @@
         android:layout_toRightOf="@+id/textanalysisnumpulses"
         android:layout_toEndOf="@+id/textanalysisnumpulses" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/textcomputationtimeseconds"
+        android:text="Computation time (s):"
+        android:layout_below="@+id/textanalysisreferencepulsenumber"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="[#]"
+        android:id="@+id/computationtimeseconds"
+        android:layout_below="@+id/analysisreferencepulsenumber"
+        android:layout_toRightOf="@+id/analysisreferencepulsenumber"
+        android:layout_toEndOf="@+id/analysisreferencepulsenumber" />
+
 </RelativeLayout>

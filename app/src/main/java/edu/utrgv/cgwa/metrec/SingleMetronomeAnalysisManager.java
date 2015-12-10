@@ -27,6 +27,7 @@ public class SingleMetronomeAnalysisManager {
     public long addEntry(final long audioID, final long profileID,
                          final String date, final String time,
                          final String filenameResult,
+                         final double computationTimeSeconds,
                          final String tag) {
 
         ContentValues values = new ContentValues();
@@ -36,7 +37,7 @@ public class SingleMetronomeAnalysisManager {
         values.put(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_DATE, date);
         values.put(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_TIME, time);
         values.put(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_FILENAME_RESULT, filenameResult);
-
+        values.put(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_COMPUTATION_TIME_SECONDS, computationTimeSeconds);
         values.put(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_TAG, tag);
 
 
@@ -88,12 +89,15 @@ public class SingleMetronomeAnalysisManager {
         int filenameResultIndex = cursor.getColumnIndex(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_FILENAME_RESULT);
         String filenameResult = cursor.getString(filenameResultIndex);
 
+        int computationTimeSecondsIndex = cursor.getColumnIndex(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_COMPUTATION_TIME_SECONDS);
+        double computationTimeSeconds = cursor.getDouble(computationTimeSecondsIndex);
+        
         int tagIndex = cursor.getColumnIndex(DbSingleMetronomeAnalysisTable.Entry.COLUMN_NAME_TAG);
         String tag = cursor.getString(tagIndex);
 
         return new DbSingleMetronomeAnalysisTable.Entry(analysisID, audioID, profileID,
                 dateString, timeString,
-                filenameResult, tag);
+                filenameResult, computationTimeSeconds, tag);
     }
 
     public void deleteEntryByID(final long id) {
