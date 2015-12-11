@@ -313,9 +313,9 @@ public class AnalysisPulseOverlayFragment extends Fragment {
     public void setupSpinner(View rootView) {
         mPulseSpinner = (Spinner) rootView.findViewById(R.id.spinnerPulseNumber);
 
-        ArrayList<Double> pulseArray = new ArrayList<>();
+        ArrayList<String> pulseArray = new ArrayList<>();
         for (int i = 0; i < mPulseTimes.length; i++) {
-            pulseArray.add( mPulseTimes[i] );
+            pulseArray.add( "Pulse " + (i+1) + ": " + String.format("%.2f", mPulseTimes[i]) );
         }
 
         ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, pulseArray);
@@ -325,12 +325,8 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         mPulseSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Get the value
-                double pulseTime = (Double) mPulseSpinner.getSelectedItem();
-
-                displayPulse(mPulseSpinner.getSelectedItemPosition());
-
-                Log.d(TAG, "Selected pulsetime = " + pulseTime);
+                int pulseNumber = mPulseSpinner.getSelectedItemPosition();
+                displayPulse(pulseNumber);
             }
 
             @Override

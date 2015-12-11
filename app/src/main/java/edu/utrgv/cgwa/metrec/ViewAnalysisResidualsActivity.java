@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import edu.utrgv.cgwa.tabletoppta.Routines;
@@ -57,7 +60,25 @@ public class ViewAnalysisResidualsActivity extends AppCompatActivity {
             numPulses.setText("" + result.numPulses());
 
             TextView computationTime = (TextView) findViewById(R.id.computationtimeseconds);
-            computationTime.setText("" + result.computationTimeSeconds());
+            computationTime.setText("" + String.format("%.2f", result.computationTimeSeconds()));
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.view_residuals, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_send_screenshot:
+                Screenshot.send(this);
+                return true;
+        }
+        return false;
     }
 }

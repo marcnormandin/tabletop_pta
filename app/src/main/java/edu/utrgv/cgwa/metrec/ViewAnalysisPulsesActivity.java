@@ -71,7 +71,7 @@ public class ViewAnalysisPulsesActivity extends AppCompatActivity {
             numPulses.setText("" + result.numPulses());
 
             TextView computationTime = (TextView) findViewById(R.id.computationtimeseconds);
-            computationTime.setText("" + result.computationTimeSeconds());
+            computationTime.setText("" + String.format("%.2f", result.computationTimeSeconds()));
         }
     }
 
@@ -87,66 +87,9 @@ public class ViewAnalysisPulsesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_send_screenshot:
-                Bitmap screenshot = takeScreenshot();
-                File filename = saveScreenshot(screenshot);
-                emailScreenshot(filename);
+                Screenshot.send(this);
                 return true;
         }
         return false;
-    }
-
-    private Bitmap takeScreenshot() {
-        //View rootView = findViewById(android.R.id.content);
-        //View rootView = findViewById(R.id.root_view);
-        //rootView.setDrawingCacheEnabled(true);
-        //Bitmap screenshot = rootView.getDrawingCache();
-        //rootView.setDrawingCacheEnabled(false);
-        View v1 = getWindow().getDecorView().getRootView();
-        v1.setDrawingCacheEnabled(true);
-        //v1.setDrawingCacheBackgroundColor(Color.BLACK);
-        Bitmap screenshot = v1.getDrawingCache();
-        //v1.setDrawingCacheEnabled(false);
-
-        return screenshot;
-    }
-
-    private File saveScreenshot(Bitmap screenshot) {
-        String filename = Environment.getExternalStorageDirectory()
-                + File.separator + "Pictures/screenshot.png";
-
-        File file = new File(filename);
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(file);
-            screenshot.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-            Log.d(TAG, "Saving screenshot as: " + file);
-            // PNG is a lossless format, the compression factor (100) is ignored
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return file;
-    }
-
-    private void emailScreenshot(File file) {
-        Intent ei = new Intent(android.content.Intent.ACTION_SEND);
-        ei.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { "normandin.utb@gmail.com", "martin.beroiz@gmail.com" });
-        ei.putExtra(android.content.Intent.EXTRA_SUBJECT, "Tabletop PTA Screenshot");
-        ei.putExtra(android.content.Intent.EXTRA_TEXT, "The attached screenshot was taken of the Tabletop PTA phone app.");
-        ei.setType("image/png");
-
-        // URI of the screenshot image
-        //Uri myUri = Uri.parse("file:/" + filename);
-        Uri uri = Uri.fromFile(file);
-        ei.putExtra(Intent.EXTRA_STREAM, uri);
-
-        startActivity(Intent.createChooser(ei, "Send mail..."));
     }
 }

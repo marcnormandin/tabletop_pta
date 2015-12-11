@@ -46,6 +46,7 @@
         <activity
             android:name=".BuiltinMetronomeActivity"
             android:label="Metronome"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:parentActivityName=".HomeScreenActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -7,9 +7,9 @@
         <EditTextPreference
             android:key="samplerate"
             android:title="@string/pref_title_samplerate"
-            android:text="8000"
+            android:text="44100"
             android:summary="@string/pref_summary_samplerate"
-            android:defaultValue="8000"/>
+            android:defaultValue="44100"/>
 
     </PreferenceCategory>
 

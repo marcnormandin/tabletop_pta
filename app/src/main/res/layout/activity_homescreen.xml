@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,15 +14,23 @@
         android:layout_height="129dp"
         android:id="@+id/imageView2"
         android:src="@drawable/table"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@+id/buttonMetronome"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/app_bar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Metronome"
         android:id="@+id/buttonMetronome"
-        android:drawableLeft="@android:drawable/ic_lock_silent_mode_off"
-        android:onClick="startBuiltinMetronomeActivity"/>
+        android:onClick="startBuiltinMetronomeActivity"
+        android:layout_above="@+id/btnAudioRecordings"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
@@ -30,7 +38,10 @@
         android:text="Audio"
         android:id="@+id/btnAudioRecordings"
         android:layout_gravity="center_horizontal"
-        android:onClick="viewAudioRecordings" />
+        android:onClick="viewAudioRecordings"
+        android:layout_above="@+id/btnProfiles"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
@@ -38,7 +49,10 @@
         android:text="Profiles"
         android:id="@+id/btnProfiles"
         android:layout_gravity="center_horizontal"
-        android:onClick="viewProfiles" />
+        android:onClick="viewProfiles"
+        android:layout_above="@+id/buttonAnalyses"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
@@ -46,15 +60,20 @@
         android:text="Analyses"
         android:id="@+id/buttonAnalyses"
         android:onClick="viewSingleMetronomeAnalyses"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@+id/launchWebsite"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Visit Official Website"
         android:id="@+id/launchWebsite"
-        android:drawableLeft="@android:drawable/ic_menu_info_details"
-        android:onClick="launchWebsite" />
+        android:onClick="launchWebsite"
+        android:layout_above="@+id/buttonSettings"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
@@ -62,7 +81,9 @@
         android:text="Settings"
         android:id="@+id/buttonSettings"
         android:layout_gravity="center_horizontal"
-        android:drawableLeft="@android:drawable/ic_menu_preferences"
-        android:onClick="viewSettings" />
+        android:onClick="viewSettings"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -3,25 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="2"
-    android:background="@color/background_light">
+    android:background="@drawable/corkboard"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/analysisdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="[Date]"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/analysis_at"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignTop="@+id/analysis_at"
+        android:layout_toRightOf="@+id/textView4"
+        android:layout_toEndOf="@+id/textView4" />
 
     <TextView
         android:id="@+id/analysis_at"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" at "
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="  @  "
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignTop="@+id/analysistime"
+        android:layout_toRightOf="@+id/analysisdate"
+        android:layout_toEndOf="@+id/analysisdate" />
 
     <TextView
         android:id="@+id/analysistime"
@@ -35,7 +38,7 @@
         android:id="@+id/textanalysisnumpulses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Number of pulses: "
+        android:text="Number of pulses:  "
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_below="@+id/analysisdate"
         android:layout_alignParentLeft="true"
@@ -55,7 +58,7 @@
         android:id="@+id/textanalysisreferencepulsenumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reference pulse #: "
+        android:text="Reference pulse #:  "
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_below="@+id/textanalysisnumpulses"
         android:layout_alignParentLeft="true"
@@ -76,7 +79,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textcomputationtimeseconds"
-        android:text="Computation time (s):"
+        android:text="Computation time (s):  "
         android:layout_below="@+id/textanalysisreferencepulsenumber"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -87,8 +90,18 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="[#]"
         android:id="@+id/computationtimeseconds"
-        android:layout_below="@+id/analysisreferencepulsenumber"
-        android:layout_toRightOf="@+id/analysisreferencepulsenumber"
-        android:layout_toEndOf="@+id/analysisreferencepulsenumber" />
+        android:layout_alignTop="@+id/textcomputationtimeseconds"
+        android:layout_toRightOf="@+id/textcomputationtimeseconds"
+        android:layout_toEndOf="@+id/textcomputationtimeseconds" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Recorded:  "
+        android:id="@+id/textView4"
+        android:layout_above="@+id/textanalysisnumpulses"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

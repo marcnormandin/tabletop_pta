@@ -82,6 +82,8 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
     }
 
     public void displayResiduals() {
+        final boolean showResiduals = false;
+
         if (mAnalysisResult == null) {
             return;
         }
@@ -97,26 +99,32 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
             count = MAX_PLOT_POINTS;
         }
 
+        // Add the datasets for display
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+
         // The time values (X-Axis) to display on the plot
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < count; i++) {
             xVals.add(x[i] + "");
         }
 
-        // Residual series
-        ArrayList<Entry> residualsVals = new ArrayList<Entry>();
-        for (int i = 0; i < count; i++) {
-            float val = (float) residuals[i];
-            residualsVals.add(new Entry(val, i));
-        }
+        if (showResiduals) {
+            // Residual series
+            ArrayList<Entry> residualsVals = new ArrayList<Entry>();
+            for (int i = 0; i < count; i++) {
+                float val = (float) residuals[i];
+                residualsVals.add(new Entry(val, i));
+            }
 
-        // create the audio dataset and give it a type
-        LineDataSet residualsSet = new LineDataSet(residualsVals, "Residuals");
-        residualsSet.setColor(Color.GRAY);
-        residualsSet.setCircleColor(Color.DKGRAY);
-        residualsSet.setLineWidth(0f);
-        residualsSet.setDrawCircles(true);
-        residualsSet.setDrawValues(false);
+            // create the audio dataset and give it a type
+            LineDataSet residualsSet = new LineDataSet(residualsVals, "Residuals");
+            residualsSet.setColor(Color.GRAY);
+            residualsSet.setCircleColor(Color.DKGRAY);
+            residualsSet.setLineWidth(0f);
+            residualsSet.setDrawCircles(true);
+            residualsSet.setDrawValues(false);
+            dataSets.add(residualsSet);
+        }
 
         // Detrended Residual series
         ArrayList<Entry> detrendedResidualsVals = new ArrayList<Entry>();
@@ -129,14 +137,11 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         LineDataSet detrendedResidualsSet = new LineDataSet(detrendedResidualsVals, "Detrended residuals");
         detrendedResidualsSet.setColor(Color.BLUE);
         detrendedResidualsSet.setCircleColor(Color.RED);
-        detrendedResidualsSet.setLineWidth(0f);
+        detrendedResidualsSet.setCircleColorHole(Color.RED);
+        detrendedResidualsSet.setLineWidth(1f);
         detrendedResidualsSet.setDrawCircles(true);
         detrendedResidualsSet.setDrawValues(false);
-
-
-        // Add the datasets for display
-        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
-        dataSets.add(residualsSet);
+        detrendedResidualsSet.setDrawCircleHole(true);
         dataSets.add(detrendedResidualsSet);
 
         // create a data object with the datasets

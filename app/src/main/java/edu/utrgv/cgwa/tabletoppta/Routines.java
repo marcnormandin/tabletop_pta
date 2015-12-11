@@ -583,8 +583,8 @@ public class Routines {
             } else {
                 tauhat[i] = ts.t[idx];
             }
-            Ahat[i] = correlate(tauhat[i], ts, template, norm);
-
+            // Original: Ahat[i] = correlate(tauhat[i], ts, template, norm);
+            Ahat[i] = C[idx];
             Log.d(TAG, "Found peak " + (i+1) + " of " + Np + ": tau = " + tauhat[i]);
         }
 

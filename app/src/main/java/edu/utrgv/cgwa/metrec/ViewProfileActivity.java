@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class ViewProfileActivity extends AppCompatActivity {
@@ -52,5 +55,23 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         TextView time = (TextView) findViewById(R.id.metronomepulseprofiletime);
         time.setText("Time: " + profile.time());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.view_profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_send_screenshot:
+                Screenshot.send(this);
+                return true;
+        }
+        return false;
     }
 }

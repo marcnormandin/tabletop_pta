@@ -8,7 +8,8 @@
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinnerPulseNumber" />
+        android:id="@+id/spinnerPulseNumber"
+        android:longClickable="false" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/charttimeseries"
