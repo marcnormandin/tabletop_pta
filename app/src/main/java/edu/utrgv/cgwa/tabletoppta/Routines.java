@@ -3,6 +3,16 @@ package edu.utrgv.cgwa.tabletoppta;
 import android.util.Log;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
+import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.fitting.leastsquares.MultivariateJacobianFunction;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
@@ -11,12 +21,15 @@ import org.apache.commons.math3.optim.univariate.SearchInterval;
 import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.util.Precision;
 
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 
 import ca.uol.aig.fftpack.Complex1D;
 import ca.uol.aig.fftpack.RealDoubleFFT;
@@ -981,6 +994,82 @@ public class Routines {
     return y
     */
 
+
+    public static double[] fitSinusoid(final double[] measuredTOAs, final double[] residuals) {
+
+        // Initialize the starting parameters
+        final int M = 4;
+        double[] initialParameters = new double[M];
+        initialParameters[0] = 2.0e-4; // amplitude
+        initialParameters[1] = 0.6; // frequency eg. 0.4
+        initialParameters[2] = 0.0; // phase
+        initialParameters[3] = 0.0; // offset
+
+        final int N = measuredTOAs.length;
+
+        MultivariateJacobianFunction distances = new MultivariateJacobianFunction() {
+            public Pair<RealVector, RealMatrix> value(final RealVector point) {
+
+                // Parameters being checked
+                double p0 = point.getEntry(0);
+                double p1 = point.getEntry(1);
+                double p2 = point.getEntry(2);
+                double p3 = point.getEntry(3);
+
+
+                RealVector value = new ArrayRealVector(N);
+                RealMatrix jacobian = new Array2DRowRealMatrix(N, M);
+
+                for (int i = 0; i < N; ++i) {
+                    final double xi = measuredTOAs[i];
+
+                    value.setEntry(i, p0*Math.sin(2.0*Math.PI*xi*p1 + p2) + p3);
+
+                    // derivative with respect to p0
+                    jacobian.setEntry(i, 0, Math.sin(2.0*Math.PI*p1*xi + p2));
+
+                    // derivative with respect to p1
+                    jacobian.setEntry(i, 1, p0*Math.cos(2.0*Math.PI*p1*xi + p2)*(2.0*Math.PI*xi));
+
+                    // derivative with respect to p2
+                    jacobian.setEntry(i, 2, p0*Math.cos(2.0*Math.PI*p1*xi + p2));
+
+                    // derivative with respect to p3
+                    jacobian.setEntry(i, 3, 1.0);
+                }
+
+                return new Pair<RealVector, RealMatrix>(value, jacobian);
+            }
+        };
+
+        LeastSquaresProblem problem = new LeastSquaresBuilder().
+                start(initialParameters).
+                model(distances).
+                target(residuals).
+                lazyEvaluation(false).
+                maxEvaluations(10000).
+                maxIterations(10000).
+                build();
+        
+        LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().
+                withCostRelativeTolerance(2 * Precision.EPSILON).
+                withParameterRelativeTolerance(2 * Precision.EPSILON).
+                optimize(problem);
+
+        // Get the fitted parameters
+        double[] fittedParameters = new double[M];
+        for (int i = 0; i < M; i++) {
+            fittedParameters[i] = optimum.getPoint().getEntry(i);
+        }
+
+        // Print the results
+        for (int i = 0; i < M; i++) {
+            Log.d(TAG, "p" + i + " = " + fittedParameters[i]);
+        }
+
+
+        return fittedParameters;
+    }
 
     public static void debug() {
         // These values were picked by Joe, and the math

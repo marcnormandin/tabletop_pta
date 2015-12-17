@@ -5,6 +5,7 @@ package edu.utrgv.cgwa.metrec;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 
 import edu.utrgv.cgwa.tabletoppta.Routines;
+import edu.utrgv.cgwa.tabletoppta.Utility;
 
 public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "ResidualsFragment";
@@ -59,6 +61,8 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_analysis_residuals, container, false);
 
         (new AsyncTask<Void, Void, Void>() {
+            private double[] mSinusoidParameters;
+
             @Override
             protected Void doInBackground(Void... params) {
                 // Get the analysis record
@@ -68,29 +72,54 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
                 // Load the analysis result from file
                 mAnalysisResult = new Routines.CalMeasuredTOAsResult(analysisEntry.filenameResult());
 
+                // Compute the sinusoid parameters
+                mSinusoidParameters = Routines.fitSinusoid(mAnalysisResult.measuredTOAs(), mAnalysisResult.detrendedResiduals());
+
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 setupLineChart(rootView);
-                displayResiduals();
+                displayResiduals(mSinusoidParameters);
             }
         }).execute();
 
         return rootView;
     }
 
-    public void displayResiduals() {
+    public void displayResiduals(double[] sinusoidParameters) {
         final boolean showResiduals = false;
 
         if (mAnalysisResult == null) {
             return;
         }
 
-        double[] x = mAnalysisResult.measuredTOAs();
+        double[] toas = mAnalysisResult.measuredTOAs();
+        double[] x = Utility.linspace(toas[0], toas[toas.length-1], 1000);
+
         double[] residuals = mAnalysisResult.residuals();
         double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
+
+        /*double[] detrendedResiduals = new double[toas.length];
+        // Make sinusoid
+        for (int i = 0; i < toas.length; i++) {
+            double p0 = 2.0e-4;
+            double p1 = 0.4;
+            double p2 = 0.0;
+            double p3 = 0.00005;
+
+            double max = 5.0e-5;
+            double min = -5.0e-5;
+            double range = (max - min);
+            double r = Math.random() * range + min;
+            Log.d(TAG, "r = " + r);
+
+            detrendedResiduals[i] = p0*Math.sin(2.0*Math.PI*toas[i]*p1 + p2) + p3 + r;
+        }
+        sinusoidParameters = Routines.fitSinusoid(toas, detrendedResiduals);
+        */
+
 
         // The number of points to display
         int count = x.length;
@@ -128,9 +157,14 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
 
         // Detrended Residual series
         ArrayList<Entry> detrendedResidualsVals = new ArrayList<Entry>();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < detrendedResiduals.length; i++) {
             float val = (float) detrendedResiduals[i];
-            detrendedResidualsVals.add(new Entry(val, i));
+            // find which index in the x-array our i resides at
+            int j;
+            for (j = 0; j < count; j++) {
+                if (toas[i] <= x[j]) break;
+            }
+            detrendedResidualsVals.add(new Entry(val, j));
         }
 
         // create the audio dataset and give it a type
@@ -143,6 +177,29 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         detrendedResidualsSet.setDrawValues(false);
         detrendedResidualsSet.setDrawCircleHole(true);
         dataSets.add(detrendedResidualsSet);
+
+
+        // Fitted sinsoid series
+        ArrayList<Entry> sinusoidVals = new ArrayList<Entry>();
+        for (int i = 0; i < count; i++) {
+            double p0 = sinusoidParameters[0];
+            double p1 = sinusoidParameters[1];
+            double p2 = sinusoidParameters[2];
+            double p3 = sinusoidParameters[3];
+            double val = p0 * Math.sin(2.0*Math.PI*x[i]*p1 + p2) + p3;
+            sinusoidVals.add(new Entry((float)val, i));
+        }
+
+        // create the audio dataset and give it a type
+        LineDataSet sinusoidSet = new LineDataSet(sinusoidVals, "Fit");
+        sinusoidSet.setColor(Color.RED);
+        sinusoidSet.setCircleColor(Color.RED);
+        sinusoidSet.setCircleColorHole(Color.RED);
+        sinusoidSet.setLineWidth(1f);
+        sinusoidSet.setDrawCircles(false);
+        sinusoidSet.setDrawValues(false);
+        sinusoidSet.setDrawCircleHole(false);
+        dataSets.add(sinusoidSet);
 
         // create a data object with the datasets
         LineData mLineData = new LineData(xVals, dataSets);
