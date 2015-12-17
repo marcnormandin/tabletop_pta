@@ -320,7 +320,7 @@ public class Routines {
         }
 
         // Fixme This is slow
-        public void saveToFile(String filename) {
+        private void saveToFileSlow(String filename) {
             DataOutputStream os = null;
             try {
                 os = new DataOutputStream(new FileOutputStream(filename));
@@ -367,6 +367,78 @@ public class Routines {
             } catch (Exception e) {
                 // Fixme
             } finally {
+                // Fixme
+            }
+        }
+
+        public void saveToFile(String filename) {
+            try {
+                RandomAccessFile rFile = new RandomAccessFile(filename, "rw");
+
+                // Write the common length of the residual-related arrays
+                final int len = this.mMeasuredTOAs.length;
+                rFile.writeInt(len);
+
+                // Write N0
+                rFile.writeInt(mN0);
+
+                // Write IND0
+                rFile.writeInt(mInd0);
+
+                // Write correlation array length
+                final int lengthCorrelation = this.mCorrelation.length;
+                rFile.writeInt(lengthCorrelation);
+
+                // Get the computation time
+                rFile.writeDouble(mComputationTimeSeconds);
+
+                FileChannel inChannel = rFile.getChannel();
+
+                // Allocate a buffer for the size of one array
+                final int desiredSized = len * Double.SIZE / Byte.SIZE;
+                ByteBuffer buf_in = ByteBuffer.allocate(desiredSized);
+                if (buf_in.capacity() != desiredSized) {
+                    Log.d(TAG, "ERROR! Buffer capacity is not desired capacity. The logic will be wrong.");
+                }
+
+                // Write mMeasuredTOAs
+                buf_in.asDoubleBuffer().put(this.mMeasuredTOAs);
+                inChannel.write(buf_in);
+                buf_in.flip();
+                buf_in.clear();
+
+                // Write mExpectedTOAs
+                buf_in.asDoubleBuffer().put(this.mExpectedTOAs);
+                inChannel.write(buf_in);
+                buf_in.flip();
+                buf_in.clear();
+
+                // Write mUncertainties
+                buf_in.asDoubleBuffer().put(this.mUncertainties);
+                inChannel.write(buf_in);
+                buf_in.flip();
+                buf_in.clear();
+
+
+                // Allocate a buffer for the size of one array
+                final int desiredSizeda = lengthCorrelation * Double.SIZE / Byte.SIZE;
+                ByteBuffer buf_ina = ByteBuffer.allocate(desiredSizeda);
+                if (buf_ina.capacity() != desiredSizeda) {
+                    Log.d(TAG, "ERROR! Buffer capacity (for correlation array) is not desired capacity. The logic will be wrong.");
+                }
+
+                // Write mCorrelation
+                buf_ina.asDoubleBuffer().put(this.mCorrelation);
+                inChannel.write(buf_ina);
+                buf_ina.flip();
+                buf_ina.clear();
+
+                inChannel.close();
+
+            } catch (Exception e) {
+                // Fixme
+            }
+            finally {
                 // Fixme
             }
         }

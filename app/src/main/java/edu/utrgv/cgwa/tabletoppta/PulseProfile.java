@@ -29,7 +29,7 @@ public class PulseProfile {
         loadFromFile(filename);
     }
 
-    public void saveToFile(String filename) {
+    private void saveToFileSlow(String filename) {
         DataOutputStream os = null;
         try {
             os = new DataOutputStream(new FileOutputStream(filename));
@@ -53,6 +53,57 @@ public class PulseProfile {
         } catch (Exception e) {
             // Fixme
         } finally {
+            // Fixme
+        }
+    }
+
+    public void saveToFile(String filename) {
+        try {
+            RandomAccessFile rFile = new RandomAccessFile(filename, "rw");
+
+            // Write the period
+            rFile.writeDouble(this.T);
+
+            // Write the beats per minute
+            rFile.writeDouble(this.bpm);
+
+            // Get the length of the two arrays
+            final int len = this.ts.t.length;
+
+            // Write the length of the two arrays
+            rFile.writeInt(len);
+
+            FileChannel outChannel = rFile.getChannel();
+
+            // Allocate a buffer for the size of one array
+            final int desiredSized = len * Double.SIZE / Byte.SIZE;
+            ByteBuffer buf = ByteBuffer.allocate(desiredSized);
+            if (buf.capacity() != desiredSized) {
+                // Fixme
+            }
+
+            // Write the time array
+            buf.asDoubleBuffer().put(this.ts.t);
+            outChannel.write(buf);
+            buf.flip();
+            buf.clear();
+
+            // Write the value array
+            buf.asDoubleBuffer().put(this.ts.h);
+            outChannel.write(buf);
+            buf.flip();
+            buf.clear();
+
+            outChannel.close();
+
+        }
+        catch (OutOfMemoryError e) {
+            // Fixme
+        }
+        catch (Exception e) {
+            // Fixme
+        }
+        finally {
             // Fixme
         }
     }
