@@ -33,8 +33,53 @@ public class TimeSeries {
         return (int) Math.round( 1.0 / (this.t[1] - this.t[0]) );
     }
 
-    // Fixme This is slow!
     public void saveToFile(String filename) {
+        saveToFileFast(filename);
+    }
+
+    private void saveToFileFast(String filename) {
+        try {
+            RandomAccessFile rFile = new RandomAccessFile(filename, "rw");
+
+            // Get the length of the two arrays
+            final int len = this.t.length;
+
+            // Write out the array length
+            rFile.writeInt(len);
+
+            FileChannel inChannel = rFile.getChannel();
+
+            // Allocate a buffer for the size of one array
+            final int desiredSized = len * Double.SIZE / Byte.SIZE;
+            ByteBuffer buf = ByteBuffer.allocate(desiredSized);
+            if (buf.capacity() != desiredSized) {
+                // Fixme
+            }
+
+            // Write the time array
+            buf.asDoubleBuffer().put(this.t);
+            inChannel.write(buf);
+            buf.flip();
+            buf.clear();
+
+            // Write the value array
+            buf.asDoubleBuffer().put(this.h);
+            inChannel.write(buf);
+            buf.flip();
+            buf.clear();
+
+            inChannel.close();
+
+        } catch (Exception e) {
+            // Fixme
+        }
+        finally {
+            // Fixme
+        }
+    }
+
+    // Fixme This is slow!
+    public void saveToFileSlow(String filename) {
         DataOutputStream os = null;
         try {
             os = new DataOutputStream(new FileOutputStream(filename));
