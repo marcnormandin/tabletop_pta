@@ -64,7 +64,16 @@ public class ProfileListActivity extends AppCompatActivity implements ProfileLis
                 return true;
 
             case R.id.action_delete:
-                popupMenuDelete();
+                // Make sure that there are items checked
+                FragmentManager fm = getSupportFragmentManager();
+                ProfileListFragment frag = (ProfileListFragment)
+                        fm.findFragmentById(R.id.listfragment);
+                long[] ids = frag.getSelectedProfileIDs();
+                if (ids.length > 0) {
+                    popupMenuDelete();
+                } else {
+                    Toast.makeText(this, "There are no records selected.", Toast.LENGTH_SHORT).show();
+                }
                 return true;
         }
         return false;

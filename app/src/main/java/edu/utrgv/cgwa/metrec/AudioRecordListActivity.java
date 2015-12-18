@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 public class AudioRecordListActivity extends AppCompatActivity implements AudioRecordListFragment.OnFragmentInteractionListener {
@@ -50,12 +51,20 @@ public class AudioRecordListActivity extends AppCompatActivity implements AudioR
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_new:
-                Intent intent = new Intent(this, NewProfileActivity.class);
-                startActivity(intent);
+                Toast.makeText(this, "Adding audio is not yet implemented", Toast.LENGTH_LONG).show();
                 return true;
 
             case R.id.action_delete:
-                popupMenuDelete();
+                // Make sure that there are items checked
+                FragmentManager fm = getSupportFragmentManager();
+                AudioRecordListFragment frag = (AudioRecordListFragment)
+                        fm.findFragmentById(R.id.listfragment);
+                long[] ids = frag.getSelectedEntryIDs();
+                if (ids.length > 0) {
+                    popupMenuDelete();
+                } else {
+                    Toast.makeText(this, "There are no records selected.", Toast.LENGTH_SHORT).show();
+                }
                 return true;
         }
         return false;
