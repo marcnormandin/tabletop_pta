@@ -73,6 +73,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
             return ids;
         }
 
+
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View rowView = mInflater.inflate(R.layout.fragment_single_metronome_analysis_listview_row, parent, false);
@@ -122,14 +123,31 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
             return mManager.getNumRecords();
         }
 
-        /*
-        public void deleteProfile(int position, long analysisID) {
-            mManager.deleteEntryByID(analysisID);
-            mChecked.remove(position);
+        public void deleteSelectedIDs() {
+            boolean moreToCheck = true;
+            while(moreToCheck) {
+                int i;
+                for (i = 0; i < mChecked.size(); i++) {
+                    if (mChecked.get(i)) {
+                        // The checked object keeps track of positions, not ids,
+                        // so we need to convert from positions to ids.
+                        long analysisID = mManager.getEntryByPosition(i).id();
+                        int position = i;
+
+                        mManager.deleteEntryByID(analysisID);
+                        mChecked.remove(position);
+                        moreToCheck = true;
+                        break;
+                    }
+                }
+                if (i == mChecked.size()) {
+                    moreToCheck = false;
+                }
+            }
+
             //notifyItemRemoved(position);
             notifyDataSetChanged();
         }
-        */
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -154,6 +172,11 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
     public SingleMetronomeAnalysisListFragment() {
     }
 
+    public void deleteSelectedIDs() {
+        if (mAdapter != null) {
+            mAdapter.deleteSelectedIDs();
+        }
+    }
     public long[] getSelectedIDs() {
         ArrayList<Long> idsa = mAdapter.getSelectedIDs();
         long[] ids = new long[idsa.size()];
@@ -185,6 +208,10 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
         super.onAttach(context);
         try {
             mListener = (OnFragmentInteractionListener) context;
+
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");

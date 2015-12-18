@@ -1,6 +1,9 @@
 package edu.utrgv.cgwa.metrec;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.app.AlertDialog;
 
 public class SingleMetronomeAnalysisListActivity extends AppCompatActivity implements SingleMetronomeAnalysisListFragment.OnFragmentInteractionListener {
     private Toolbar mToolbar;
@@ -57,7 +61,40 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity imple
                 Intent intent = new Intent(this, SingleMetronomeAnalysisActivity.class);
                 startActivity(intent);
                 return true;
+
+            case R.id.action_delete:
+                popupMenuDelete();
+                return true;
         }
         return false;
+    }
+
+    private void popupMenuDelete() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Alert!!");
+        alert.setMessage("Are you sure that you want to delete records?");
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteRecords();
+                dialog.dismiss();
+            }
+        });
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+    }
+
+    private void deleteRecords() {
+        FragmentManager fm = getSupportFragmentManager();
+        SingleMetronomeAnalysisListFragment frag = (SingleMetronomeAnalysisListFragment) fm.findFragmentById(R.id.listfragment);
+        frag.deleteSelectedIDs();
     }
 }

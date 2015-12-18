@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import java.io.File;
+
 public class SingleMetronomeAnalysisManager {
 
     private DbHelper mHelper = null;
@@ -100,7 +102,19 @@ public class SingleMetronomeAnalysisManager {
                 filenameResult, computationTimeSeconds, tag);
     }
 
+    private void deleteFile(String filename) {
+        File f = new File(filename);
+        if (f.exists()) {
+            Log.d(TAG, "deleting " + f.getPath());
+            f.delete();
+        }
+    }
+
     public void deleteEntryByID(final long id) {
+        // First delete the files referenced from the entry
+        DbSingleMetronomeAnalysisTable.Entry e = getEntryByID(id);
+        deleteFile(e.filenameResult());
+
         final String SQL = "DELETE FROM " + DbSingleMetronomeAnalysisTable.Entry.TABLE_NAME
                 + " WHERE _ID = " + id;
         Log.d(TAG, "Deleting Single Metronome Analysis with _ID = " + id + " from the database.");

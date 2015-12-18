@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import java.io.File;
+
 public class ProfileManager {
     private DbHelper mHelper = null;
     private static final String TAG = "ProfileManager";
@@ -96,7 +98,18 @@ public class ProfileManager {
                 computedPeriod, frequency);
     }
 
+    private void deleteFile(String filename) {
+        File f = new File(filename);
+        if (f.exists()) {
+            Log.d(TAG, "deleting " + f.getPath());
+            f.delete();
+        }
+    }
+
     public void deleteEntryByID(long profileID) {
+        DbProfileTable.ProfileEntry e = getEntryByID(profileID);
+        deleteFile(e.filenamePrefix() + ".pf");
+
         final String SQL = "DELETE FROM " + DbProfileTable.ProfileEntry.TABLE_NAME
                 + " WHERE _ID = " + profileID;
         Log.d(TAG, "Deleting Profile with _ID = " + profileID + " from the database.");

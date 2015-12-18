@@ -9,4 +9,11 @@
         android:icon="@android:drawable/ic_menu_add"
         android:title="New"/>
 
+    <item
+        android:id="@+id/action_delete"
+        app:showAsAction="always"
+        android:orderInCategory="199"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="Delete"/>
+
 </menu>

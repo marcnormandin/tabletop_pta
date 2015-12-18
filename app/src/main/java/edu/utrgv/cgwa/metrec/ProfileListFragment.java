@@ -76,6 +76,34 @@ public class ProfileListFragment extends Fragment {
             return selectedProfileIDs;
         }
 
+        public void deleteSelectedIDs() {
+            boolean moreToCheck = true;
+            while(moreToCheck) {
+                int i;
+                for (i = 0; i < mChecked.size(); i++) {
+                    if (mChecked.get(i)) {
+                        // The checked object keeps track of positions, not ids,
+                        // so we need to convert from positions to ids.
+                        // long audioID = mManager.getEntryByPosition(i).audioID();
+                        long profileID = mManager.getEntryByPosition(i).profileID();
+
+                        int position = i;
+
+                        mManager.deleteEntryByID(profileID);
+                        mChecked.remove(position);
+                        moreToCheck = true;
+                        break;
+                    }
+                }
+                if (i == mChecked.size()) {
+                    moreToCheck = false;
+                }
+            }
+
+            //notifyItemRemoved(position);
+            notifyDataSetChanged();
+        }
+
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View rowView = mInflater.inflate(R.layout.fragment_profilelist_listview_row, parent, false);
@@ -207,6 +235,12 @@ public class ProfileListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void deleteSelectedIDs() {
+        if (mAdapter != null) {
+            mAdapter.deleteSelectedIDs();
+        }
     }
 
     public interface OnFragmentInteractionListener {

@@ -1,7 +1,10 @@
 package edu.utrgv.cgwa.metrec;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -59,7 +62,40 @@ public class ProfileListActivity extends AppCompatActivity implements ProfileLis
                 Intent intent = new Intent(this, NewProfileActivity.class);
                 startActivity(intent);
                 return true;
+
+            case R.id.action_delete:
+                popupMenuDelete();
+                return true;
         }
         return false;
+    }
+
+    private void popupMenuDelete() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Alert!!");
+        alert.setMessage("Are you sure that you want to delete the selected records?");
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteRecords();
+                dialog.dismiss();
+            }
+        });
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+    }
+
+    private void deleteRecords() {
+        FragmentManager fm = getSupportFragmentManager();
+        ProfileListFragment frag = (ProfileListFragment) fm.findFragmentById(R.id.listfragment);
+        frag.deleteSelectedIDs();
     }
 }

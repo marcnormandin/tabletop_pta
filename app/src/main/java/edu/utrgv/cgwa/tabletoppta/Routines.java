@@ -389,7 +389,7 @@ public class Routines {
                 final int lengthCorrelation = this.mCorrelation.length;
                 rFile.writeInt(lengthCorrelation);
 
-                // Get the computation time
+                // Write the computation time
                 rFile.writeDouble(mComputationTimeSeconds);
 
                 FileChannel inChannel = rFile.getChannel();
