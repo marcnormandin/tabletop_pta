@@ -243,6 +243,12 @@ public class ProfileListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+    }
+
     public interface OnFragmentInteractionListener {
         void onDisplayProfileClicked(final long profileID);
         void onDisplayTimeSeriesClicked(final long audioID);

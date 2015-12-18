@@ -208,14 +208,16 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
         super.onAttach(context);
         try {
             mListener = (OnFragmentInteractionListener) context;
-
-            if (mAdapter != null) {
-                mAdapter.notifyDataSetChanged();
-            }
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

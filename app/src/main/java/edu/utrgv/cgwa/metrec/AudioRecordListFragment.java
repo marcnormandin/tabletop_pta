@@ -228,6 +228,12 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+    }
+
     public void deleteSelectedIDs() {
         if (mAdapter != null) {
             mAdapter.deleteSelectedIDs();
