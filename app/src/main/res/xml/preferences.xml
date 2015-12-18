@@ -2,7 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/pref_category_general">
+        android:title="@string/pref_category_general"
+        android:layout="@layout/preferences_category">
 
         <EditTextPreference
             android:key="samplerate"
@@ -14,7 +15,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Built-in Metronome">
+        android:title="Built-in Metronome"
+        android:layout="@layout/preferences_category">
 
         <EditTextPreference
             android:key="mode_a_frequency"
@@ -33,7 +35,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_category_pulseprofile">
+        android:title="@string/pref_category_pulseprofile"
+        android:layout="@layout/preferences_category">
 
         <EditTextPreference
             android:key="pulserecordingduration"
@@ -46,7 +49,8 @@
 
 
     <PreferenceCategory
-        android:title="@string/pref_category_analysis">
+        android:title="@string/pref_category_analysis"
+        android:layout="@layout/preferences_category">
 
         <EditTextPreference
             android:key="analysisrecordingdelay"

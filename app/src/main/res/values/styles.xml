@@ -10,10 +10,17 @@
     <style name="CustomToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
     </style>
 
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">5dp</item>
+        <item name="android:background">@color/accent_color</item>
+    </style>
+
     <style name="ListViewStyle" parent="android:style/Widget.ListView">
         <item name="android:background">@color/background_light</item>
-        <item name="android:divider">@color/accent_color</item>
-        <item name="android:dividerHeight">5dp</item>
+        <item name="android:preferenceCategoryStyle">@color/accent_color</item>
+        <!-- <item name="android:divider">@color/accent_color</item> -->
+        <item name="android:dividerHeight">2dp</item>
         <item name="android:drawSelectorOnTop">false</item>
         <item name="android:cacheColorHint">#00000000</item>
     </style>
