@@ -76,6 +76,34 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
             return selectedEntryIDs;
         }
 
+        public void deleteSelectedIDs() {
+            boolean moreToCheck = true;
+            while(moreToCheck) {
+                int i;
+                for (i = 0; i < mChecked.size(); i++) {
+                    if (mChecked.get(i)) {
+                        // The checked object keeps track of positions, not ids,
+                        // so we need to convert from positions to ids.
+                        // long audioID = mManager.getEntryByPosition(i).audioID();
+                        long id = mManager.getEntryByPosition(i).id();
+
+                        int position = i;
+
+                        mManager.deleteEntryByID(id);
+                        mChecked.remove(position);
+                        moreToCheck = true;
+                        break;
+                    }
+                }
+                if (i == mChecked.size()) {
+                    moreToCheck = false;
+                }
+            }
+
+            //notifyItemRemoved(position);
+            notifyDataSetChanged();
+        }
+
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View rowView = mInflater.inflate(R.layout.fragment_audiorecordlist_list_row, parent, false);
@@ -198,6 +226,12 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void deleteSelectedIDs() {
+        if (mAdapter != null) {
+            mAdapter.deleteSelectedIDs();
+        }
     }
 
     public interface OnFragmentInteractionListener {

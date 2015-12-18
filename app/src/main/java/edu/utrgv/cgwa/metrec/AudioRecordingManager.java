@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import java.io.File;
+
 public class AudioRecordingManager {
     private DbHelper mHelper = null;
     private static final String TAG = "AudioRecordingManager";
@@ -108,7 +110,19 @@ public class AudioRecordingManager {
                 filenamePrefix, filenamePCM, filenameTS, samplesPerSecond, durationInSeconds, tag);
     }
 
+    private void deleteFile(String filename) {
+        File f = new File(filename);
+        if (f.exists()) {
+            Log.d(TAG, "deleting " + f.getPath());
+            f.delete();
+        }
+    }
+
     public void deleteEntryByID(final long id) {
+        DbAudioRecordingTable.AudioRecordingEntry e = getEntryByID(id);
+        deleteFile(e.filenamePCM());
+        deleteFile(e.filenameTS());
+
         final String SQL = "DELETE FROM " + DbAudioRecordingTable.AudioRecordingEntry.TABLE_NAME
                 + " WHERE _ID = " + id;
         Log.d(TAG, "Deleting Audio Recording with _ID = " + id + " from the database.");
