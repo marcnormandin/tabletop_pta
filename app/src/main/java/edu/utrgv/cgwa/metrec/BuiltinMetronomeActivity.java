@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -71,6 +72,16 @@ public class BuiltinMetronomeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return false;
+    }
+
     private void setupSwitchFrequency(Bundle savedInstanceState) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         final double modeA = Double.parseDouble(sp.getString("mode_a_frequency", "900"));
@@ -119,7 +130,7 @@ public class BuiltinMetronomeActivity extends AppCompatActivity {
     private void setupSpinnerBPM(Bundle savedInstanceState) {
         mBPM = (Spinner) findViewById(R.id.beatsPerMinuteSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.beats_per_minute, android.R.layout.simple_spinner_item);
+                R.array.beats_per_minute, R.layout.spinner_layout);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBPM.setAdapter(adapter);
         mBPM.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {

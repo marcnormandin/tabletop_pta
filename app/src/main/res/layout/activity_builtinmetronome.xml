@@ -1,104 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:orientation="vertical"
+    android:background="@drawable/pulsar">
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/app_bar"/>
+        layout="@layout/app_bar" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linearLayout2">
+        android:layout_height="match_parent">
 
-    </LinearLayout>
-
-
-
-
-    <Switch
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Frequency"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/frequencySwitch"
-        android:checked="false"
-        android:textOn="1200 Hz"
-        android:textOff="1000 Hz"
-        android:layout_above="@+id/textVolume"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <Switch
+            android:id="@+id/frequencySwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textVolume"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:checked="false"
+            android:text="Frequency"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textOff="1000 Hz"
+            android:textOn="1200 Hz" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <SeekBar
+            android:id="@+id/volumeSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/toggleButton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:max="100"
+            android:progress="100" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/toggleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_horizontal"
+            android:onClick="onButtonToggle"
+            android:text="Start" />
 
+        <TextView
+            android:id="@+id/textVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/volumeSeekBar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="Volume (#)"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/volumeSeekBar"
-        android:progress="100"
-        android:max="100"
-        android:layout_above="@+id/toggleButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <TextView
+            android:id="@+id/textBeatsPerMinute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/frequencySwitch"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="Beats per minute (#)"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/toggleButton"
-        android:layout_gravity="center_horizontal"
-        android:onClick="onButtonToggle"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Volume (#)"
-        android:id="@+id/textVolume"
-        android:layout_above="@+id/volumeSeekBar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Beats per minute (#)"
-        android:id="@+id/textBeatsPerMinute"
-        android:layout_above="@+id/frequencySwitch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Spinner
-        android:id="@+id/beatsPerMinuteSpinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textBeatsPerMinute"
-        android:layout_toRightOf="@+id/textBeatsPerMinute"
-        android:layout_toEndOf="@+id/textBeatsPerMinute"
-        android:layout_above="@+id/frequencySwitch" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:src="@drawable/pulsar"
-        android:layout_above="@+id/frequencySwitch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <Spinner
+            android:id="@+id/beatsPerMinuteSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/frequencySwitch"
+            android:layout_alignTop="@+id/textBeatsPerMinute"
+            android:layout_toEndOf="@+id/textBeatsPerMinute"
+            android:layout_toRightOf="@+id/textBeatsPerMinute" />
+    </RelativeLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

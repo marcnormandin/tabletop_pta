@@ -101,7 +101,13 @@ public class ProfileListFragment extends Fragment {
             }
 
             //notifyItemRemoved(position);
-            notifyDataSetChanged();
+            //notifyDataSetChanged();
+            refresh();
+        }
+
+        public void refresh() {
+            mAdapter.notifyDataSetChanged();
+            mChecked = new Checked(mManager.getNumProfiles());
         }
 
         @Override
@@ -120,6 +126,7 @@ public class ProfileListFragment extends Fragment {
             holder.audioID = data.audioID();
             holder.profileID = data.profileID();
 
+            holder.recordID.setText("ID: (" + data.profileID() + ")");
             holder.date.setText(data.date());
             holder.time.setText(data.time());
             holder.bpm.setText("" + data.beatsPerMinute());
@@ -165,7 +172,7 @@ public class ProfileListFragment extends Fragment {
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView time, date, bpm, frequency;
+        public TextView time, date, bpm, frequency, recordID;
         public ImageButton buttonTimeSeries, buttonProfile;
         public CheckBox checkbox;
 
@@ -178,6 +185,7 @@ public class ProfileListFragment extends Fragment {
             date = (TextView) itemView.findViewById(R.id.listview_row_date);
             bpm  = (TextView) itemView.findViewById(R.id.listview_row_bpm);
             frequency = (TextView) itemView.findViewById(R.id.listview_row_frequency);
+            recordID = (TextView) itemView.findViewById(R.id.listview_row_recordid);
             buttonTimeSeries = (ImageButton) itemView.findViewById(R.id.listview_row_button_timeseries);
             buttonProfile = (ImageButton) itemView.findViewById(R.id.listview_row_button_profile);
             checkbox = (CheckBox) itemView.findViewById(R.id.listview_row_checkbox);
@@ -247,6 +255,12 @@ public class ProfileListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mAdapter.notifyDataSetChanged();
+    }
+
+    public void refresh() {
+        if (mAdapter != null) {
+            mAdapter.refresh();
+        }
     }
 
     public interface OnFragmentInteractionListener {

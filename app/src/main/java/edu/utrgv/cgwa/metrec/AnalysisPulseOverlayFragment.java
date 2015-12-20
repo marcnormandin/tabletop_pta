@@ -90,7 +90,7 @@ public class AnalysisPulseOverlayFragment extends Fragment {
                 final long profileID = analysisEntry.profileID();
                 ProfileManager profileManager = new ProfileManager(getActivity());
                 DbProfileTable.ProfileEntry profileEntry = profileManager.getEntryByID(profileID);
-                mPulseProfile = new ProfileModel(profileEntry.filenamePrefix()).getPulseProfile();
+                mPulseProfile = new ProfileModel(profileEntry.filenamePF()).getPulseProfile();
 
                 return null;
             }
@@ -111,9 +111,6 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         }
 
         double dt = 1.0 / mTimeSeries.getSampleRate();
-
-
-
 
         // Measured pulse time
         double measuredPulseTime = mAnalysisResult.measuredTOAs()[pulseNumber];
@@ -305,6 +302,8 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         xaxis.addLimitLine(llExpected);
         xaxis.addLimitLine(llMeasured);
 
+        float maxVisible = (float)Math.floor(0.2*mPulseProfile.ts.t.length);
+        mLineChart.setVisibleXRangeMaximum(maxVisible);
 
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
@@ -315,10 +314,10 @@ public class AnalysisPulseOverlayFragment extends Fragment {
 
         ArrayList<String> pulseArray = new ArrayList<>();
         for (int i = 0; i < mPulseTimes.length; i++) {
-            pulseArray.add( "Pulse " + (i+1) + ": " + String.format("%.2f", mPulseTimes[i]) );
+            pulseArray.add( "Pulse " + (i+1) + ": (" + String.format("%.2f", mPulseTimes[i]) + " s)" );
         }
 
-        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, pulseArray);
+        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(getActivity(), R.layout.spinner_layout, pulseArray);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mPulseSpinner.setAdapter(spinnerArrayAdapter);
 

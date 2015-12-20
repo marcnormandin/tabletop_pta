@@ -6,10 +6,12 @@ import java.io.File;
 
 import edu.utrgv.cgwa.tabletoppta.PulseProfile;
 import edu.utrgv.cgwa.tabletoppta.Routines;
+import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
-public class ProfileModel extends AudioRecordingModel {
+public class ProfileModel {
     private static final String TAG = "ProfileModel";
     private PulseProfile mPulseProfile = null;
+    private String mFilenamePF;
     private ProfileProgressListener mProfileProgressListener = null;
 
     public interface ProfileProgressListener {
@@ -21,12 +23,12 @@ public class ProfileModel extends AudioRecordingModel {
         mProfileProgressListener = listener;
     }
 
-    public ProfileModel(String filenamePrefix) {
-        super(filenamePrefix);
+    public ProfileModel(String filenamePF) {
+        mFilenamePF = filenamePF;
     }
 
     private String getFilenamePF() {
-        return getFilenamePrefix() + ".pf";
+        return mFilenamePF;
     }
 
     public boolean hasProfile() {
@@ -53,20 +55,19 @@ public class ProfileModel extends AudioRecordingModel {
         }
     }
 
+    protected void deleteFile(String filename) {
+        File f = new File(filename);
+        if (f.exists()) {
+            Log.d(TAG, "deleting " + f.getPath());
+            f.delete();
+        }
+    }
 
-    @Override
     public void clearAll() {
-        super.clearAll();
         deleteFile(getFilenamePF());
     }
 
-    public void newRecording(int sampleRate, double desiredRuntime, double beatsPerMinute) {
-        super.newRecording(sampleRate, desiredRuntime);
-
-        newProfile(beatsPerMinute);
-    }
-
-    private void newProfile(double beatsPerMinute) {
+    public void newProfile(double beatsPerMinute, TimeSeries ts) {
         Log.d(TAG, "Calculating profile with beats-per-minute = " + beatsPerMinute);
 
         if (mProfileProgressListener != null) {
@@ -74,7 +75,7 @@ public class ProfileModel extends AudioRecordingModel {
         }
 
         // Get the folded time series
-        mPulseProfile = Routines.calpulseprofile(getTimeSeries(), beatsPerMinute);
+        mPulseProfile = Routines.calpulseprofile(ts, beatsPerMinute);
         mPulseProfile.saveToFile(getFilenamePF());
 
         if (mProfileProgressListener != null) {

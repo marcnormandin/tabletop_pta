@@ -10,10 +10,20 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:text="[ID]"
+        android:paddingRight="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/listview_row_recordid" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="ERROR"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/listview_row_time" />
 
     <TextView
@@ -22,14 +32,15 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:text="ERROR"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/listview_row_date" />
 
     <ImageButton
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:paddingRight="5dp"
         android:scaleType="fitXY"
-        android:layout_alignParentLeft="true"
+        android:layout_toRightOf="@id/listview_row_recordid"
         android:layout_centerVertical="true"
         android:src="@drawable/icon_timeseries"
         android:background="@null"
@@ -49,7 +60,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="2dp"
         android:layout_alignParentBottom="true"
         android:background="@color/accent_color"
         android:id="@+id/linearLayout"></LinearLayout>
@@ -57,12 +68,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="[AUDIO TYPE]"
         android:textColor="#0000FF"
         android:id="@+id/audiotype"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_toRightOf="@id/listview_row_button_timeseries" />
 
 
 </RelativeLayout>

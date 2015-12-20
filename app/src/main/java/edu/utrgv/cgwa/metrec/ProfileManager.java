@@ -26,7 +26,7 @@ public class ProfileManager {
     }
 
     public long addEntry(final long audioRecordID, final String date, final String time,
-                         final String filenamePrefix,
+                         final String filenamePF,
                          final int beatsPerMinute, final double computedPeriod,
                          final double frequency) {
 
@@ -35,7 +35,7 @@ public class ProfileManager {
         values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_AUDIO_RECORDING_TABLE_ID, audioRecordID);
         values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_DATE, date);
         values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_TIME, time);
-        values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_FILENAME_PREFIX, filenamePrefix);
+        values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_FILENAME_PF, filenamePF);
         values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_BEATS_PER_MINUTE, beatsPerMinute);
         values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_COMPUTED_PERIOD, computedPeriod);
         values.put(DbProfileTable.ProfileEntry.COLUMN_NAME_FREQUENCY, frequency);
@@ -82,8 +82,8 @@ public class ProfileManager {
         int timeIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_TIME);
         String timeString = cursor.getString(timeIndex);
 
-        int filenamePrefixIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_FILENAME_PREFIX);
-        String filenamePrefix = cursor.getString(filenamePrefixIndex);
+        int filenamePFIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_FILENAME_PF);
+        String filenamePF = cursor.getString(filenamePFIndex);
 
         int bpmIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_BEATS_PER_MINUTE);
         int bpm = cursor.getInt(bpmIndex);
@@ -94,7 +94,7 @@ public class ProfileManager {
         int frequencyIndex = cursor.getColumnIndex(DbProfileTable.ProfileEntry.COLUMN_NAME_FREQUENCY);
         double frequency = cursor.getDouble(frequencyIndex);
 
-        return new DbProfileTable.ProfileEntry(profileID, audioID, dateString, timeString, filenamePrefix, bpm,
+        return new DbProfileTable.ProfileEntry(profileID, audioID, dateString, timeString, filenamePF, bpm,
                 computedPeriod, frequency);
     }
 
@@ -108,7 +108,7 @@ public class ProfileManager {
 
     public void deleteEntryByID(long profileID) {
         DbProfileTable.ProfileEntry e = getEntryByID(profileID);
-        deleteFile(e.filenamePrefix() + ".pf");
+        deleteFile(e.filenamePF());
 
         final String SQL = "DELETE FROM " + DbProfileTable.ProfileEntry.TABLE_NAME
                 + " WHERE _ID = " + profileID;

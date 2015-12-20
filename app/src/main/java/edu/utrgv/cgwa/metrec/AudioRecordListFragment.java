@@ -101,7 +101,7 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
             }
 
             //notifyItemRemoved(position);
-            notifyDataSetChanged();
+            refresh();
         }
 
         @Override
@@ -123,6 +123,8 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
             holder.time.setText(data.time());
 
             holder.audioType.setText(data.tag());
+
+            holder.recordID.setText("ID: (" + data.id() + ")");
 
             holder.buttonTimeSeries.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -148,6 +150,11 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
             return mManager.getNumRecordings();
         }
 
+        public void refresh() {
+            mAdapter.notifyDataSetChanged();
+            mChecked = new Checked(mManager.getNumRecordings());
+        }
+
         /*
         public void deleteProfile(int position, long profileID) {
             mManager.deleteEntryByID(profileID);
@@ -158,7 +165,7 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView time, date, audioType;
+        public TextView time, date, audioType, recordID;
         public ImageButton buttonTimeSeries;
         public CheckBox checkbox;
 
@@ -170,6 +177,7 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
             time = (TextView) itemView.findViewById(R.id.listview_row_time);
             date = (TextView) itemView.findViewById(R.id.listview_row_date);
             audioType = (TextView) itemView.findViewById(R.id.audiotype);
+            recordID = (TextView) itemView.findViewById(R.id.listview_row_recordid);
 
             buttonTimeSeries = (ImageButton) itemView.findViewById(R.id.listview_row_button_timeseries);
             checkbox = (CheckBox) itemView.findViewById(R.id.listview_row_checkbox);
@@ -231,7 +239,13 @@ public class AudioRecordListFragment extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mAdapter.notifyDataSetChanged();
+        refresh();
+    }
+
+    public void refresh() {
+        if (mAdapter != null) {
+            mAdapter.refresh();
+        }
     }
 
     public void deleteSelectedIDs() {

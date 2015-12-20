@@ -29,7 +29,7 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity imple
 
     @Override
     public void onCheckboxChanged(final int position, final long analysisID, final boolean isChecked) {
-        Toast.makeText(this, "Position (" + position + "), Analysis ID (" + analysisID + "),  checked = " + isChecked, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Position (" + position + "), Analysis ID (" + analysisID + "),  checked = " + isChecked, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -57,6 +57,9 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity imple
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.action_new:
                 Intent intent = new Intent(this, SingleMetronomeAnalysisActivity.class);
                 startActivity(intent);

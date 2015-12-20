@@ -34,11 +34,13 @@ public class ViewProfileActivity extends AppCompatActivity {
             Log.d(TAG, "Attempt to view a profile, but no profile ID given in intent.");
         } else {
             Log.d(TAG, "Adding profile fragment");
+            /*
             ProfileFragment frag = ProfileFragment.newInstance(mProfileID);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, frag);
             ft.commit();
+            */
         }
 
         ProfileManager manager = new ProfileManager(this);
@@ -70,6 +72,9 @@ public class ViewProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.action_send_screenshot:
                 Screenshot.send(this);
                 return true;

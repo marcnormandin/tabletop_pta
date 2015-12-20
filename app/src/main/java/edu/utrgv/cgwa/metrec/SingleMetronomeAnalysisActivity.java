@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -58,6 +59,16 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_PROFILE_REQUEST) {
             if (resultCode == RESULT_OK) {
@@ -96,108 +107,10 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
         startActivityForResult(pickAudioRecordIntent, PICK_AUDIO_RECORD_REQUEST);
     }
 
-    // Fixme
-    // This is hackish
-    private String getFilenamePrefix() {
-        String uniquePrefix = new SimpleDateFormat("MM-dd-yyyy-hh-mm-ss").format(new Date());
-        String commonPrefix = "/metronome_";
-        String filesDirectory = getFilesDir() + "";
-        String filenamePrefix = filesDirectory + commonPrefix + uniquePrefix;
-
-        return filenamePrefix;
-    }
-
     private void loadAudioRecording() {
         AudioRecordingManager manager = new AudioRecordingManager(this);
         DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
         mAudioRecording = new AudioRecordingModel(entry.filenamePrefix());
-    }
-
-    public void buttonNewRecording(View v) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        final int sampleRate = Integer.parseInt(sp.getString("samplerate", "8000"));
-
-        // Fixme The duration should be separate from the pulse profile duration
-        final double desiredRuntime = Double.parseDouble(sp.getString("pulserecordingduration", "8.0"));
-
-        mAudioRecording = new AudioRecordingModel(getFilenamePrefix());
-
-        class NewRecordingAsync extends AsyncTask<Void, String, Void>
-                implements AudioRecordingModel.ProgressListener {
-            private ProgressDialog mProgress = null;
-            private Context mContext;
-
-            public NewRecordingAsync(Context context) {
-                mContext = context;
-            }
-
-            @Override
-            public void onRecordingStarted() {
-                publishProgress("Recording audio...");
-            }
-
-            @Override
-            public void onRecordingFinished() {
-                publishProgress("Recording audio has ended!");
-            }
-
-            @Override
-            public void onTimeSeriesStart() {
-                publishProgress("Processing time series...");
-            }
-
-            @Override
-            public void onTimeSeriesFinished() {
-                publishProgress("Time series processed!");
-            }
-
-            @Override
-            protected void onPreExecute() {
-                mProgress = ProgressDialog.show(mContext, "Working...", "Please wait");
-
-                Button buttonRecord  = (Button) findViewById(R.id.buttonNewRecording);
-                buttonRecord.setText("Recording audio...");
-                buttonRecord.setEnabled(false);
-
-                mAudioRecording.setProgressListener(this);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                mAudioRecording.newRecording(sampleRate, desiredRuntime);
-
-                publishProgress("Saving times series to the database...");
-
-                Date date = new Date();
-                String dateString = new SimpleDateFormat("MM-dd-yyyy").format(date);
-                String timeString = new SimpleDateFormat("hh:mm").format(date);
-
-                // Save the time series to the database
-                AudioRecordingManager audioManager = new AudioRecordingManager(mContext);
-                mAudioID = audioManager.addEntry(dateString, timeString, mAudioRecording.getFilenamePrefix(),
-                        mAudioRecording.getFilenamePCM(), mAudioRecording.getFilenameTS(), sampleRate, desiredRuntime,
-                        AudioRecordingManager.VALUE_NAME_TAG_SINGLE_METRONOME);
-
-                publishProgress("All results have been saved to database!");
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(String... values) {
-                mProgress.setMessage(values[0]);
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                Button buttonRecord  = (Button) findViewById(R.id.buttonNewRecording);
-                buttonRecord.setText("Create New Recording");
-                buttonRecord.setEnabled(true);
-
-                mProgress.dismiss();
-            }
-        }
-
-        new NewRecordingAsync(this).execute();
     }
 
     private void updateGUI() {
@@ -222,9 +135,20 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
     public PulseProfile getPulseProfile() {
         ProfileManager manager = new ProfileManager(this);
         DbProfileTable.ProfileEntry entry = manager.getEntryByID(mProfileID);
-        ProfileModel model = new ProfileModel(entry.filenamePrefix());
+        ProfileModel model = new ProfileModel(entry.filenamePF());
         // Fixme We should load the pulse profile directly from file using the stored filename
         return model.getPulseProfile();
+    }
+
+    // Fixme
+    // This is hackish
+    private String getFilenamePrefix() {
+        String uniquePrefix = new SimpleDateFormat("MM-dd-yyyy-hh-mm-ss").format(new Date());
+        String commonPrefix = "/metronome_";
+        String filesDirectory = getFilesDir() + "";
+        String filenamePrefix = filesDirectory + commonPrefix + uniquePrefix;
+
+        return filenamePrefix;
     }
 
     // This is called when both an audio record and a pulse profile have been selected

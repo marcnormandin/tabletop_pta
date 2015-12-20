@@ -91,6 +91,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
 
             holder.date.setText(entry.date());
             holder.time.setText(entry.time());
+            holder.recordID.setText("ID: (" + entry.id() + ")");
 
             // Fixme This causes a null-pointer exception
             //holder.checkbox.setChecked( mChecked.get(position) );
@@ -151,7 +152,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView time, date;
+        public TextView time, date, recordID;
         public CheckBox checkbox;
         public Button viewPulses, viewResiduals;
         public long analysisID;
@@ -161,6 +162,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
 
             time = (TextView) itemView.findViewById(R.id.listview_row_time);
             date = (TextView) itemView.findViewById(R.id.listview_row_date);
+            recordID = (TextView) itemView.findViewById(R.id.listview_row_recordid);
             checkbox = (CheckBox) itemView.findViewById(R.id.listview_row_checkbox);
             viewPulses = (Button) itemView.findViewById(R.id.buttonViewPulses);
             viewResiduals = (Button) itemView.findViewById(R.id.buttonViewResiduals);

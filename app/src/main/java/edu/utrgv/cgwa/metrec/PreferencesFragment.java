@@ -1,6 +1,8 @@
 package edu.utrgv.cgwa.metrec;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -17,8 +19,25 @@ public class PreferencesFragment extends PreferenceFragment {
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         // Check if the user wants to restore the default settings
         if (preference.getKey().equalsIgnoreCase("restoredefaultsettings")) {
-            deleteData();
-            resetToDefault();
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle("WARNING!!!");
+                alert.setMessage("Are you sure that you restore to default settings?");
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        resetToDefault();
+                        dialog.dismiss();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
             return true;
         } else {
             return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -43,28 +62,6 @@ public class PreferencesFragment extends PreferenceFragment {
         PreferenceManager.setDefaultValues(context, R.xml.preferences, true);
         setPreferenceScreen(null);
         addPreferencesFromResource(R.xml.preferences);
-    }
-
-    private void deleteData() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-        // Delete the first metronome
-        String prefix = sp.getString("metronome_one_filename_prefix", "error");
-        if (!prefix.equalsIgnoreCase("error")) {
-            ProfileModel model = new ProfileModel(prefix);
-            model.clearAll();
-        }else {
-            Log.d(TAG, "ERROR! Metronome one prefix not found in settings.");
-        }
-
-        // Delete the second metronome
-        String prefix2 = sp.getString("metronome_two_filename_prefix", "error");
-        if (!prefix2.equalsIgnoreCase("error")) {
-            ProfileModel model = new ProfileModel(prefix);
-            model.clearAll();
-        } else {
-            Log.d(TAG, "ERROR! Metronome two prefix not found in settings.");
-        }
     }
 }
 
