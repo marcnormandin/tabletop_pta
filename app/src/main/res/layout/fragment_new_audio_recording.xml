@@ -2,24 +2,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="20dp"
     tools:context="edu.utrgv.cgwa.metrec.NewAudioRecordingFragment"
     android:background="@color/primary_color_dark">
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:text="Duration: "
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:orientation="horizontal"
+        android:background="@color/accent_color"
+        android:id="@+id/titleBar">
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/textTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="fill_horizontal"
+            android:text="Add a new recording"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/textDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/textView6"
-        android:text="[Duration]"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_below="@id/titleBar"
+        android:layout_centerHorizontal="true"
+        android:text="TAG"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
     <Spinner
@@ -27,6 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textDuration"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_centerHorizontal="true" />
 
     <LinearLayout

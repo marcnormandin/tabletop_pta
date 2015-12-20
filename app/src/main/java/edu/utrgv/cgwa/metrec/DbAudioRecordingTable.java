@@ -14,7 +14,7 @@ public class DbAudioRecordingTable {
 
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + AudioRecordingEntry.TABLE_NAME + " (" +
-                    AudioRecordingEntry._ID + " INTEGER PRIMARY KEY, " +
+                    AudioRecordingEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     AudioRecordingEntry.COLUMN_NAME_DATE + TEXT_TYPE + COMMA_SEP +
                     AudioRecordingEntry.COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP +
                     AudioRecordingEntry.COLUMN_NAME_FILENAME_PREFIX + TEXT_TYPE + COMMA_SEP +

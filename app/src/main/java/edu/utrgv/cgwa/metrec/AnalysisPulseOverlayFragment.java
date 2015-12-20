@@ -83,8 +83,13 @@ public class AnalysisPulseOverlayFragment extends Fragment {
                 // Get the audio record
                 final long audioID = analysisEntry.audioID();
                 AudioRecordingManager audioManager = new AudioRecordingManager(getActivity());
-                DbAudioRecordingTable.AudioRecordingEntry audioEntry = audioManager.getEntryByID(audioID);
-                mTimeSeries = new AudioRecordingModel(audioEntry.filenamePrefix()).getTimeSeries();
+                try {
+                    DbAudioRecordingTable.AudioRecordingEntry audioEntry = audioManager.getEntryByID(audioID);
+                    mTimeSeries = new AudioRecordingModel(audioEntry.filenamePrefix()).getTimeSeries();
+                }
+                catch (AudioRecordingManager.InvalidRecordException e) {
+                    // Fixme
+                }
 
                 // Get the pulse profile record
                 final long profileID = analysisEntry.profileID();
@@ -106,6 +111,9 @@ public class AnalysisPulseOverlayFragment extends Fragment {
     }
 
     public void displayPulse(final int pulseNumber) {
+        // Fixme
+        // This function should still display the location
+        // of the pulses, even if the audio has been deleted.
         if(mTimeSeries == null) {
             return;
         }

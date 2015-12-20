@@ -44,9 +44,18 @@ public class ProfileListActivity extends AppCompatActivity
 
     @Override
     public void onDisplayTimeSeriesClicked(final long audioID) {
-        Intent intent = new Intent(this, ViewTimeSeriesActivity.class);
-        intent.putExtra(TimeSeriesFragment.ARG_AUDIOID, audioID);
-        startActivity(intent);
+        // Make sure that the audio hasn't been deleted
+        // before attempting to display it.
+        AudioRecordingManager am = new AudioRecordingManager(this);
+        try {
+            DbAudioRecordingTable.AudioRecordingEntry e = am.getEntryByID(audioID);
+            Intent intent = new Intent(this, ViewTimeSeriesActivity.class);
+            intent.putExtra(TimeSeriesFragment.ARG_AUDIOID, audioID);
+            startActivity(intent);
+        }
+        catch (AudioRecordingManager.InvalidRecordException e) {
+            Toast.makeText(this, "The audio time series does not exist.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

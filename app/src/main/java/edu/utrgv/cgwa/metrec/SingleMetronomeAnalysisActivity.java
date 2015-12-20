@@ -109,8 +109,14 @@ public class SingleMetronomeAnalysisActivity extends AppCompatActivity {
 
     private void loadAudioRecording() {
         AudioRecordingManager manager = new AudioRecordingManager(this);
-        DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
-        mAudioRecording = new AudioRecordingModel(entry.filenamePrefix());
+        try {
+            DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
+            mAudioRecording = new AudioRecordingModel(entry.filenamePrefix());
+        }
+        catch (AudioRecordingManager.InvalidRecordException e) {
+            mAudioID = -1;
+            Toast.makeText(this, "Error: Unable to load audio recording.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void updateGUI() {

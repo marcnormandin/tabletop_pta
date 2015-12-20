@@ -30,8 +30,13 @@ public class TimeSeriesFragmentPresenter {
         mAudioID = audioID;
 
         AudioRecordingManager manager = new AudioRecordingManager(frag.getActivity());
-        mEntry = manager.getEntryByID(mAudioID);
-        mAudioRecording = new AudioRecordingModel(mEntry.filenamePrefix());
+        try {
+            mEntry = manager.getEntryByID(mAudioID);
+            mAudioRecording = new AudioRecordingModel(mEntry.filenamePrefix());
+        }
+        catch (AudioRecordingManager.InvalidRecordException e) {
+            Log.d(TAG, "Error: Unable to load audio record.");
+        }
 
         Log.d(TAG, "Timeseries fragment presenter created for: filenamePrefix = " + mEntry.filenamePrefix());
     }

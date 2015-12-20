@@ -57,19 +57,25 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
 
 
         AudioRecordingManager manager = new AudioRecordingManager(this);
-        DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
+        try {
+            DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
 
-        TextView date = (TextView) findViewById(R.id.date);
-        date.setText("Date: " + entry.date());
+            TextView date = (TextView) findViewById(R.id.date);
+            date.setText("Date: " + entry.date());
 
-        TextView time = (TextView) findViewById(R.id.time);
-        time.setText("Time: " + entry.time());
+            TextView time = (TextView) findViewById(R.id.time);
+            time.setText("Time: " + entry.time());
 
-        TextView samplesPerSecond = (TextView) findViewById(R.id.samplespersecond);
-        samplesPerSecond.setText("Samples per second: " + entry.samplesPerSecond());
+            TextView samplesPerSecond = (TextView) findViewById(R.id.samplespersecond);
+            samplesPerSecond.setText("Samples per second: " + entry.samplesPerSecond());
 
-        TextView durationInSeconds = (TextView) findViewById(R.id.durationinseconds);
-        durationInSeconds.setText("Duration (s): " + entry.durationInSeconds());
+            TextView durationInSeconds = (TextView) findViewById(R.id.durationinseconds);
+            durationInSeconds.setText("Duration (s): " + entry.durationInSeconds());
+        }
+        catch (AudioRecordingManager.InvalidRecordException e) {
+            Log.d(TAG, "Error: Unable to load audio record.");
+            Toast.makeText(this, "Error: Unable to load audio record.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -107,19 +113,24 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
 
         // Get the PCM filename
         AudioRecordingManager manager = new AudioRecordingManager(this);
-        DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
-        String fullPathAndFilename = entry.filenamePCM();
-        int n = fullPathAndFilename.lastIndexOf("/");
-        String filename = fullPathAndFilename.substring(n);
-        File file = new File(this.getFilesDir(), filename);
-        Log.d(TAG, "Sharing audio file: " + file);
+        try {
+            DbAudioRecordingTable.AudioRecordingEntry entry = manager.getEntryByID(mAudioID);
+            String fullPathAndFilename = entry.filenamePCM();
+            int n = fullPathAndFilename.lastIndexOf("/");
+            String filename = fullPathAndFilename.substring(n);
+            File file = new File(this.getFilesDir(), filename);
+            Log.d(TAG, "Sharing audio file: " + file);
 
-        Uri uri = FileProvider.getUriForFile(this, "edu.utrgv.cgwa.metrec.fileprovider", file);
+            Uri uri = FileProvider.getUriForFile(this, "edu.utrgv.cgwa.metrec.fileprovider", file);
 
 
-        // Add it to the intent
-        ei.putExtra(Intent.EXTRA_STREAM, uri);
+            // Add it to the intent
+            ei.putExtra(Intent.EXTRA_STREAM, uri);
 
-        startActivity(Intent.createChooser(ei, "Send audio recording..."));
+            startActivity(Intent.createChooser(ei, "Send audio recording..."));
+        }
+        catch (AudioRecordingManager.InvalidRecordException e) {
+            Toast.makeText(this, "Error: Unable to load audio record.", Toast.LENGTH_LONG).show();
+        }
     }
 }

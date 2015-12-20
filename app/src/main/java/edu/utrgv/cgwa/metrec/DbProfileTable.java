@@ -12,7 +12,7 @@ public class DbProfileTable {
 
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + ProfileEntry.TABLE_NAME + " (" +
-                    ProfileEntry._ID + " INTEGER PRIMARY KEY, " +
+                    ProfileEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     ProfileEntry.COLUMN_NAME_AUDIO_RECORDING_TABLE_ID + " INTEGER" + COMMA_SEP +
                     ProfileEntry.COLUMN_NAME_DATE + TEXT_TYPE + COMMA_SEP +
                     ProfileEntry.COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP +

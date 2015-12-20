@@ -199,21 +199,26 @@ public class NewProfileFragment extends Fragment implements View.OnClickListener
 
                 // Load the audio time series from the database
                 AudioRecordingManager audioManager = new AudioRecordingManager(getContext());
-                DbAudioRecordingTable.AudioRecordingEntry audioEntry = audioManager.getEntryByID(audioID);
-                AudioRecordingModel audioModel = new AudioRecordingModel(audioEntry.filenamePrefix());
+                try {
+                    DbAudioRecordingTable.AudioRecordingEntry audioEntry = audioManager.getEntryByID(audioID);
+                    AudioRecordingModel audioModel = new AudioRecordingModel(audioEntry.filenamePrefix());
 
-                // Create a new profile model based on the audio time series
-                ProfileModel profileModel = new ProfileModel(filenamePF);
-                profileModel.setProfileProgressListener(this);
-                profileModel.newProfile(mBeatsPerMinute, audioModel.getTimeSeries());
-                PulseProfile pulse = profileModel.getPulseProfile();
+                    // Create a new profile model based on the audio time series
+                    ProfileModel profileModel = new ProfileModel(filenamePF);
+                    profileModel.setProfileProgressListener(this);
+                    profileModel.newProfile(mBeatsPerMinute, audioModel.getTimeSeries());
+                    PulseProfile pulse = profileModel.getPulseProfile();
 
-                // Save the profile to the database
-                ProfileManager profileManager = new ProfileManager(getContext());
-                profileManager.addEntry(audioID, dateString, timeString, filenamePF,
-                        (int) pulse.bpm, pulse.T, mFrequency);
+                    // Save the profile to the database
+                    ProfileManager profileManager = new ProfileManager(getContext());
+                    profileManager.addEntry(audioID, dateString, timeString, filenamePF,
+                            (int) pulse.bpm, pulse.T, mFrequency);
 
-                publishProgress("All results have been saved to database!");
+                    publishProgress("All results have been saved to database!");
+                }
+                catch (AudioRecordingManager.InvalidRecordException e) {
+                    Toast.makeText(getActivity(), "Error: Unable to load audio time series", Toast.LENGTH_LONG).show();
+                }
 
                 return null;
             }

@@ -19,6 +19,13 @@ public class AudioRecordingManager {
         mHelper = new DbHelper(context);
     }
 
+    public static class InvalidRecordException extends Exception  {
+
+        public InvalidRecordException(String msg) {
+            super(msg);
+        }
+    }
+
     public int getNumRecordings() {
         final String SQL = "SELECT Count(*) FROM " + DbAudioRecordingTable.AudioRecordingEntry.TABLE_NAME;
         Cursor cursor = mHelper.getReadableDatabase().rawQuery(SQL, null);
@@ -67,9 +74,14 @@ public class AudioRecordingManager {
         return entry;
     }
 
-    public DbAudioRecordingTable.AudioRecordingEntry getEntryByID(final long id) {
+    public DbAudioRecordingTable.AudioRecordingEntry getEntryByID(final long id) throws InvalidRecordException {
         final String SQL = "SELECT * FROM " + DbAudioRecordingTable.AudioRecordingEntry.TABLE_NAME + " WHERE _ID = " + id;
         Cursor cursor = mHelper.getReadableDatabase().rawQuery(SQL, null);
+
+        if (cursor.getCount() == 0) {
+            throw new InvalidRecordException("invalid record id");
+        }
+
         cursor.moveToFirst();
 
         DbAudioRecordingTable.AudioRecordingEntry entry = getEntry(cursor);
@@ -119,14 +131,20 @@ public class AudioRecordingManager {
     }
 
     public void deleteEntryByID(final long id) {
-        DbAudioRecordingTable.AudioRecordingEntry e = getEntryByID(id);
-        deleteFile(e.filenamePCM());
-        deleteFile(e.filenameTS());
+        try {
+            DbAudioRecordingTable.AudioRecordingEntry e = getEntryByID(id);
+            deleteFile(e.filenamePCM());
+            deleteFile(e.filenameTS());
 
-        final String SQL = "DELETE FROM " + DbAudioRecordingTable.AudioRecordingEntry.TABLE_NAME
-                + " WHERE _ID = " + id;
-        Log.d(TAG, "Deleting Audio Recording with _ID = " + id + " from the database.");
+            final String SQL = "DELETE FROM " + DbAudioRecordingTable.AudioRecordingEntry.TABLE_NAME
+                    + " WHERE _ID = " + id;
+            Log.d(TAG, "Deleting Audio Recording with _ID = " + id + " from the database.");
 
-        mHelper.getWritableDatabase().execSQL(SQL);
+            mHelper.getWritableDatabase().execSQL(SQL);
+        }
+        catch (InvalidRecordException e) {
+            Log.d(TAG, "Error: Attempt to delete a record that does not exist.");
+        }
+
     }
 }

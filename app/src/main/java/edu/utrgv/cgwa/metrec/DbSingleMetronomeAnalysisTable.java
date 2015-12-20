@@ -13,7 +13,7 @@ public class DbSingleMetronomeAnalysisTable {
 
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + Entry.TABLE_NAME + " (" +
-                    Entry._ID + " INTEGER PRIMARY KEY, " +
+                    Entry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     Entry.COLUMN_NAME_AUDIO_ID + TEXT_TYPE + COMMA_SEP +
                     Entry.COLUMN_NAME_PROFILE_ID + TEXT_TYPE + COMMA_SEP +
                     Entry.COLUMN_NAME_DATE + TEXT_TYPE + COMMA_SEP +
