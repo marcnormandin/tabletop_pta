@@ -54,6 +54,6 @@ public class SelectAudioRecordActivity extends AppCompatActivity implements Audi
 
     @Override
     public void onCheckboxChanged(int position, long audioID, boolean isChecked) {
-        Toast.makeText(this, "Audio record (" + audioID + ") changed.", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Audio record (" + audioID + ") changed.", Toast.LENGTH_LONG).show();
     }
 }

@@ -2,65 +2,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
     android:background="@color/primary_color_dark"
     android:orientation="vertical"
-    android:layout_margin="5dp"
-    tools:context="edu.utrgv.cgwa.metrec.NewProfileFragment">
+    tools:context="edu.utrgv.cgwa.metrec.NewSingleAnalysisFragment">
 
     <!-- Title bar -->
     <LinearLayout
+        android:id="@+id/containerTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/accent_color"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:id="@+id/containerTitle">
+        android:paddingRight="4dp">
 
         <TextView
+            android:id="@+id/textView5"
+            style="@style/FragmentTitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="Compute profile"
-            style="@style/FragmentTitleText"
-            android:id="@+id/textView5" />
+            android:text="New single analysis" />
 
     </LinearLayout>
 
-    <Switch
-        android:id="@+id/frequencySwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        style="@style/FragmentWidgetText"
-        android:text="Mode" />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:id="@+id/beatsPerMinuteContainer">
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/FragmentWidgetText"
-            android:layout_alignParentLeft="true"
-            android:text="Beats per minute" />
+        android:background="@color/primary_color"
+        android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/beatsPerMinuteSpinner"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/buttonSelectAudioRecord"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_toRightOf="@id/textView3" />
+            android:layout_weight="1"
+            android:text="Select Audio" />
 
-    </RelativeLayout>
+        <Button
+            android:id="@+id/buttonSelectProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Select Profile" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,15 +63,13 @@
             android:text="Cancel" />
 
         <Button
-            android:id="@+id/buttonSelectAudioRecord"
-            android:layout_weight="1"
+            android:id="@+id/buttonCompute"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select" />
-
+            android:layout_weight="1"
+            android:text="Compute" />
 
     </LinearLayout>
-
 
 
 </LinearLayout>

@@ -3,7 +3,9 @@ package edu.utrgv.cgwa.metrec;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,8 +15,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.app.AlertDialog;
 
-public class SingleMetronomeAnalysisListActivity extends AppCompatActivity implements SingleMetronomeAnalysisListFragment.OnFragmentInteractionListener {
+public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
+        implements SingleMetronomeAnalysisListFragment.OnFragmentInteractionListener,
+        NewSingleAnalysisFragment.NewSingleAnalysisFragmentListener {
+
     private Toolbar mToolbar;
+
+    static public final int PICK_AUDIO_RECORD_REQUEST = 1;  // The request code
+    static public final int PICK_PROFILE_RECORD_REQUEST = 2;  // The request code
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +69,9 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity imple
                 finish();
                 return true;
             case R.id.action_new:
-                Intent intent = new Intent(this, SingleMetronomeAnalysisActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(this, SingleMetronomeAnalysisActivity.class);
+                //startActivity(intent);
+                actionNewSingleAnalysis();
                 return true;
 
             case R.id.action_delete:
@@ -108,5 +117,92 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity imple
         FragmentManager fm = getSupportFragmentManager();
         SingleMetronomeAnalysisListFragment frag = (SingleMetronomeAnalysisListFragment) fm.findFragmentById(R.id.listfragment);
         frag.deleteSelectedIDs();
+    }
+
+    private void actionNewSingleAnalysis() {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        NewSingleAnalysisFragment frag = new NewSingleAnalysisFragment();
+        ft.replace(R.id.newAnalysisFragmentContainer, frag, "analysisFragment");
+        ft.commit();
+    }
+
+    @Override
+    public void onCancel() {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+        ft.remove(frag);
+        ft.commit();
+    }
+
+    @Override
+    public void onSelectAudioRecord() {
+        Intent intent = new Intent(this, SelectAudioRecordActivity.class);
+        startActivityForResult(intent, PICK_AUDIO_RECORD_REQUEST);
+    }
+
+    @Override
+    public void onSelectProfile() {
+        Intent intent = new Intent(this, SelectProfilesActivity.class);
+        startActivityForResult(intent, PICK_PROFILE_RECORD_REQUEST);
+    }
+
+    @Override
+    public void onNewSingleAnalysisCreated(final long audioID) {
+        Toast.makeText(this, "NEW ANALYSIS RECORD (" + audioID + ") CREATED!", Toast.LENGTH_LONG).show();
+
+        // Remove the "new analysis" fragment
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+        ft.remove(frag);
+        ft.commit();
+
+        // Update the list fragment
+        SingleMetronomeAnalysisListFragment list = (SingleMetronomeAnalysisListFragment)
+                fm.findFragmentById(R.id.listfragment);
+        list.refresh();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_PROFILE_RECORD_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                long[] ids = data.getLongArrayExtra(SelectProfilesActivity.RESULT_SELECTED_PROFILES);
+
+                if (ids.length != 1) {
+                    Toast.makeText(this, "SELECT ONLY ONE PROFILE!", Toast.LENGTH_LONG).show();
+                } else {
+                    final long profileID = ids[0];
+
+                    FragmentManager fm = getSupportFragmentManager();
+                    NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+                    if (frag.loadProfileRecord(profileID)) {
+                        Toast.makeText(this, "Profile record loaded successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Unable to load the selected profile record.", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }
+        } else if (requestCode == PICK_AUDIO_RECORD_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                long[] ids = data.getLongArrayExtra(SelectAudioRecordActivity.RESULT_SELECTED_AUDIO_RECORDS);
+                if (ids.length != 1) {
+                    Toast.makeText(this, "SELECT ONLY ONE AUDIO RECORD!", Toast.LENGTH_LONG).show();
+                } else {
+                    final long audioID = ids[0];
+
+                    FragmentManager fm = getSupportFragmentManager();
+                    NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+                    if (frag.loadAudioRecord(audioID)) {
+                        Toast.makeText(this, "Audio record loaded successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Unable to load the selected audio record.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        }
     }
 }

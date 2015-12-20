@@ -94,7 +94,7 @@
         </activity>
         <activity
             android:name=".AudioRecordListActivity"
-            android:label="Audio Recordings" >
+            android:label="Recordings" >
         </activity>
         <activity
             android:name=".SelectAudioRecordActivity"

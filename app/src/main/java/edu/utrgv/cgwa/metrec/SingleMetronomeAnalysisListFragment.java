@@ -147,7 +147,13 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
             }
 
             //notifyItemRemoved(position);
-            notifyDataSetChanged();
+            //notifyDataSetChanged();
+            refresh();
+        }
+
+        public void refresh() {
+            mAdapter.notifyDataSetChanged();
+            mChecked = new Checked(mManager.getNumRecords());
         }
     }
 
@@ -226,6 +232,12 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void refresh() {
+        if (mAdapter != null) {
+            mAdapter.refresh();
+        }
     }
 
     public interface OnFragmentInteractionListener {
