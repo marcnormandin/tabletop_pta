@@ -38,7 +38,7 @@ public class ProfileListActivity extends AppCompatActivity
     @Override
     public void onDisplayProfileClicked(final long profileID) {
         Intent intent = new Intent(this, ViewProfileActivity.class);
-        //intent.putExtra(ProfileFragment.ARG_PROFILEID, profileID);
+        intent.putExtra(ProfileFragment.ARG_PROFILEID, profileID);
         startActivity(intent);
     }
 
