@@ -1,14 +1,17 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:layout_margin="5dp"
+    android:orientation="vertical"
     tools:context="edu.utrgv.cgwa.metrec.NewAudioRecordingFragment"
     android:background="@color/primary_color_dark">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:orientation="horizontal"
         android:background="@color/accent_color"
         android:id="@+id/titleBar">
@@ -18,37 +21,44 @@
             android:id="@+id/textTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="fill_horizontal"
-            android:text="Add a new recording"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:gravity="center_horizontal"
+            style="@style/FragmentTitleText"
+            android:text="Add new recording" />
 
     </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/textDuration"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/titleBar"
-        android:layout_centerHorizontal="true"
-        android:text="TAG"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp">
 
+        <TextView
+            android:id="@+id/textDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            style="@style/FragmentWidgetText"
+            android:paddingRight="10dp"
+            android:text="Label" />
 
-    <Spinner
-        android:id="@+id/spinnerAudioTag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textDuration"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_centerHorizontal="true" />
+        <Spinner
+            android:id="@+id/spinnerAudioTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/textDuration"/>
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@id/spinnerAudioTag">
+        android:background="@color/primary_color"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/buttonCancel"
@@ -68,4 +78,4 @@
 
 
 
-</RelativeLayout>
+</LinearLayout>

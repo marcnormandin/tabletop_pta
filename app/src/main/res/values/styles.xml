@@ -27,4 +27,25 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!-- Used for the title text of the "new audio", "new profile", etc, fragments -->
+    <style name="FragmentTitleText">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:capitalize">characters</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textSize">12pt</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <!-- Used for the widget control label text. -->
+    <style name="FragmentWidgetText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:capitalize">characters</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">10pt</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:textColor">#BBBBBB</item>
+    </style>
 </resources>
