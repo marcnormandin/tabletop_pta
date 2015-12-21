@@ -42,6 +42,11 @@ public class HomeScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void viewDoubleMetronomeAnalyses(View view) {
+        Intent intent = new Intent(HomeScreenActivity.this, DoubleMetronomeAnalysisListActivity.class);
+        startActivity(intent);
+    }
+
     public void launchWebsite(View view) {
         final String url = "http://nanograv.org/outreach/ptademo/";
         Intent intent = new Intent(Intent.ACTION_VIEW);

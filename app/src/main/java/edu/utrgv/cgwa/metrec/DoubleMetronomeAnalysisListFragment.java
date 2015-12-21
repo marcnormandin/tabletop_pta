@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.Fragment {
+public class DoubleMetronomeAnalysisListFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "AnalysisListFragment";
     private OnFragmentInteractionListener mListener;
     private RecyclerView mAnalysisList;
@@ -23,7 +23,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         private LayoutInflater mInflater;
-        private SingleMetronomeAnalysisManager mManager;
+        private DoubleMetronomeAnalysisManager mManager;
         private Checked mChecked;
 
         private class Checked {
@@ -55,7 +55,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
 
         public MyAdapter(Context context) {
             mInflater = LayoutInflater.from(context);
-            mManager = new SingleMetronomeAnalysisManager(context);
+            mManager = new DoubleMetronomeAnalysisManager(context);
             mChecked = new Checked(mManager.getNumRecords());
         }
 
@@ -76,19 +76,18 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View rowView = mInflater.inflate(R.layout.fragment_single_metronome_analysis_listview_row, parent, false);
+            View rowView = mInflater.inflate(R.layout.fragment_double_metronome_analysis_listview_row, parent, false);
             MyViewHolder holder = new MyViewHolder(rowView);
             return holder;
         }
 
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
-            DbSingleMetronomeAnalysisTable.Entry entry = mManager.getEntryByPosition(position);
+            DbDoubleMetronomeAnalysisTable.Entry entry = mManager.getEntryByPosition(position);
 
             // Fixme
             // There is not view element for the IDs
             holder.analysisID = entry.id();
-            holder.analysisFilenameResult = entry.filenameResult();
 
             holder.date.setText(entry.date());
             holder.time.setText(entry.time());
@@ -115,7 +114,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
             holder.viewResiduals.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onViewResidualsClicked(position, holder.analysisID, holder.analysisFilenameResult);
+                    mListener.onViewResidualsClicked(position, holder.analysisID);
                 }
             });
         }
@@ -127,7 +126,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
 
         public void deleteSelectedIDs() {
             boolean moreToCheck = true;
-            while(moreToCheck) {
+            while (moreToCheck) {
                 int i;
                 for (i = 0; i < mChecked.size(); i++) {
                     if (mChecked.get(i)) {
@@ -163,7 +162,6 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
         public CheckBox checkbox;
         public Button viewPulses, viewResiduals;
         public long analysisID;
-        public String analysisFilenameResult;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -179,7 +177,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
         }
     }
 
-    public SingleMetronomeAnalysisListFragment() {
+    public DoubleMetronomeAnalysisListFragment() {
     }
 
     public void deleteSelectedIDs() {
@@ -187,6 +185,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
             mAdapter.deleteSelectedIDs();
         }
     }
+
     public long[] getSelectedIDs() {
         ArrayList<Long> idsa = mAdapter.getSelectedIDs();
         long[] ids = new long[idsa.size()];
@@ -199,7 +198,7 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_single_metronome_analysis_listview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_double_metronome_analysis_listview, container, false);
 
         Log.d(TAG, "Creating the listview");
 
@@ -244,7 +243,9 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
 
     public interface OnFragmentInteractionListener {
         void onCheckboxChanged(final int position, final long analysisID, final boolean isChecked);
+
         void onViewPulseOverlayClicked(final int position, final long analysisID);
-        void onViewResidualsClicked(final int position, final long analysisID, final String analysisFilenameResult);
+
+        void onViewResidualsClicked(final int position, final long analysisID);
     }
 }

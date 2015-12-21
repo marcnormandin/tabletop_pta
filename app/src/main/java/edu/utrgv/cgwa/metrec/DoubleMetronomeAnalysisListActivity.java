@@ -1,3 +1,4 @@
+
 package edu.utrgv.cgwa.metrec;
 
 import android.app.Activity;
@@ -15,19 +16,21 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.app.AlertDialog;
 
-public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
-        implements SingleMetronomeAnalysisListFragment.OnFragmentInteractionListener,
-        NewSingleAnalysisFragment.NewSingleAnalysisFragmentListener {
+public class DoubleMetronomeAnalysisListActivity extends AppCompatActivity
+        implements DoubleMetronomeAnalysisListFragment.OnFragmentInteractionListener,
+        NewDoubleAnalysisFragment.NewDoubleAnalysisFragmentListener {
 
     private Toolbar mToolbar;
 
     static public final int PICK_AUDIO_RECORD_REQUEST = 1;  // The request code
-    static public final int PICK_PROFILE_RECORD_REQUEST = 2;  // The request code
+    static public final int PICK_PROFILE_ONE_RECORD_REQUEST = 2;  // The request code
+    static public final int PICK_PROFILE_TWO_RECORD_REQUEST = 3;  // The request code
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_single_metronome_analysis_list);
+        setContentView(R.layout.activity_double_metronome_analysis_list);
 
         mToolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(mToolbar);
@@ -48,10 +51,9 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onViewResidualsClicked(int position, long analysisID, String analysisFilenameResult) {
-        Intent intent = new Intent(this, ViewAnalysisResidualsActivity.class);
-        intent.putExtra(ViewAnalysisResidualsActivity.ARG_ANALYSIS_ID, analysisID);
-        intent.putExtra(ViewAnalysisResidualsActivity.ARG_ANALYSIS_FILENAME_RESULT, analysisFilenameResult);
+    public void onViewResidualsClicked(int position, long analysisID) {
+        Intent intent = new Intent(this, ViewDoubleAnalysisResidualsActivity.class);
+        intent.putExtra(ViewDoubleAnalysisResidualsActivity.ARG_ANALYSIS_ID, analysisID);
         startActivity(intent);
     }
 
@@ -59,26 +61,24 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_single_metronome_analysis_list, menu);
+        inflater.inflate(R.menu.menu_double_metronome_analysis_list, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
             case R.id.action_new:
-                //Intent intent = new Intent(this, SingleMetronomeAnalysisActivity.class);
-                //startActivity(intent);
-                actionNewSingleAnalysis();
+                actionNewDoubleAnalysis();
                 return true;
 
             case R.id.action_delete:
                 // Make sure that there are items checked
                 FragmentManager fm = getSupportFragmentManager();
-                SingleMetronomeAnalysisListFragment frag = (SingleMetronomeAnalysisListFragment)
+                DoubleMetronomeAnalysisListFragment frag = (DoubleMetronomeAnalysisListFragment)
                         fm.findFragmentById(R.id.listfragment);
                 long[] ids = frag.getSelectedIDs();
                 if (ids.length > 0) {
@@ -116,14 +116,14 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
 
     private void deleteRecords() {
         FragmentManager fm = getSupportFragmentManager();
-        SingleMetronomeAnalysisListFragment frag = (SingleMetronomeAnalysisListFragment) fm.findFragmentById(R.id.listfragment);
+        DoubleMetronomeAnalysisListFragment frag = (DoubleMetronomeAnalysisListFragment) fm.findFragmentById(R.id.listfragment);
         frag.deleteSelectedIDs();
     }
 
-    private void actionNewSingleAnalysis() {
+    private void actionNewDoubleAnalysis() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        NewSingleAnalysisFragment frag = new NewSingleAnalysisFragment();
+        NewDoubleAnalysisFragment frag = new NewDoubleAnalysisFragment();
         ft.replace(R.id.newAnalysisFragmentContainer, frag, "analysisFragment");
         ft.commit();
     }
@@ -132,7 +132,7 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
     public void onCancel() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+        NewDoubleAnalysisFragment frag = (NewDoubleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
         ft.remove(frag);
         ft.commit();
     }
@@ -144,31 +144,37 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSelectProfile() {
+    public void onSelectProfileOne() {
         Intent intent = new Intent(this, SelectProfilesActivity.class);
-        startActivityForResult(intent, PICK_PROFILE_RECORD_REQUEST);
+        startActivityForResult(intent, PICK_PROFILE_ONE_RECORD_REQUEST);
     }
 
     @Override
-    public void onNewSingleAnalysisCreated(final long audioID) {
+    public void onSelectProfileTwo() {
+        Intent intent = new Intent(this, SelectProfilesActivity.class);
+        startActivityForResult(intent, PICK_PROFILE_TWO_RECORD_REQUEST);
+    }
+
+    @Override
+    public void onNewDoubleAnalysisCreated(final long audioID) {
         Toast.makeText(this, "NEW ANALYSIS RECORD (" + audioID + ") CREATED!", Toast.LENGTH_LONG).show();
 
         // Remove the "new analysis" fragment
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+        NewDoubleAnalysisFragment frag = (NewDoubleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
         ft.remove(frag);
         ft.commit();
 
         // Update the list fragment
-        SingleMetronomeAnalysisListFragment list = (SingleMetronomeAnalysisListFragment)
+        DoubleMetronomeAnalysisListFragment list = (DoubleMetronomeAnalysisListFragment)
                 fm.findFragmentById(R.id.listfragment);
         list.refresh();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICK_PROFILE_RECORD_REQUEST) {
+        if (requestCode == PICK_PROFILE_ONE_RECORD_REQUEST) {
             if (resultCode == RESULT_OK) {
                 long[] ids = data.getLongArrayExtra(SelectProfilesActivity.RESULT_SELECTED_PROFILES);
 
@@ -178,8 +184,8 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
                     final long profileID = ids[0];
 
                     FragmentManager fm = getSupportFragmentManager();
-                    NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
-                    if (frag.loadProfileRecord(profileID)) {
+                    NewDoubleAnalysisFragment frag = (NewDoubleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+                    if (frag.loadProfileRecordOne(profileID)) {
                         Toast.makeText(this, "Profile record loaded successfully", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "Unable to load the selected profile record.", Toast.LENGTH_LONG).show();
@@ -187,7 +193,28 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
 
                 }
             }
-        } else if (requestCode == PICK_AUDIO_RECORD_REQUEST) {
+        }
+        else if (requestCode == PICK_PROFILE_TWO_RECORD_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                long[] ids = data.getLongArrayExtra(SelectProfilesActivity.RESULT_SELECTED_PROFILES);
+
+                if (ids.length != 1) {
+                    Toast.makeText(this, "SELECT ONLY ONE PROFILE!", Toast.LENGTH_LONG).show();
+                } else {
+                    final long profileID = ids[0];
+
+                    FragmentManager fm = getSupportFragmentManager();
+                    NewDoubleAnalysisFragment frag = (NewDoubleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+                    if (frag.loadProfileRecordTwo(profileID)) {
+                        Toast.makeText(this, "Profile record loaded successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Unable to load the selected profile record.", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }
+        }
+        else if (requestCode == PICK_AUDIO_RECORD_REQUEST) {
             if (resultCode == RESULT_OK) {
                 long[] ids = data.getLongArrayExtra(SelectAudioRecordActivity.RESULT_SELECTED_AUDIO_RECORDS);
                 if (ids.length != 1) {
@@ -196,7 +223,7 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
                     final long audioID = ids[0];
 
                     FragmentManager fm = getSupportFragmentManager();
-                    NewSingleAnalysisFragment frag = (NewSingleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
+                    NewDoubleAnalysisFragment frag = (NewDoubleAnalysisFragment) fm.findFragmentByTag("analysisFragment");
                     if (frag.loadAudioRecord(audioID)) {
                         Toast.makeText(this, "Audio record loaded successfully", Toast.LENGTH_SHORT).show();
                     } else {

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="96dp"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:text="[ID]"
+        android:paddingRight="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/listview_row_recordid" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="ERROR"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/listview_row_time" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="ERROR"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/listview_row_date" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/listview_row_checkbox"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/accent_color"
+        android:id="@+id/linearLayout"></LinearLayout>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pulses"
+        android:id="@+id/buttonViewPulses"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/listview_row_recordid" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Residuals"
+        android:id="@+id/buttonViewResiduals"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/buttonViewPulses" />
+
+
+</RelativeLayout>

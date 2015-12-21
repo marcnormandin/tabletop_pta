@@ -50,16 +50,27 @@
         android:id="@+id/btnProfiles"
         android:layout_gravity="center_horizontal"
         android:onClick="viewProfiles"
-        android:layout_above="@+id/buttonAnalyses"
+        android:layout_above="@+id/buttonSingleAnalyses"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Analyses"
-        android:id="@+id/buttonAnalyses"
+        android:text="Single Analyses"
+        android:id="@+id/buttonSingleAnalyses"
         android:onClick="viewSingleMetronomeAnalyses"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@+id/buttonDoubleAnalyses"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Double Analyses"
+        android:id="@+id/buttonDoubleAnalyses"
+        android:onClick="viewDoubleMetronomeAnalyses"
         android:layout_gravity="center_horizontal"
         android:layout_above="@+id/launchWebsite"
         android:layout_alignParentLeft="true"

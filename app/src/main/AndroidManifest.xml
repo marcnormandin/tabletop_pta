@@ -82,7 +82,7 @@
         </activity>
         <activity
             android:name=".SingleMetronomeAnalysisListActivity"
-            android:label="Analyses" >
+            android:label="Single Analyses" >
         </activity>
         <activity
             android:name=".ViewAnalysisPulsesActivity"
@@ -102,6 +102,12 @@
             android:theme="@style/AppTheme" >
         </activity>
         <activity android:name=".NewAudioRecording" >
+        </activity>
+        <activity
+            android:name=".DoubleMetronomeAnalysisListActivity"
+            android:label="Double Analyses" >
+        </activity>
+        <activity android:name=".ViewDoubleAnalysisResidualsActivity" >
         </activity>
     </application>
 

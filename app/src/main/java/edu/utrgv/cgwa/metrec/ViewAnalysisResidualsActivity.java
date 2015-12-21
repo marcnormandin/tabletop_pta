@@ -17,9 +17,12 @@ import edu.utrgv.cgwa.tabletoppta.Routines;
 public class ViewAnalysisResidualsActivity extends AppCompatActivity {
     private static final String TAG = "ViewResiduals";
     public static final String ARG_ANALYSIS_ID = "analysisID";
+    public static final String ARG_ANALYSIS_FILENAME_RESULT = "analysisFilenameResult";
+
 
     private Toolbar mToolbar;
     private long mAnalysisID;
+    private String mAnalysisFilenameResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +35,13 @@ public class ViewAnalysisResidualsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mAnalysisID = intent.getLongExtra(ARG_ANALYSIS_ID, -1);
+        mAnalysisFilenameResult = intent.getStringExtra(ARG_ANALYSIS_FILENAME_RESULT);
+
         if (mAnalysisID == -1) {
             Log.d(TAG, "Attempt to view residuals, but no analysis ID given in intent.");
         } else {
             Log.d(TAG, "Adding residuals fragment");
-            AnalysisResidualsFragment frag = AnalysisResidualsFragment.newInstance(mAnalysisID);
+            AnalysisResidualsFragment frag = AnalysisResidualsFragment.newInstance(mAnalysisFilenameResult);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, frag);

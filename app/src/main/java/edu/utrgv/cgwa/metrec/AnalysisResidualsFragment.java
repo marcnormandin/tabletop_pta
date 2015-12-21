@@ -23,9 +23,9 @@ import edu.utrgv.cgwa.tabletoppta.Utility;
 
 public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "ResidualsFragment";
-    private static final String ARG_ANALYSIS_ID = "audioID";
+    private static final String ARG_ANALYSIS_FILENAME_RESULT = "analysisFilenameResult";
 
-    private long mAnalysisID = -1;
+    private String mAnalysisFilenameResult;
 
     private LineChart mLineChart = null;
 
@@ -34,10 +34,10 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public static AnalysisResidualsFragment newInstance(final long analysisID) {
+    public static AnalysisResidualsFragment newInstance(final String analysisFilenameResult) {
         AnalysisResidualsFragment fragment = new AnalysisResidualsFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_ANALYSIS_ID, analysisID);
+        args.putString(ARG_ANALYSIS_FILENAME_RESULT, analysisFilenameResult);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,7 +50,7 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mAnalysisID = getArguments().getLong(ARG_ANALYSIS_ID);
+            mAnalysisFilenameResult = getArguments().getString(ARG_ANALYSIS_FILENAME_RESULT);
         }
     }
 
@@ -65,12 +65,9 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
 
             @Override
             protected Void doInBackground(Void... params) {
-                // Get the analysis record
-                SingleMetronomeAnalysisManager analysisManager = new SingleMetronomeAnalysisManager(getActivity());
-                DbSingleMetronomeAnalysisTable.Entry analysisEntry = analysisManager.getEntryByID(mAnalysisID);
-
                 // Load the analysis result from file
-                mAnalysisResult = new Routines.CalMeasuredTOAsResult(analysisEntry.filenameResult());
+                Log.d(TAG, "Loading result: " + mAnalysisFilenameResult);
+                mAnalysisResult = new Routines.CalMeasuredTOAsResult( mAnalysisFilenameResult );
 
                 // Compute the sinusoid parameters
                 mSinusoidParameters = Routines.fitSinusoid(mAnalysisResult.measuredTOAs(), mAnalysisResult.detrendedResiduals());
@@ -99,7 +96,11 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         double[] x = Utility.linspace(toas[0], toas[toas.length-1], 1000);
 
         double[] residuals = mAnalysisResult.residuals();
-        double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
+
+        // Fixme
+        // Correct: double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
+
+        double[] detrendedResiduals = mAnalysisResult.residuals();
 
         /*double[] detrendedResiduals = new double[toas.length];
         // Make sinusoid

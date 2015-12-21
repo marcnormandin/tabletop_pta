@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "pta.db";
 
 
@@ -19,6 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(DbProfileTable.SQL_CREATE_ENTRIES);
         db.execSQL(DbAudioRecordingTable.SQL_CREATE_ENTRIES);
         db.execSQL(DbSingleMetronomeAnalysisTable.SQL_CREATE_ENTRIES);
+        db.execSQL(DbDoubleMetronomeAnalysisTable.SQL_CREATE_ENTRIES);
     }
 
     @Override
@@ -32,6 +33,8 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(DbProfileTable.SQL_DELETE_ENTRIES);
         db.execSQL(DbAudioRecordingTable.SQL_DELETE_ENTRIES);
         db.execSQL(DbSingleMetronomeAnalysisTable.SQL_DELETE_ENTRIES);
+        db.execSQL(DbDoubleMetronomeAnalysisTable.SQL_DELETE_ENTRIES);
+
         onCreate(db);
     }
 }
