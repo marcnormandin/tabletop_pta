@@ -119,9 +119,10 @@ public class NewAudioRecordingFragment extends Fragment implements View.OnClickL
     public void buttonRecord(final View v) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final int sampleRate = Integer.parseInt(sp.getString("samplerate", "8000"));
+        final double timeDelay = Double.parseDouble(sp.getString("recordingdelay", "4.0"));
+        final double desiredRuntime = Double.parseDouble(sp.getString("recordingduration", "8.0"));
 
-        // Fixme The duration should be separate from the pulse profile duration
-        final double desiredRuntime = Double.parseDouble(sp.getString("pulserecordingduration", "8.0"));
+
 
         final String tag = (String)mSpinnerAudioTag.getSelectedItem();
 
@@ -169,7 +170,7 @@ public class NewAudioRecordingFragment extends Fragment implements View.OnClickL
 
             @Override
             protected Void doInBackground(Void... params) {
-                mAudioRecording.newRecording(sampleRate, desiredRuntime);
+                mAudioRecording.newRecording(sampleRate, timeDelay, desiredRuntime);
 
                 publishProgress("Saving times series to the database...");
 

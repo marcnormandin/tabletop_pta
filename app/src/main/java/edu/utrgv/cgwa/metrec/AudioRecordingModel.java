@@ -123,7 +123,25 @@ public class AudioRecordingModel {
         }
     }
 
-    public void newRecording(int sampleRate, double desiredRuntime) {
+    private void customWait(final double desiredWait) {
+        long start = System.currentTimeMillis();
+        long last = start;
+        while (true) {
+            long curr = System.currentTimeMillis();
+            double elapsed = (curr - start) / 1000.0;
+
+            if ((curr - last)/1000.0 >= 0.25) {
+                //publishProgress(mDesiredRuntime - elapsed);
+                last = curr;
+            }
+
+            if ( (desiredWait - elapsed) <= 0.0) {
+                break;
+            }
+        }
+    }
+
+    public void newRecording(int sampleRate, double timeDelay, double desiredRuntime) {
 
         if (mProgressListener != null) {
             mProgressListener.onRecordingStarted();
@@ -144,23 +162,11 @@ public class AudioRecordingModel {
 
         mPCMSoundSystem = new PCMSoundSystem( sampleRate, getFilenamePCM() );
 
+        customWait(timeDelay);
+
         mPCMSoundSystem.startRecording();
 
-        long start = System.currentTimeMillis();
-        long last = start;
-        while (true) {
-            long curr = System.currentTimeMillis();
-            double elapsed = (curr - start) / 1000.0;
-
-            if ((curr - last)/1000.0 >= 0.25) {
-                //publishProgress(mDesiredRuntime - elapsed);
-                last = curr;
-            }
-
-            if ( (desiredRuntime - elapsed) <= 0.0) {
-                break;
-            }
-        }
+        customWait(desiredRuntime);
 
         mPCMSoundSystem.stopRecording();
 

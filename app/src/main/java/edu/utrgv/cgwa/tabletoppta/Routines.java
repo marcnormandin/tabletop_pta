@@ -1067,13 +1067,15 @@ public class Routines {
     */
 
 
-    public static double[] fitSinusoid(final double[] measuredTOAs, final double[] residuals) {
+    public static double[] fitSinusoid(final double[] measuredTOAs, final double[] residuals,
+                                       final double initialAmplitude,
+                                       final double initialFrequency) {
 
         // Initialize the starting parameters
         final int M = 4;
         double[] initialParameters = new double[M];
-        initialParameters[0] = 2.0e-4; // amplitude
-        initialParameters[1] = 0.6; // frequency eg. 0.4
+        initialParameters[0] = initialAmplitude;
+        initialParameters[1] = initialFrequency; // frequency eg. 0.4
         initialParameters[2] = 0.0; // phase
         initialParameters[3] = 0.0; // offset
 

@@ -70,7 +70,13 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
                 mAnalysisResult = new Routines.CalMeasuredTOAsResult( mAnalysisFilenameResult );
 
                 // Compute the sinusoid parameters
-                mSinusoidParameters = Routines.fitSinusoid(mAnalysisResult.measuredTOAs(), mAnalysisResult.detrendedResiduals());
+                // Fixme
+                final double initialAmplitude = 2.0e-4; // amplitude
+                final double initialFrequency = 0.6;
+                mSinusoidParameters = Routines.fitSinusoid(mAnalysisResult.measuredTOAs(),
+                        mAnalysisResult.detrendedResiduals(),
+                        initialAmplitude,
+                        initialFrequency);
 
                 return null;
             }
@@ -85,6 +91,32 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         return rootView;
     }
 
+    public void computeFit(final double initialAmplitude, final double initialFrequency) {
+        (new AsyncTask<Void, Void, Void>() {
+            private double[] mSinusoidParameters;
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // Load the analysis result from file
+                Log.d(TAG, "Loading result: " + mAnalysisFilenameResult);
+                mAnalysisResult = new Routines.CalMeasuredTOAsResult( mAnalysisFilenameResult );
+
+                // Compute the sinusoid parameters
+                mSinusoidParameters = Routines.fitSinusoid(mAnalysisResult.measuredTOAs(),
+                        mAnalysisResult.detrendedResiduals(),
+                        initialAmplitude,
+                        initialFrequency);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                displayResiduals(mSinusoidParameters);
+            }
+        }).execute();
+    }
+
     public void displayResiduals(double[] sinusoidParameters) {
         final boolean showResiduals = false;
 
@@ -97,10 +129,7 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
 
         double[] residuals = mAnalysisResult.residuals();
 
-        // Fixme
-        // Correct: double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
-
-        double[] detrendedResiduals = mAnalysisResult.residuals();
+        double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
 
         /*double[] detrendedResiduals = new double[toas.length];
         // Make sinusoid
@@ -193,10 +222,10 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
 
         // create the audio dataset and give it a type
         LineDataSet sinusoidSet = new LineDataSet(sinusoidVals, "Fit");
-        sinusoidSet.setColor(Color.RED);
-        sinusoidSet.setCircleColor(Color.RED);
-        sinusoidSet.setCircleColorHole(Color.RED);
-        sinusoidSet.setLineWidth(1f);
+        sinusoidSet.setColor(Color.MAGENTA);
+        sinusoidSet.setCircleColor(Color.MAGENTA);
+        sinusoidSet.setCircleColorHole(Color.MAGENTA);
+        sinusoidSet.setLineWidth(4f);
         sinusoidSet.setDrawCircles(false);
         sinusoidSet.setDrawValues(false);
         sinusoidSet.setDrawCircleHole(false);

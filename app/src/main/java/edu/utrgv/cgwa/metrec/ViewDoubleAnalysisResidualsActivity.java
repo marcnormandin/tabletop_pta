@@ -10,13 +10,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-public class ViewDoubleAnalysisResidualsActivity extends AppCompatActivity {
+public class ViewDoubleAnalysisResidualsActivity extends AppCompatActivity
+implements FitSinusoidFragment.Listener {
     private static final String TAG = "ViewDoubleResiduals";
     public static final String ARG_ANALYSIS_ID = "analysisID";
 
     private Toolbar mToolbar;
     private long mAnalysisID;
+    private final String mFitOneTag = "fitOneTag";
+    private final String mFitTwoTag = "fitTwoTag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +45,20 @@ public class ViewDoubleAnalysisResidualsActivity extends AppCompatActivity {
             Log.d(TAG, "Creating fragment for result filename: " + entry.filenameResultOne());
             Log.d(TAG, "Creating fragment for result filename: " + entry.filenameResultTwo());
 
-            // First residual plot
             AnalysisResidualsFragment frag1 = AnalysisResidualsFragment.newInstance(entry.filenameResultOne());
             AnalysisResidualsFragment frag2 = AnalysisResidualsFragment.newInstance(entry.filenameResultTwo());
 
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.containerOne, frag1, "fragmentOne");
-            ft.add(R.id.containerTwo, frag2, "fragmentTwo");
+
+            // First plot
+            ft.add(R.id.containerOne, FitSinusoidFragment.newInstance(mFitOneTag), mFitOneTag);
+            ft.add(R.id.containerOne, frag1, mFitOneTag);
+
+            // Second plot
+            ft.add(R.id.containerTwo, FitSinusoidFragment.newInstance(mFitTwoTag), mFitTwoTag);
+            ft.add(R.id.containerTwo, frag2, mFitTwoTag);
+
             ft.commit();
         }
     }
@@ -72,5 +82,15 @@ public class ViewDoubleAnalysisResidualsActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onFit(String controlTag, double amplitude, double frequency) {
+        Toast.makeText(this, "FIT: id = " + controlTag + ", amp = " + amplitude + ", freq = " + frequency,
+                Toast.LENGTH_SHORT).show();
+
+        FragmentManager fm = getSupportFragmentManager();
+        AnalysisResidualsFragment f = (AnalysisResidualsFragment) fm.findFragmentByTag(controlTag);
+        f.computeFit(amplitude, frequency);
     }
 }

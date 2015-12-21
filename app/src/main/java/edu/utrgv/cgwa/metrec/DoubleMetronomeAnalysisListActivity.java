@@ -43,12 +43,13 @@ public class DoubleMetronomeAnalysisListActivity extends AppCompatActivity
         //Toast.makeText(this, "Position (" + position + "), Analysis ID (" + analysisID + "),  checked = " + isChecked, Toast.LENGTH_SHORT).show();
     }
 
+    /*
     @Override
     public void onViewPulseOverlayClicked(int position, long analysisID) {
         Intent intent = new Intent(this, ViewAnalysisPulsesActivity.class);
         intent.putExtra(ViewAnalysisPulsesActivity.ARG_ANALYSIS_ID, analysisID);
         startActivity(intent);
-    }
+    }*/
 
     @Override
     public void onViewResidualsClicked(int position, long analysisID) {

@@ -2,19 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/pref_category_general"
-        android:layout="@layout/preferences_category">
-
-        <EditTextPreference
-            android:key="samplerate"
-            android:title="@string/pref_title_samplerate"
-            android:text="44100"
-            android:summary="@string/pref_summary_samplerate"
-            android:defaultValue="44100"/>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:title="Built-in Metronome"
         android:layout="@layout/preferences_category">
 
@@ -35,36 +22,30 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_category_pulseprofile"
+        android:title="@string/pref_category_recording"
         android:layout="@layout/preferences_category">
 
         <EditTextPreference
-            android:key="pulserecordingduration"
-            android:title="@string/pref_title_pulserecordingduration"
-            android:text="8"
-            android:summary="@string/pref_summary_pulserecordingduration"
-            android:defaultValue="8"/>
-
-    </PreferenceCategory>
-
-
-    <PreferenceCategory
-        android:title="@string/pref_category_analysis"
-        android:layout="@layout/preferences_category">
+            android:key="samplerate"
+            android:title="@string/pref_title_samplerate"
+            android:text="44100"
+            android:summary="@string/pref_summary_samplerate"
+            android:defaultValue="44100"/>
 
         <EditTextPreference
-            android:key="analysisrecordingdelay"
-            android:title="@string/pref_title_analysisrecordingdelay"
-            android:text="8"
-            android:summary="@string/pref_summary_analysisrecordingdelay"
-            android:defaultValue="8"/>
+            android:key="recordingdelay"
+            android:title="@string/pref_title_recordingdelay"
+            android:text="4"
+            android:summary="@string/pref_summary_recordingdelay"
+            android:defaultValue="4"/>
 
         <EditTextPreference
-            android:key="analysisrecordingduration"
-            android:title="@string/pref_title_analysisrecordingduration"
+            android:key="recordingduration"
+            android:title="@string/pref_title_recordingduration"
             android:text="8"
-            android:summary="@string/pref_summary_analysisrecordingduration"
+            android:summary="@string/pref_summary_recordingduration"
             android:defaultValue="8"/>
+
     </PreferenceCategory>
 
     <Preference android:title="@string/pref_title_restoredefaultsettings"

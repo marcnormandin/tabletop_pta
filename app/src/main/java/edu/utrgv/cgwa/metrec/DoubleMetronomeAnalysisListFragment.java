@@ -104,13 +104,6 @@ public class DoubleMetronomeAnalysisListFragment extends android.support.v4.app.
                 }
             });
 
-            holder.viewPulses.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onViewPulseOverlayClicked(position, holder.analysisID);
-                }
-            });
-
             holder.viewResiduals.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -160,7 +153,7 @@ public class DoubleMetronomeAnalysisListFragment extends android.support.v4.app.
     private static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView time, date, recordID;
         public CheckBox checkbox;
-        public Button viewPulses, viewResiduals;
+        public Button viewResiduals;
         public long analysisID;
 
         public MyViewHolder(View itemView) {
@@ -170,7 +163,6 @@ public class DoubleMetronomeAnalysisListFragment extends android.support.v4.app.
             date = (TextView) itemView.findViewById(R.id.listview_row_date);
             recordID = (TextView) itemView.findViewById(R.id.listview_row_recordid);
             checkbox = (CheckBox) itemView.findViewById(R.id.listview_row_checkbox);
-            viewPulses = (Button) itemView.findViewById(R.id.buttonViewPulses);
             viewResiduals = (Button) itemView.findViewById(R.id.buttonViewResiduals);
 
             analysisID = -1;
@@ -244,7 +236,7 @@ public class DoubleMetronomeAnalysisListFragment extends android.support.v4.app.
     public interface OnFragmentInteractionListener {
         void onCheckboxChanged(final int position, final long analysisID, final boolean isChecked);
 
-        void onViewPulseOverlayClicked(final int position, final long analysisID);
+        //void onViewPulseOverlayClicked(final int position, final long analysisID);
 
         void onViewResidualsClicked(final int position, final long analysisID);
     }

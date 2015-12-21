@@ -5,26 +5,17 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_audio_record">AudioRecordActivity</string>
 
-    <!-- General -->
-    <string name="pref_category_general">General</string>
+    <!-- Preferences -->
+    <string name="pref_category_recording">Audio recording</string>
 
     <string name="pref_title_samplerate">Sampling rate</string>
     <string name="pref_summary_samplerate">Samples per second for audio recordings</string>
 
-    <!-- Pulse profile -->
-    <string name="pref_category_pulseprofile">Pulse profile</string>
+    <string name="pref_title_recordingdelay">Delay (s)</string>
+    <string name="pref_summary_recordingdelay">Seconds to wait before beginning a recording</string>
 
-    <string name="pref_title_pulserecordingduration">Duration (s)</string>
-    <string name="pref_summary_pulserecordingduration">Sets the time duration of the metronome pulse recordings</string>
-
-    <!-- Analysis -->
-    <string name="pref_category_analysis">Analysis</string>
-
-    <string name="pref_title_analysisrecordingdelay">Delay (s)</string>
-    <string name="pref_summary_analysisrecordingdelay">Seconds to wait before beginning the analysis recording</string>
-
-    <string name="pref_title_analysisrecordingduration">Duration (s)</string>
-    <string name="pref_summary_analysisrecordingduration">Sets the time duration for the analysis recording of two metronomes with the moving recorder.</string>
+    <string name="pref_title_recordingduration">Duration (s)</string>
+    <string name="pref_summary_recordingduration">Sets the time duration of a recording</string>
 
     <!-- Restore defaults -->
     <string name="pref_title_restoredefaultsettings">Restore default settings</string>
