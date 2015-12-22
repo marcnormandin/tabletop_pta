@@ -1,11 +1,14 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 
 public class HomeScreenActivity extends AppCompatActivity {
@@ -20,6 +23,12 @@ public class HomeScreenActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
+
+        TextView textVersion = (TextView) findViewById(R.id.textVersion);
+        textVersion.setText(versionName);
     }
 
     public void startBuiltinMetronomeActivity(View view) {

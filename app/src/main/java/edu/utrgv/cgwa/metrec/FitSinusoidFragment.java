@@ -83,4 +83,12 @@ public class FitSinusoidFragment extends Fragment implements View.OnClickListene
         super.onDetach();
         mListener = null;
     }
+
+    public void setAmplitude(double a) {
+        mEditAmplitude.setText(Double.toString(a));
+    }
+
+    public void setFrequency(double f) {
+        mEditFrequency.setText(Double.toString(f));
+    }
 }

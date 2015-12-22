@@ -14,7 +14,8 @@ import android.widget.TextView;
 
 import edu.utrgv.cgwa.tabletoppta.Routines;
 
-public class ViewAnalysisResidualsActivity extends AppCompatActivity {
+public class ViewAnalysisResidualsActivity extends AppCompatActivity
+implements AnalysisResidualsFragment.Listener {
     private static final String TAG = "ViewResiduals";
     public static final String ARG_ANALYSIS_ID = "analysisID";
     public static final String ARG_ANALYSIS_FILENAME_RESULT = "analysisFilenameResult";
@@ -41,7 +42,7 @@ public class ViewAnalysisResidualsActivity extends AppCompatActivity {
             Log.d(TAG, "Attempt to view residuals, but no analysis ID given in intent.");
         } else {
             Log.d(TAG, "Adding residuals fragment");
-            AnalysisResidualsFragment frag = AnalysisResidualsFragment.newInstance(mAnalysisFilenameResult);
+            AnalysisResidualsFragment frag = AnalysisResidualsFragment.newInstance("notag", mAnalysisFilenameResult);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, frag);
@@ -88,5 +89,11 @@ public class ViewAnalysisResidualsActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onFitParametersUpdated(String tag, double amplitude, double frequency,
+                                       double phase, double offset) {
+
     }
 }

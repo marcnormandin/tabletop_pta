@@ -175,6 +175,7 @@ public class BuiltinMetronomeService extends Service {
 
         mAudioTrack.write(mGeneratedSnd, 0, mGeneratedSnd.length);
         mAudioTrack.setStereoVolume(mVolume, mVolume);
+        //mAudioTrack.setVolume(); // API 21
     }
 
     public void startPlaying() {
@@ -200,8 +201,14 @@ public class BuiltinMetronomeService extends Service {
         mMillisPerBeat = (long) (1.0 / ((double)mBeatsPerMinute /(double)(60*1000)));
     }
 
-    public void setVolume(float volume) {
-        mVolume = volume;
+    public void setVolumePercent(float volumePercent) {
+        if (volumePercent > 100.0) {
+            volumePercent = 100.0f;
+        } else if (volumePercent < 0.0) {
+            volumePercent = 0.0f;
+        }
+
+        mVolume = (volumePercent/100.0f) * mAudioTrack.getMaxVolume();
         mAudioTrack.setStereoVolume(mVolume, mVolume);
     }
 

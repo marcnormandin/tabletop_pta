@@ -152,9 +152,9 @@ public class BuiltinMetronomeActivity extends AppCompatActivity {
 
     private void setupSeekbarVolume(Bundle savedInstanceState) {
         pv = new Property();
-        pv.min = 0.10;
-        pv.max = 1.0;
-        pv.numDivisions = 9;
+        pv.min = 1.0;
+        pv.max = 100.0;
+        pv.numDivisions = 90;
         pv.initial = 0.5;
 
         // Volume SeekBar
@@ -179,13 +179,13 @@ public class BuiltinMetronomeActivity extends AppCompatActivity {
                 final double volume = convertProgressToNumber(pv.min, pv.max, progress, pv.numDivisions);
 
                 if (mService != null) {
-                    mService.setVolume((float) volume);
+                    mService.setVolumePercent((float) volume);
                 }
 
                 // Update the text
                 TextView tv = (TextView) findViewById(R.id.textVolume);
-                float percent = (float) volume * 100.0f;
-                tv.setText("Volume: " + Math.round(percent) + " %");
+                float percent = (float) volume;
+                tv.setText("Volume: " + Math.ceil(percent) + " %");
             }
         });
     }
@@ -290,7 +290,7 @@ public class BuiltinMetronomeActivity extends AppCompatActivity {
 
         // Volume
         final float volume = (float) convertProgressToNumber(pv.min, pv.max, skv.getProgress(), pv.numDivisions);
-        mService.setVolume(volume);
+        mService.setVolumePercent(volume);
 
     }
 

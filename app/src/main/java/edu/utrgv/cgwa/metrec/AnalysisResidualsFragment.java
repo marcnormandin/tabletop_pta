@@ -2,6 +2,7 @@
 
 package edu.utrgv.cgwa.metrec;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,20 +24,35 @@ import edu.utrgv.cgwa.tabletoppta.Utility;
 
 public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "ResidualsFragment";
-    private static final String ARG_ANALYSIS_FILENAME_RESULT = "analysisFilenameResult";
+    private static final String ARG_TAG = "ArgTag";
+    private static final String ARG_ANALYSIS_FILENAME_RESULT = "ArgAnalysisFilenameResult";
+    private static final String ARG_INITIAL_AMPLITUDE = "ArgInitialAmplitude";
+    private static final String ARG_INITIAL_FREQUENCY = "ArgInitialFrequency";
 
+    private String mTag; // This is not for debugging
     private String mAnalysisFilenameResult;
 
     private LineChart mLineChart = null;
 
     private Routines.CalMeasuredTOAsResult mAnalysisResult = null;
 
+    private static final int NUM_SINUSOID_PARAMETERS = 5;
+    private double[] mSinusoidParameters;
+
+    private Listener mListener;
+
+    public interface Listener {
+        void onFitParametersUpdated(String tag, double amplitude, double frequency,
+                                    double phase, double offset);
+    }
+
     // Fixme
     private static final int MAX_PLOT_POINTS = 40000;
 
-    public static AnalysisResidualsFragment newInstance(final String analysisFilenameResult) {
+    public static AnalysisResidualsFragment newInstance(final String tag, final String analysisFilenameResult) {
         AnalysisResidualsFragment fragment = new AnalysisResidualsFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_TAG, tag);
         args.putString(ARG_ANALYSIS_FILENAME_RESULT, analysisFilenameResult);
         fragment.setArguments(args);
         return fragment;
@@ -49,8 +65,12 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSinusoidParameters = new double[NUM_SINUSOID_PARAMETERS];
         if (getArguments() != null) {
+            mTag = getArguments().getString(ARG_TAG, "notag");
             mAnalysisFilenameResult = getArguments().getString(ARG_ANALYSIS_FILENAME_RESULT);
+            mSinusoidParameters[0] = getArguments().getDouble(ARG_INITIAL_AMPLITUDE, 2.0e-3);
+            mSinusoidParameters[1] = getArguments().getDouble(ARG_INITIAL_FREQUENCY, 0.1);
         }
     }
 
@@ -60,41 +80,46 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_analysis_residuals, container, false);
 
-        (new AsyncTask<Void, Void, Void>() {
-            private double[] mSinusoidParameters;
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                // Load the analysis result from file
-                Log.d(TAG, "Loading result: " + mAnalysisFilenameResult);
-                mAnalysisResult = new Routines.CalMeasuredTOAsResult( mAnalysisFilenameResult );
-
-                // Compute the sinusoid parameters
-                // Fixme
-                final double initialAmplitude = 2.0e-4; // amplitude
-                final double initialFrequency = 0.6;
-                mSinusoidParameters = Routines.fitSinusoid(mAnalysisResult.measuredTOAs(),
-                        mAnalysisResult.detrendedResiduals(),
-                        initialAmplitude,
-                        initialFrequency);
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                setupLineChart(rootView);
-                displayResiduals(mSinusoidParameters);
-            }
-        }).execute();
+        computeFit(getAmplitude(), getFrequency());
 
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (Listener) context;
+        }
+        catch (ClassCastException e) {
+            throw new ClassCastException(e.getMessage() + " could not cast to Listener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public double getAmplitude() {
+        return mSinusoidParameters[0];
+    }
+
+    public double getFrequency() {
+        return mSinusoidParameters[1];
+    }
+
+    public double getPhase() {
+        return mSinusoidParameters[2];
+    }
+
+    public double getOffset() {
+        return mSinusoidParameters[3];
+    }
+
     public void computeFit(final double initialAmplitude, final double initialFrequency) {
         (new AsyncTask<Void, Void, Void>() {
-            private double[] mSinusoidParameters;
-
             @Override
             protected Void doInBackground(Void... params) {
                 // Load the analysis result from file
@@ -112,12 +137,19 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                displayResiduals(mSinusoidParameters);
+                setupLineChart(getView());
+                displayResiduals();
+
+                // It should never be null, but whatever
+                if (mListener != null) {
+                    mListener.onFitParametersUpdated(mTag, getAmplitude(), getFrequency(),
+                            getPhase(), getOffset());
+                }
             }
         }).execute();
     }
 
-    public void displayResiduals(double[] sinusoidParameters) {
+    public void displayResiduals() {
         final boolean showResiduals = false;
 
         if (mAnalysisResult == null) {
@@ -212,10 +244,10 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         // Fitted sinsoid series
         ArrayList<Entry> sinusoidVals = new ArrayList<Entry>();
         for (int i = 0; i < count; i++) {
-            double p0 = sinusoidParameters[0];
-            double p1 = sinusoidParameters[1];
-            double p2 = sinusoidParameters[2];
-            double p3 = sinusoidParameters[3];
+            double p0 = mSinusoidParameters[0];
+            double p1 = mSinusoidParameters[1];
+            double p2 = mSinusoidParameters[2];
+            double p3 = mSinusoidParameters[3];
             double val = p0 * Math.sin(2.0*Math.PI*x[i]*p1 + p2) + p3;
             sinusoidVals.add(new Entry((float)val, i));
         }

@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -107,7 +106,8 @@
             android:name=".DoubleMetronomeAnalysisListActivity"
             android:label="Double Analyses" >
         </activity>
-        <activity android:name=".ViewDoubleAnalysisResidualsActivity" >
+        <activity android:name=".ViewDoubleAnalysisResidualsActivity"
+            android:label="Double Metronome Analysis">
         </activity>
     </application>
 

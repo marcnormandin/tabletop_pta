@@ -27,6 +27,23 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/containerCorrelation"
+        android:background="#FF80AB">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="[0.9]"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/textCorrelation"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 

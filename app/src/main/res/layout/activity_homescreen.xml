@@ -9,6 +9,17 @@
         android:id="@+id/app_bar"
         layout="@layout/app_bar"/>
 
+    <!-- Version text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="[Version]"
+        android:id="@+id/textVersion"
+        android:layout_alignTop="@+id/imageView2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
     <ImageView
         android:layout_width="134dp"
         android:layout_height="129dp"
@@ -96,5 +107,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+
 
 </RelativeLayout>
