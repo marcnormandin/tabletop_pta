@@ -103,7 +103,7 @@ public class BuiltinMetronomeService extends Service {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Fixme
         // These names are not the same as used in the preferences activity!
-        mDuration = mPreferences.getFloat("duration", 0.01f);
+        mDuration = mPreferences.getFloat("duration", 0.02f);
         mSampleRate = mPreferences.getInt("sampleRate", 44100);
         mFreqOfTone = mPreferences.getFloat("freqOfTone", 640);
         mBeatsPerMinute = mPreferences.getInt("beatsPerMinute", 120);
@@ -147,12 +147,12 @@ public class BuiltinMetronomeService extends Service {
     private void genTone()
     {
         // fill out the array
-        double percent = 0.10;
+        double percent = 0.20;
         double Trise = percent * mDuration;
         int Nw = (int) (mSampleRate * Trise);
 
         for (int i = 0; i < mNumSamples; ++i) {
-            mSample[i] = Math.sin(2 * Math.PI * i / (mSampleRate/mFreqOfTone));
+            mSample[i] = Math.sin(2.0 * Math.PI * i / (mSampleRate/mFreqOfTone));
 
             if (i < Nw) {
                 mSample[i] *= Math.sin(Math.PI/2.0 * i / Nw);
