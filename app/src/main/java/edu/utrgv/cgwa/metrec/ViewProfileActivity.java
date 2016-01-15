@@ -1,21 +1,17 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 public class ViewProfileActivity extends AppCompatActivity {
-    private static final String TAG = "ViewProfile";
     private Toolbar mToolbar;
     private long mProfileID;
 
@@ -31,10 +27,8 @@ public class ViewProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mProfileID = intent.getLongExtra("profileID", -1);
         if (mProfileID == -1) {
-            Log.d(TAG, "Attempt to view a profile, but no profile ID given in intent.");
+            // Fixme
         } else {
-            Log.d(TAG, "Adding profile fragment");
-
             ProfileFragment frag = ProfileFragment.newInstance(mProfileID);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();

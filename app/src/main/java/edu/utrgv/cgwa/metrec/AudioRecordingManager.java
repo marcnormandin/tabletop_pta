@@ -3,13 +3,11 @@ package edu.utrgv.cgwa.metrec;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import java.io.File;
 
 public class AudioRecordingManager {
     private DbHelper mHelper = null;
-    private static final String TAG = "AudioRecordingManager";
 
     public static final String VALUE_NAME_TAG_PULSE_PROFILE = "pulse_profile";
     public static final String VALUE_NAME_TAG_SINGLE_METRONOME = "single_metronome";
@@ -125,7 +123,6 @@ public class AudioRecordingManager {
     private void deleteFile(String filename) {
         File f = new File(filename);
         if (f.exists()) {
-            Log.d(TAG, "deleting " + f.getPath());
             f.delete();
         }
     }
@@ -138,12 +135,10 @@ public class AudioRecordingManager {
 
             final String SQL = "DELETE FROM " + DbAudioRecordingTable.AudioRecordingEntry.TABLE_NAME
                     + " WHERE _ID = " + id;
-            Log.d(TAG, "Deleting Audio Recording with _ID = " + id + " from the database.");
 
             mHelper.getWritableDatabase().execSQL(SQL);
         }
         catch (InvalidRecordException e) {
-            Log.d(TAG, "Error: Attempt to delete a record that does not exist.");
         }
 
     }

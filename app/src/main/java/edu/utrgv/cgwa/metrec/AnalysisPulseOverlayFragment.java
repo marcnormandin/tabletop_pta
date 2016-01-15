@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import edu.utrgv.cgwa.tabletoppta.Routines;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class AnalysisPulseOverlayFragment extends Fragment {
-    private static final String TAG = "ViewPulseOverlay";
     private static final String ARG_ANALYSIS_ID = "audioID";
 
     private long mAnalysisID = -1;
@@ -125,15 +123,11 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         // Get the closest time index for the measured pulse time
         int measuredStartIndex = (int) Math.round(measuredPulseTime / dt);
 
-
-        Log.d(TAG, "Measured pulse time: " + measuredPulseTime);
-
         // Expected pulse time
         double expectedPulseTime = mAnalysisResult.expectedTOAs()[pulseNumber];
         // Get the closest time index for the expected pulse time
         int expectedStartIndex = (int) Math.round(expectedPulseTime / dt);
 
-        Log.d(TAG, "Expected pulse time: " + expectedPulseTime);
 
         // Pick the start time with the smallest index so that
         // both pulses can be drawn
@@ -208,7 +202,6 @@ public class AnalysisPulseOverlayFragment extends Fragment {
         ArrayList<Entry> correlationVals = new ArrayList<Entry>();
         double[] correlation = mAnalysisResult.correlation();
         double maxCorrelation = correlation[mAnalysisResult.ind0()];
-        Log.d(TAG, "Correlation array (PLOTTING) length = " + correlation.length);
 
         for (int i = 0; i < count; i++) {
             int timeIndex = startIndex + i;

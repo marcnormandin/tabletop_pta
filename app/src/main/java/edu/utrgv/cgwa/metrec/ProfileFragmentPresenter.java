@@ -1,9 +1,7 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -27,45 +25,11 @@ public class ProfileFragmentPresenter {
         mFragment = frag;
         ProfileManager manager = new ProfileManager(frag.getActivity());
         DbProfileTable.ProfileEntry entry = manager.getEntryByID(profileID);
-        Log.d(TAG, "Profile fragment presenter created for: filenamePF = "  + entry.filenamePF());
         mMetronome = new ProfileModel(entry.filenamePF());
     }
 
     void onCreateView() {
         refreshProfileView();
-        /*
-        class PreloadViews extends AsyncTask<Void, String, Void> {
-            private ProgressDialog mProgressDialog;
-
-            @Override
-            protected void onPreExecute() {
-                mProgressDialog = ProgressDialog.show(mFragment.getActivity(), "Loading data...", "Reading previous data");
-            }
-
-            @Override
-            protected void onProgressUpdate(String... values) {
-                mProgressDialog.setMessage(values[0]);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                publishProgress("Reading previous time series");
-                mMetronome.getTimeSeries();
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                mProgressDialog.setMessage("Drawing time series plot");
-                refreshProfileView();
-                mProgressDialog.dismiss();
-            }
-        }
-
-        PreloadViews pl = new PreloadViews();
-        pl.execute();
-        */
     }
 
     class RefreshPulseProfileViewAsync extends AsyncTask<Void, Void, Void> {
@@ -78,7 +42,6 @@ public class ProfileFragmentPresenter {
             // set data
             LineChart plot = (LineChart) mFragment.getView().findViewById(R.id.metronomepulseprofilefoldedseries);
             if (plot == null) {
-                Log.d(TAG, "Error: Unable to find profile line plot.");
                 return;
             }
 
@@ -134,8 +97,6 @@ public class ProfileFragmentPresenter {
     }
 
     public void refreshProfileView() {
-        Log.d(TAG, "refreshing metronome profile view");
-
         new RefreshPulseProfileViewAsync().execute();
     }
 }

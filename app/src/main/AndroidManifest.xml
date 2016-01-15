@@ -100,8 +100,6 @@
             android:label="@string/title_activity_select_audio_record"
             android:theme="@style/AppTheme" >
         </activity>
-        <activity android:name=".NewAudioRecording" >
-        </activity>
         <activity
             android:name=".DoubleMetronomeAnalysisListActivity"
             android:label="Double Analyses" >

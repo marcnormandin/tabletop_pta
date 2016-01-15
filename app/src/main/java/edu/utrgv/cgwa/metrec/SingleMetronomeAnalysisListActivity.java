@@ -1,9 +1,7 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -70,8 +68,6 @@ public class SingleMetronomeAnalysisListActivity extends AppCompatActivity
                 finish();
                 return true;
             case R.id.action_new:
-                //Intent intent = new Intent(this, SingleMetronomeAnalysisActivity.class);
-                //startActivity(intent);
                 actionNewSingleAnalysis();
                 return true;
 

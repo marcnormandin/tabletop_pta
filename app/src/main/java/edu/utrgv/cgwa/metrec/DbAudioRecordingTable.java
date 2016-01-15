@@ -1,7 +1,6 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.provider.BaseColumns;
-import android.provider.MediaStore;
 
 public class DbAudioRecordingTable {
 

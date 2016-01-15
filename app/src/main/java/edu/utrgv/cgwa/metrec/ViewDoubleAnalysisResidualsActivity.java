@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import edu.utrgv.cgwa.tabletoppta.Utility;
 
 public class ViewDoubleAnalysisResidualsActivity extends AppCompatActivity
 implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
-    private static final String TAG = "ViewDoubleResiduals";
     public static final String ARG_ANALYSIS_ID = "analysisID";
 
     private Toolbar mToolbar;
@@ -52,18 +50,14 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
         mTextCorrelation = (TextView) findViewById(R.id.textCorrelation);
 
         if (mAnalysisID == -1) {
-            Log.d(TAG, "Attempt to view residuals, but no analysis ID given in intent.");
+            // Fixme
         } else {
-            Log.d(TAG, "Adding residuals fragment");
-
             DoubleMetronomeAnalysisManager manager = new DoubleMetronomeAnalysisManager(this);
             DbDoubleMetronomeAnalysisTable.Entry entry = manager.getEntryByID(mAnalysisID);
 
-            Log.d(TAG, "Creating fragment for result filename: " + entry.filenameResultOne());
             mControlOne = FitSinusoidFragment.newInstance(mControlOneTag);
             mChartOne = AnalysisResidualsFragment.newInstance(mChartOneTag, entry.filenameResultOne());
 
-            Log.d(TAG, "Creating fragment for result filename: " + entry.filenameResultTwo());
             mControlTwo = FitSinusoidFragment.newInstance(mControlTwoTag);
             mChartTwo = AnalysisResidualsFragment.newInstance(mChartTwoTag, entry.filenameResultTwo());
 

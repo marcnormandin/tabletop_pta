@@ -1,10 +1,8 @@
 
 package edu.utrgv.cgwa.metrec;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -42,14 +40,6 @@ public class DoubleMetronomeAnalysisListActivity extends AppCompatActivity
     public void onCheckboxChanged(final int position, final long analysisID, final boolean isChecked) {
         //Toast.makeText(this, "Position (" + position + "), Analysis ID (" + analysisID + "),  checked = " + isChecked, Toast.LENGTH_SHORT).show();
     }
-
-    /*
-    @Override
-    public void onViewPulseOverlayClicked(int position, long analysisID) {
-        Intent intent = new Intent(this, ViewAnalysisPulsesActivity.class);
-        intent.putExtra(ViewAnalysisPulsesActivity.ARG_ANALYSIS_ID, analysisID);
-        startActivity(intent);
-    }*/
 
     @Override
     public void onViewResidualsClicked(int position, long analysisID) {

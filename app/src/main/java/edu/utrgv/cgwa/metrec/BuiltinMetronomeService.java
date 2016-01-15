@@ -9,12 +9,8 @@ import android.media.AudioTrack;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class BuiltinMetronomeService extends Service {
-
-    private final String TAG = "BuiltinMetronomeService";
-
     class SoundThread extends Thread {
         boolean mKeepLooping = true;
 
@@ -34,7 +30,6 @@ public class BuiltinMetronomeService extends Service {
                 } while ((System.currentTimeMillis() - last) < mMillisPerBeat);
             }
             mAudioTrack.stop();
-            Log.d(TAG, "mThread.run() end reached.");
         }
 
         @Override
@@ -49,7 +44,7 @@ public class BuiltinMetronomeService extends Service {
             }
 
             if (mAudioTrackIsDirty) {
-                genTone();
+                generatePulseWaveform();
                 mAudioTrackIsDirty = false;
             }
 
@@ -97,7 +92,6 @@ public class BuiltinMetronomeService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate");
 
         // Settings
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -120,31 +114,26 @@ public class BuiltinMetronomeService extends Service {
                 AudioTrack.MODE_STATIC);
 
         // Generate the initial audio track
-        genTone();
+        generatePulseWaveform();
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
-
         stopPlaying();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "onUnbind");
-
         stopPlaying();
         return false;
     }
 
-    private void genTone()
+    private void generatePulseWaveform()
     {
         // fill out the array
         double percent = 0.20;
@@ -171,11 +160,8 @@ public class BuiltinMetronomeService extends Service {
 
         }
 
-        Log.d(TAG, "sampling rate for tone = " + mSampleRate);
-
         mAudioTrack.write(mGeneratedSnd, 0, mGeneratedSnd.length);
         mAudioTrack.setStereoVolume(mVolume, mVolume);
-        //mAudioTrack.setVolume(); // API 21
     }
 
     public void startPlaying() {
@@ -183,7 +169,6 @@ public class BuiltinMetronomeService extends Service {
             mIsPlaying = true;
             mSoundThread = new SoundThread(mAudioTrack);
             mSoundThread.start();
-            Log.d(TAG, "thread started");
         }
     }
 

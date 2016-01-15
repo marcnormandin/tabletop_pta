@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.Fragment {
-    private static final String TAG = "AnalysisListFragment";
     private OnFragmentInteractionListener mListener;
     private RecyclerView mAnalysisList;
     private MyAdapter mAdapter;
@@ -147,8 +145,6 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
                 }
             }
 
-            //notifyItemRemoved(position);
-            //notifyDataSetChanged();
             refresh();
         }
 
@@ -200,8 +196,6 @@ public class SingleMetronomeAnalysisListFragment extends android.support.v4.app.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_single_metronome_analysis_listview, container, false);
-
-        Log.d(TAG, "Creating the listview");
 
         // Find the list view
         mAnalysisList = (RecyclerView) rootView.findViewById(R.id.analysislist);

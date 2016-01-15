@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,7 +15,6 @@ import edu.utrgv.cgwa.tabletoppta.Routines;
 
 public class ViewAnalysisResidualsActivity extends AppCompatActivity
 implements AnalysisResidualsFragment.Listener {
-    private static final String TAG = "ViewResiduals";
     public static final String ARG_ANALYSIS_ID = "analysisID";
     public static final String ARG_ANALYSIS_FILENAME_RESULT = "analysisFilenameResult";
 
@@ -39,9 +37,8 @@ implements AnalysisResidualsFragment.Listener {
         mAnalysisFilenameResult = intent.getStringExtra(ARG_ANALYSIS_FILENAME_RESULT);
 
         if (mAnalysisID == -1) {
-            Log.d(TAG, "Attempt to view residuals, but no analysis ID given in intent.");
+            // Fixme
         } else {
-            Log.d(TAG, "Adding residuals fragment");
             AnalysisResidualsFragment frag = AnalysisResidualsFragment.newInstance("notag", mAnalysisFilenameResult);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();

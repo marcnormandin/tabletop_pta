@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import edu.utrgv.cgwa.tabletoppta.PulseProfile;
-import edu.utrgv.cgwa.tabletoppta.Routines;
 
 public class NewProfileFragment extends Fragment implements View.OnClickListener {
 

@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 public class SelectAudioRecordActivity extends AppCompatActivity implements AudioRecordListFragment.OnFragmentInteractionListener {
     private static final String TAG = "SelectAudioRecord";
@@ -30,13 +28,6 @@ public class SelectAudioRecordActivity extends AppCompatActivity implements Audi
             public void onClick(View view) {
                 // Ask the fragment for the selected audio records
                 long[] ids = mList.getSelectedEntryIDs();
-                if (ids == null) {
-                    Log.d(TAG, "Returned ID array is null!");
-                } else {
-                    for (int i = 0; i < ids.length; i++) {
-                        Log.d(TAG, "selected id: " + ids[i]);
-                    }
-                }
 
                 // Return the result
                 Intent result = new Intent();

@@ -3,7 +3,6 @@ package edu.utrgv.cgwa.metrec;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class TimeSeriesFragmentPresenter {
-    private final String TAG = "TimeSeriesPresenter";
     private AudioRecordingModel mAudioRecording;
     private DbAudioRecordingTable.AudioRecordingEntry mEntry;
     private TimeSeriesFragment mFragment;
@@ -35,10 +33,9 @@ public class TimeSeriesFragmentPresenter {
             mAudioRecording = new AudioRecordingModel(mEntry.filenamePrefix());
         }
         catch (AudioRecordingManager.InvalidRecordException e) {
-            Log.d(TAG, "Error: Unable to load audio record.");
+            // Fixme
         }
 
-        Log.d(TAG, "Timeseries fragment presenter created for: filenamePrefix = " + mEntry.filenamePrefix());
     }
 
     void onCreateView() {
@@ -133,22 +130,6 @@ public class TimeSeriesFragmentPresenter {
 
             mLineChart.notifyDataSetChanged();
             mLineChart.invalidate();
-
-            // Debug
-            boolean triggered = false;
-            int i = 0;
-            for (i = 0; i < MAX_PLOT_POINTS; i++) {
-                if (mTS.h[i] >= 10000) {
-                    triggered = true;
-                    break;
-                }
-            }
-
-            if (triggered) {
-                for (int j = i; j-i < 1000 && j < MAX_PLOT_POINTS; j++) {
-                    Log.d(TAG, "t[" + j + "]: " + mTS.h[j]);
-                }
-            }
         }
 
         @Override
@@ -161,11 +142,10 @@ public class TimeSeriesFragmentPresenter {
     }
 
     public void refreshTimeseriesView() {
-        Log.d(TAG, "refreshing timeseries view");
 
         LineChart plot = (LineChart) mFragment.getView().findViewById(R.id.charttimeseries);
         if (plot == null) {
-            Log.d(TAG, "Error: Linechart is null");
+            // Fixme
         } else {
             new RefreshTimeSeriesViewAsync(plot, mAudioRecording).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -175,7 +155,7 @@ public class TimeSeriesFragmentPresenter {
         if (mAudioRecording != null) {
             mAudioRecording.playRecording(mEntry.samplesPerSecond());
         } else {
-            Log.d(TAG, "Error: Attempt to play sound on null audio recording!");
+            // Fixme
         }
     }
 }

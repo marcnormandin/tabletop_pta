@@ -5,7 +5,6 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
-import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class PCMSoundSystem {
-    private static final String TAG = "PCMSoundSystem";
 
     // Sound system properties
     private static int RECORDER_SAMPLERATE;
@@ -37,7 +35,6 @@ public class PCMSoundSystem {
         mFilename = filename;
         RECORDER_SAMPLERATE = sampleRate;
 
-        Log.d(TAG, "Sound settings set for " + RECORDER_SAMPLERATE + " samples per second.");
     }
 
     public void startRecording() {
@@ -121,7 +118,6 @@ public class PCMSoundSystem {
         //short sData[] = new short[BufferElements2Rec];
         short sData[] = new short[bufferSize/2];
 
-        Log.d(TAG, "recording to " + filePath);
 
         FileOutputStream os = null;
         try {

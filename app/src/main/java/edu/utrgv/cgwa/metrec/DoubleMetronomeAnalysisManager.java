@@ -3,14 +3,12 @@ package edu.utrgv.cgwa.metrec;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import java.io.File;
 
 public class DoubleMetronomeAnalysisManager {
 
     private DbHelper mHelper = null;
-    private static final String TAG = "DoubleAnalysisManager";
 
     public DoubleMetronomeAnalysisManager(Context context) {
         mHelper = new DbHelper(context);
@@ -113,7 +111,6 @@ public class DoubleMetronomeAnalysisManager {
     private void deleteFile(String filename) {
         File f = new File(filename);
         if (f.exists()) {
-            Log.d(TAG, "deleting " + f.getPath());
             f.delete();
         }
     }
@@ -126,7 +123,6 @@ public class DoubleMetronomeAnalysisManager {
 
         final String SQL = "DELETE FROM " + DbDoubleMetronomeAnalysisTable.Entry.TABLE_NAME
                 + " WHERE _ID = " + id;
-        Log.d(TAG, "Deleting Double Metronome Analysis with _ID = " + id + " from the database.");
 
         mHelper.getWritableDatabase().execSQL(SQL);
     }

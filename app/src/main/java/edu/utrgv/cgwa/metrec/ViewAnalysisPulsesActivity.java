@@ -1,26 +1,15 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import edu.utrgv.cgwa.tabletoppta.Routines;
 
@@ -44,9 +33,8 @@ public class ViewAnalysisPulsesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mAnalysisID = intent.getLongExtra(ARG_ANALYSIS_ID, -1);
         if (mAnalysisID == -1) {
-            Log.d(TAG, "Attempt to view an analysis, but no analysis ID given in intent.");
+            // Fixme
         } else {
-            Log.d(TAG, "Adding pulse overlay fragment");
             AnalysisPulseOverlayFragment frag = AnalysisPulseOverlayFragment.newInstance(mAnalysisID);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();

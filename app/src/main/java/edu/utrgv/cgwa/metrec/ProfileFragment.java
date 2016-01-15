@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class ProfileFragment extends Fragment {
-    private static final String TAG = "ProfileFragment";
     public static final String ARG_PROFILEID = "profileID";
     private ProfileFragmentPresenter mPresenter;
 

@@ -6,20 +6,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ProfileListFragment extends Fragment {
-    private static final String TAG = "ProfileListFragment";
     private OnFragmentInteractionListener mListener;
     private RecyclerView mProfileList;
     private MyAdapter mAdapter;
@@ -215,8 +211,6 @@ public class ProfileListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profilelist_listview, container, false);
-
-        Log.d(TAG, "Creating the listview");
 
         // Find the list view
         mProfileList = (RecyclerView) rootView.findViewById(R.id.profilelist);

@@ -3,14 +3,11 @@ package edu.utrgv.cgwa.metrec;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,10 +16,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import edu.utrgv.cgwa.tabletoppta.TimeSeries;
-
 public class ViewTimeSeriesActivity extends AppCompatActivity {
-    private static final String TAG = "ViewTimeSeries";
     private static TimeSeriesFragment mFragment;
     private Toolbar mToolbar;
     private long mAudioID;
@@ -40,21 +34,14 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mAudioID = intent.getLongExtra("audioID", -1);
         if (mAudioID == -1) {
-            Log.d(TAG, "Attempt to view a time series, but no audio ID given in intent.");
+            // Fixme
         } else {
-            Log.d(TAG, "Adding time series fragment");
             mFragment = TimeSeriesFragment.newInstance(mAudioID);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, mFragment);
             ft.commit();
         }
-
-        /*
-        if (TimeSeries.test(getFilesDir() + "/timeseries.test") == false) {
-            Log.d(TAG, "ERROR: TIME SERIES READ AND WRITE ARE NOT CONSISTENT!");
-        }*/
-
 
         AudioRecordingManager manager = new AudioRecordingManager(this);
         try {
@@ -73,7 +60,6 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
             durationInSeconds.setText("Duration (s): " + entry.durationInSeconds());
         }
         catch (AudioRecordingManager.InvalidRecordException e) {
-            Log.d(TAG, "Error: Unable to load audio record.");
             Toast.makeText(this, "Error: Unable to load audio record.", Toast.LENGTH_LONG).show();
         }
     }
@@ -119,7 +105,6 @@ public class ViewTimeSeriesActivity extends AppCompatActivity {
             int n = fullPathAndFilename.lastIndexOf("/");
             String filename = fullPathAndFilename.substring(n);
             File file = new File(this.getFilesDir(), filename);
-            Log.d(TAG, "Sharing audio file: " + file);
 
             Uri uri = FileProvider.getUriForFile(this, "edu.utrgv.cgwa.metrec.fileprovider", file);
 

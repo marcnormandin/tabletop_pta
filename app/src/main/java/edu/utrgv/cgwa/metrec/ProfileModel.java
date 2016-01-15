@@ -1,7 +1,5 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.util.Log;
-
 import java.io.File;
 
 import edu.utrgv.cgwa.tabletoppta.PulseProfile;
@@ -9,7 +7,6 @@ import edu.utrgv.cgwa.tabletoppta.Routines;
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
 
 public class ProfileModel {
-    private static final String TAG = "ProfileModel";
     private PulseProfile mPulseProfile = null;
     private String mFilenamePF;
     private ProfileProgressListener mProfileProgressListener = null;
@@ -58,7 +55,6 @@ public class ProfileModel {
     protected void deleteFile(String filename) {
         File f = new File(filename);
         if (f.exists()) {
-            Log.d(TAG, "deleting " + f.getPath());
             f.delete();
         }
     }
@@ -68,8 +64,6 @@ public class ProfileModel {
     }
 
     public void newProfile(double beatsPerMinute, TimeSeries ts) {
-        Log.d(TAG, "Calculating profile with beats-per-minute = " + beatsPerMinute);
-
         if (mProfileProgressListener != null) {
             mProfileProgressListener.onProfileComputationStarted();
         }

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,7 +122,6 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
             @Override
             protected Void doInBackground(Void... params) {
                 // Load the analysis result from file
-                Log.d(TAG, "Loading result: " + mAnalysisFilenameResult);
                 mAnalysisResult = new Routines.CalMeasuredTOAsResult( mAnalysisFilenameResult );
 
                 // Compute the sinusoid parameters

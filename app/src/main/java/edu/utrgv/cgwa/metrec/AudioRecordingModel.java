@@ -1,7 +1,5 @@
 package edu.utrgv.cgwa.metrec;
 
-import android.util.Log;
-
 import java.io.File;
 
 import edu.utrgv.cgwa.tabletoppta.TimeSeries;
@@ -12,7 +10,6 @@ import edu.utrgv.cgwa.tabletoppta.TimeSeries;
  * and adds the data to a database.
  */
 public class AudioRecordingModel {
-    private static final String TAG = "AudioRecordingModel";
     private String mFilenamePrefix;
     private PCMSoundSystem mPCMSoundSystem = null;
     private TimeSeries mTimeSeries = null;
@@ -47,7 +44,6 @@ public class AudioRecordingModel {
     protected void deleteFile(String filename) {
         File f = new File(filename);
         if (f.exists()) {
-            Log.d(TAG, "deleting " + f.getPath());
             f.delete();
         }
     }
