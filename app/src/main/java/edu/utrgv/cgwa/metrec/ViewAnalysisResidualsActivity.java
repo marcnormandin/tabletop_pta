@@ -10,11 +10,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.utrgv.cgwa.tabletoppta.Routines;
+import edu.utrgv.cgwa.tabletoppta.Utility;
 
 public class ViewAnalysisResidualsActivity extends AppCompatActivity
-implements AnalysisResidualsFragment.Listener {
+implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
     public static final String ARG_ANALYSIS_ID = "analysisID";
     public static final String ARG_ANALYSIS_FILENAME_RESULT = "analysisFilenameResult";
 
@@ -22,6 +24,11 @@ implements AnalysisResidualsFragment.Listener {
     private Toolbar mToolbar;
     private long mAnalysisID;
     private String mAnalysisFilenameResult;
+
+    private final String mControlOneTag = "fitOneTag";
+    private final String mChartOneTag = "chartOneTag";
+    private FitSinusoidFragment mControlOne;
+    private AnalysisResidualsFragment mChartOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +46,21 @@ implements AnalysisResidualsFragment.Listener {
         if (mAnalysisID == -1) {
             // Fixme
         } else {
-            AnalysisResidualsFragment frag = AnalysisResidualsFragment.newInstance("notag", mAnalysisFilenameResult);
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.container, frag);
-            ft.commit();
-
-
             SingleMetronomeAnalysisManager manager = new SingleMetronomeAnalysisManager(this);
             DbSingleMetronomeAnalysisTable.Entry entry = manager.getEntryByID(mAnalysisID);
             Routines.CalMeasuredTOAsResult result = new Routines.CalMeasuredTOAsResult(entry.filenameResult());
+
+            //AnalysisResidualsFragment frag = AnalysisResidualsFragment.newInstance("notag", mAnalysisFilenameResult);
+            FragmentManager fm = getSupportFragmentManager();
+
+            mControlOne = FitSinusoidFragment.newInstance(mControlOneTag);
+            mChartOne = AnalysisResidualsFragment.newInstance(mChartOneTag, entry.filenameResult());
+
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.container, mControlOne, mControlOneTag);
+            ft.add(R.id.container, mChartOne, mChartOneTag);
+            ft.commit();
+
 
             TextView date = (TextView) findViewById(R.id.analysisdate);
             date.setText("" + entry.date());
@@ -88,9 +100,47 @@ implements AnalysisResidualsFragment.Listener {
         return false;
     }
 
+    // Called by the control fragment
+    @Override
+    public void onFit(String controlTag, double amplitude, double frequency) {
+        Toast.makeText(this, "FIT: id = " + controlTag + ", amp = " + amplitude + ", freq = " + frequency,
+                Toast.LENGTH_SHORT).show();
+
+        FragmentManager fm = getSupportFragmentManager();
+        AnalysisResidualsFragment f;
+        f = (AnalysisResidualsFragment) fm.findFragmentByTag(mChartOneTag);
+        f.computeFit(amplitude, frequency);
+    }
+
+    // Called by the chart fragment (which updates the fit parameters)
     @Override
     public void onFitParametersUpdated(String tag, double amplitude, double frequency,
                                        double phase, double offset) {
+        // Update the controls
+        FragmentManager fm = getSupportFragmentManager();
+        FitSinusoidFragment frag;
+        frag = (FitSinusoidFragment) fm.findFragmentByTag(mControlOneTag);
+        frag.setAmplitude(amplitude);
+        frag.setFrequency(frequency);
 
+    }
+
+    private double[] genSinusoid(final AnalysisResidualsFragment frag) {
+        final int N = 1000;
+
+        // Fixme
+        // This should use a range around the two recording times
+        double[] t = Utility.linspace(0.0, 16.0, N);
+
+        final double a = frag.getAmplitude();
+        final double f = frag.getFrequency();
+        final double p = frag.getPhase();
+        final double o = frag.getOffset();
+        double[] y = new double[N];
+        for (int i = 0; i < N; i++) {
+            y[i] = a * Math.sin(2.0*Math.PI*f*t[i] + p) + o;
+        }
+
+        return y;
     }
 }
