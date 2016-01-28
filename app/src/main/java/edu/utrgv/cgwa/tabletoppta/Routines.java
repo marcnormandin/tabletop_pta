@@ -560,7 +560,7 @@ public class Routines {
         return measuredTOAs, uncertainties, n0
     */
 
-    public static CalMeasuredTOAsResult calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp) {
+    public static CalMeasuredTOAsResult calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp, final double Tcorr) {
         final long startTime = System.nanoTime();
         boolean useBrent = false;
 
@@ -570,7 +570,7 @@ public class Routines {
         //double fNyq = 1.0 / (2.0 * deltaT); // Nyquist frequency
 
         // Magic number
-        final double Tcorr = 4e-4;
+        //final double Tcorr = 4e-4;
         final int m = (int) Math.floor( Tcorr / deltaT ); // Number of indices less than a correlation peak
 
         RealDoubleFFT transform = new RealDoubleFFT(N);

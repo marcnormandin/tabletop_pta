@@ -70,11 +70,6 @@
             android:label="Time Series" >
         </activity>
         <activity
-            android:name=".SingleMetronomeAnalysisActivity"
-            android:label="Single Metronome Analysis"
-            android:theme="@style/AppTheme" >
-        </activity>
-        <activity
             android:name=".SelectProfilesActivity"
             android:label="Select profile(s) below"
             android:theme="@style/AppTheme" >

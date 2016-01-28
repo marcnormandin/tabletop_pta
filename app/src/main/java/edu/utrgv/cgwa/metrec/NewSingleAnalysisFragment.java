@@ -3,8 +3,10 @@ package edu.utrgv.cgwa.metrec;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -245,7 +247,10 @@ public class NewSingleAnalysisFragment extends Fragment implements View.OnClickL
             // Create the template
             TimeSeries template = Routines.caltemplate(pulseProfile, singleMovingMetronome);
 
-            Routines.CalMeasuredTOAsResult result = Routines.calmeasuredTOAs(singleMovingMetronome, template, pulseProfile.T);
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            final double tcorr = Double.parseDouble(sp.getString("correlationTime", "4e-4"));
+
+            Routines.CalMeasuredTOAsResult result = Routines.calmeasuredTOAs(singleMovingMetronome, template, pulseProfile.T, tcorr);
 
             return result;
         }

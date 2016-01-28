@@ -48,6 +48,19 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="Analysis Parameters"
+        android:layout="@layout/preferences_category">
+
+        <EditTextPreference
+            android:key="correlationTime"
+            android:title="Correlation Time"
+            android:text="4.0e-4"
+            android:summary="The window size (in time) to find the maximum peak within"
+            android:defaultValue="4.0e-4" />
+
+    </PreferenceCategory>
+
     <Preference android:title="@string/pref_title_restoredefaultsettings"
         android:key="restoredefaultsettings"
         android:summary="@string/pref_summary_restoredefaultsettings"/>
