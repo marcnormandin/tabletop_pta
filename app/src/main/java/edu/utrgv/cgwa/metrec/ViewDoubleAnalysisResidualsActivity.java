@@ -100,8 +100,10 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
     // Called by the control fragment
     @Override
     public void onFit(String controlTag, double amplitude, double frequency) {
-        Toast.makeText(this, "FIT: id = " + controlTag + ", amp = " + amplitude + ", freq = " + frequency,
-                Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "FIT: id = " + controlTag + ", amp = " + amplitude + ", freq = " + frequency,
+        //        Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, "Fit updated", Toast.LENGTH_SHORT).show();
 
         FragmentManager fm = getSupportFragmentManager();
         AnalysisResidualsFragment f;

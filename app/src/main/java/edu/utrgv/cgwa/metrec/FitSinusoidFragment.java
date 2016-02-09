@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.text.DecimalFormat;
+
 public class FitSinusoidFragment extends Fragment implements View.OnClickListener {
 
     public static final String ARG_CONTROL_TAG = "ARG_CONTROL_TAG";
@@ -18,6 +20,8 @@ public class FitSinusoidFragment extends Fragment implements View.OnClickListene
     private EditText mEditFrequency;
 
     private Listener mListener;
+
+    private DecimalFormat mDecForm;
 
     public interface Listener {
         void onFit(String controlTag, double amplitude, double frequency);
@@ -50,6 +54,9 @@ public class FitSinusoidFragment extends Fragment implements View.OnClickListene
         Button buttonFit = (Button) rootView.findViewById(R.id.buttonFit);
         buttonFit.setOnClickListener(this);
 
+        mDecForm = new DecimalFormat("0.00E0");
+
+
         return rootView;
     }
 
@@ -60,6 +67,7 @@ public class FitSinusoidFragment extends Fragment implements View.OnClickListene
                 if (mListener != null) {
                     double amplitude = Double.parseDouble(mEditAmplitude.getText().toString());
                     double frequency = Double.parseDouble(mEditFrequency.getText().toString());
+
                     mListener.onFit(mControlTag, amplitude, frequency);
                 }
                 break;
@@ -85,10 +93,10 @@ public class FitSinusoidFragment extends Fragment implements View.OnClickListene
     }
 
     public void setAmplitude(double a) {
-        mEditAmplitude.setText(Double.toString(a));
+        mEditAmplitude.setText(mDecForm.format(a));
     }
 
     public void setFrequency(double f) {
-        mEditFrequency.setText(Double.toString(f));
+        mEditFrequency.setText(mDecForm.format(f));
     }
 }

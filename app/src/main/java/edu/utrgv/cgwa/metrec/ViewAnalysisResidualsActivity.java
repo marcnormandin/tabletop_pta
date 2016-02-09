@@ -103,8 +103,9 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
     // Called by the control fragment
     @Override
     public void onFit(String controlTag, double amplitude, double frequency) {
-        Toast.makeText(this, "FIT: id = " + controlTag + ", amp = " + amplitude + ", freq = " + frequency,
-                Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "FIT: id = " + controlTag + ", amp = " + amplitude + ", freq = " + frequency,
+        //        Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Fit updated", Toast.LENGTH_SHORT).show();
 
         FragmentManager fm = getSupportFragmentManager();
         AnalysisResidualsFragment f;
@@ -123,24 +124,5 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
         frag.setAmplitude(amplitude);
         frag.setFrequency(frequency);
 
-    }
-
-    private double[] genSinusoid(final AnalysisResidualsFragment frag) {
-        final int N = 1000;
-
-        // Fixme
-        // This should use a range around the two recording times
-        double[] t = Utility.linspace(0.0, 16.0, N);
-
-        final double a = frag.getAmplitude();
-        final double f = frag.getFrequency();
-        final double p = frag.getPhase();
-        final double o = frag.getOffset();
-        double[] y = new double[N];
-        for (int i = 0; i < N; i++) {
-            y[i] = a * Math.sin(2.0*Math.PI*f*t[i] + p) + o;
-        }
-
-        return y;
     }
 }

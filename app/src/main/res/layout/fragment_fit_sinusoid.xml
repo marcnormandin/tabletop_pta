@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#F50057"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     tools:context="edu.utrgv.cgwa.metrec.FitSinusoidFragment">
 
     <TextView
@@ -11,6 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingRight="5dp"
         android:text="Amplitude"
         android:id="@+id/textViewAmplitude" />
 
@@ -31,6 +34,7 @@
         android:layout_below="@id/textViewAmplitude"
         android:layout_alignParentLeft="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingRight="5dp"
         android:text="Frequency"
         android:id="@+id/textViewFrequency" />
 
