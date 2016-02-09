@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,28 +8,37 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Amplitude"
-        android:id="@+id/textView7" />
+        android:id="@+id/textViewAmplitude" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/textViewAmplitude"
+        android:layout_alignBaseline="@id/textViewAmplitude"
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/editAmplitude"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:numeric="signed|decimal" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewAmplitude"
+        android:layout_alignParentLeft="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Frequency"
-        android:id="@+id/textView8" />
+        android:id="@+id/textViewFrequency" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/textViewFrequency"
+        android:layout_alignBaseline="@id/textViewFrequency"
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/editFrequency"
@@ -39,6 +48,8 @@
         android:id="@+id/buttonFit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:text="Fit" />
 
-</LinearLayout>
+</RelativeLayout>
