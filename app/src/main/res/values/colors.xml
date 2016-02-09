@@ -2,5 +2,6 @@
     <color name="primary_color">#2196F3</color>
     <color name="primary_color_dark">#1976D2</color>
     <color name="accent_color">#E91E63</color>
+    <color name="infopanel_color">#90CAF9</color>
     <color name="background_light">#CFD8DC</color>
 </resources>
