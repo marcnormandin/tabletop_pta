@@ -61,7 +61,12 @@
 
     </PreferenceCategory>
 
-    <Preference android:title="@string/pref_title_restoredefaultsettings"
-        android:key="restoredefaultsettings"
-        android:summary="@string/pref_summary_restoredefaultsettings"/>
+    <PreferenceCategory
+        android:title="ERASE AND RESET"
+        android:layout="@layout/preferences_category">
+
+        <Preference android:title="@string/pref_title_restoredefaultsettings"
+            android:key="restoredefaultsettings"
+            android:summary="@string/pref_summary_restoredefaultsettings"/>
+    </PreferenceCategory>
 </PreferenceScreen>
