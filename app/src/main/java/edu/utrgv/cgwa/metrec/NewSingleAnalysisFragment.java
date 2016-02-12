@@ -249,8 +249,10 @@ public class NewSingleAnalysisFragment extends Fragment implements View.OnClickL
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
             final double tcorr = Double.parseDouble(sp.getString("correlationTime", "4e-4"));
+            final boolean useBrent = Boolean.parseBoolean(sp.getString("useBrent", "False"));
 
-            Routines.CalMeasuredTOAsResult result = Routines.calmeasuredTOAs(singleMovingMetronome, template, pulseProfile.T, tcorr);
+            Routines.CalMeasuredTOAsResult result = Routines.calmeasuredTOAs(singleMovingMetronome,
+                    template, pulseProfile.T, tcorr, useBrent);
 
             return result;
         }

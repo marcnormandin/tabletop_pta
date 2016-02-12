@@ -204,7 +204,12 @@ public class NewProfileFragment extends Fragment implements View.OnClickListener
                     // Create a new profile model based on the audio time series
                     ProfileModel profileModel = new ProfileModel(filenamePF);
                     profileModel.setProfileProgressListener(this);
-                    profileModel.newProfile(mBeatsPerMinute, audioModel.getTimeSeries());
+
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    final double tcorr = Double.parseDouble(sp.getString("correlationTime", "4e-4"));
+                    final boolean useBrent = Boolean.parseBoolean(sp.getString("useBrent", "false"));
+
+                    profileModel.newProfile(mBeatsPerMinute, audioModel.getTimeSeries(), tcorr, useBrent);
                     PulseProfile pulse = profileModel.getPulseProfile();
 
                     // Save the profile to the database

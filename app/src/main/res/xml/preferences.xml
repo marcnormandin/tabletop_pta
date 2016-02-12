@@ -56,8 +56,15 @@
             android:key="correlationTime"
             android:title="Correlation Time"
             android:text="4.0e-4"
-            android:summary="The window size (in time) to find the maximum peak within"
+            android:summary="The window size (in time) to find the maximum peak within. [Tcorr]"
             android:defaultValue="4.0e-4" />
+
+        <CheckBoxPreference
+            android:title="Use Brent Algorithm"
+            android:defaultValue="false"
+            android:key="useBrent"
+            android:summaryOn="Disable Brent"
+            android:summaryOff="Enable Brent"/>
 
     </PreferenceCategory>
 

@@ -36,9 +36,43 @@ import ca.uol.aig.fftpack.RealDoubleFFT;
 
 public class Routines {
     private static final String TAG = "Routines";
-    public static PulseProfile calpulseprofile(TimeSeries ts, double bpm) {
+
+    public static PulseProfile calpulseprofile(TimeSeries ts, double bpm, double Tcorr, boolean useBrent) {
+        Log.d(TAG, "len(ts) = " + ts.t.length);
+
+        // Compute the pulse profile using only the folding method
+        PulseProfile pf = calpulseprofile_phase_0(new TimeSeries(ts), bpm);
+
+        Log.d(TAG, "len(pf) = " + pf.ts.t.length);
+        Log.d(TAG, "pf.T = " + pf.T);
+
+        // Now compute residuals using the initially computed pulse period
+        TimeSeries template = caltemplate(pf, ts);
+        CalMeasuredTOAsResult calmeasured = calmeasuredTOAs(ts, template, pf.T, Tcorr, useBrent);
+
+        // Find trendline for the residuals
+        SimpleRegression regression = new SimpleRegression();
+        double[] x = calmeasured.measuredTOAs();
+        double[] y = calmeasured.residuals();
+        for (int i = 0; i < x.length; i++) {
+            regression.addData(x[i], y[i]);
+        }
+        double slope = regression.getSlope();
+
+        // New compute the improved profile period
+        double timePerSample = ts.t[1] - ts.t[0];
+        double deltaT = slope * timePerSample;
+        double Tnew = pf.T + deltaT;
+        pf.T = Tnew;
+
+        Log.d(TAG, "deltaT improvement = " + deltaT);
+        Log.d(TAG, "New pf.T = " + pf.T);
+        return pf;
+    }
+
+    public static PulseProfile calpulseprofile_phase_0(TimeSeries ts, double bpm) {
         // calculated pulse period
-        double Tp = calpulseperiod(ts, 60 / bpm);
+        double Tp = calpulseperiod(ts, 60.0 / bpm);
 
         // fold time series using calculated period
         TimeSeries fs = foldtimeseries(ts, Tp);
@@ -92,6 +126,7 @@ public class Routines {
 
         int ndx = Utility.argmax(yf_max);
         double Tp = Tt[ndx];
+
         return Tp;
     }
 
@@ -560,9 +595,9 @@ public class Routines {
         return measuredTOAs, uncertainties, n0
     */
 
-    public static CalMeasuredTOAsResult calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp, final double Tcorr) {
+    public static CalMeasuredTOAsResult calmeasuredTOAs(TimeSeries ts, TimeSeries template, double Tp,
+                                                        final double Tcorr, final boolean useBrent) {
         final long startTime = System.nanoTime();
-        boolean useBrent = false;
 
         int N = ts.t.length;
         double deltaT = ts.t[1] - ts.t[0];
@@ -1012,6 +1047,8 @@ public class Routines {
 
     return dts, b, m
 */
+
+
 
     // Source: http://excerptsworld.blogspot.com/2011/06/how-to-remove-line-trend-in-java.html
     public static double[] detrend(double[] x, double[] y) {

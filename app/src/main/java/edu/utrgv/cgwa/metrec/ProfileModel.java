@@ -1,5 +1,8 @@
 package edu.utrgv.cgwa.metrec;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import java.io.File;
 
 import edu.utrgv.cgwa.tabletoppta.PulseProfile;
@@ -63,13 +66,13 @@ public class ProfileModel {
         deleteFile(getFilenamePF());
     }
 
-    public void newProfile(double beatsPerMinute, TimeSeries ts) {
+    public void newProfile(double beatsPerMinute, TimeSeries ts, final double Tcorr, final boolean useBrent) {
         if (mProfileProgressListener != null) {
             mProfileProgressListener.onProfileComputationStarted();
         }
 
         // Get the folded time series
-        mPulseProfile = Routines.calpulseprofile(ts, beatsPerMinute);
+        mPulseProfile = Routines.calpulseprofile(ts, beatsPerMinute, Tcorr, useBrent);
         mPulseProfile.saveToFile(getFilenamePF());
 
         if (mProfileProgressListener != null) {
