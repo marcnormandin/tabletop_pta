@@ -8,6 +8,9 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.util.Log;
+
+import java.io.File;
 
 
 public class PreferencesFragment extends PreferenceFragment {
@@ -19,7 +22,7 @@ public class PreferencesFragment extends PreferenceFragment {
         if (preference.getKey().equalsIgnoreCase("restoredefaultsettings")) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                 alert.setTitle("WARNING!!!");
-                alert.setMessage("Are you sure that you restore to default settings?");
+                alert.setMessage("Are you sure that you erase data and restore to default settings?");
                 alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -52,6 +55,8 @@ public class PreferencesFragment extends PreferenceFragment {
     // This will reset all the preferences to their default values
     private void resetToDefault() {
         Context context = (Context) getActivity();
+
+        // Reset all preference settings to default
         PreferenceManager
                 .getDefaultSharedPreferences(context)
                 .edit()
@@ -60,6 +65,44 @@ public class PreferencesFragment extends PreferenceFragment {
         PreferenceManager.setDefaultValues(context, R.xml.preferences, true);
         setPreferenceScreen(null);
         addPreferencesFromResource(R.xml.preferences);
+
+        // Erase all data
+        eraseInternalStorage();
+        eraseCache();
+        eraseDatabase();
+    }
+
+    private void eraseInternalStorage() {
+        // Erase all internal data files
+        File folder = getActivity().getFilesDir();
+        File[] listOfFiles = folder.listFiles();
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                file.delete();
+            } else if (file.isDirectory()) {
+                // noop
+            }
+        }
+    }
+
+    private void eraseCache() {
+        // Erase all internal data files
+        File folder = getActivity().getCacheDir();
+        File[] listOfFiles = folder.listFiles();
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                file.delete();
+            } else if (file.isDirectory()) {
+                // noop
+            }
+        }
+    }
+
+    private void eraseDatabase() {
+        String[] databaseList = getActivity().databaseList();
+        for (String name : databaseList) {
+            getActivity().deleteDatabase(name);
+        }
     }
 }
 
