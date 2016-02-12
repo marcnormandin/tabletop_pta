@@ -13,11 +13,13 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFFFF"
         android:paddingRight="5dp"
         android:text="Amplitude"
         android:id="@+id/textViewAmplitude" />
 
     <EditText
+        android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/textViewAmplitude"
@@ -25,10 +27,10 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/editAmplitude"
-        android:layout_weight="1"
-        android:numeric="signed|decimal" />
+        android:layout_weight="1" />
 
     <TextView
+        android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewAmplitude"
@@ -39,6 +41,7 @@
         android:id="@+id/textViewFrequency" />
 
     <EditText
+        android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/textViewFrequency"

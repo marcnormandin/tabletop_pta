@@ -118,7 +118,7 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
         FragmentManager fm = getSupportFragmentManager();
         AnalysisResidualsFragment f;
         f = (AnalysisResidualsFragment) fm.findFragmentByTag(mChartOneTag);
-        f.computeFit(amplitude, frequency);
+        f.computeFit(amplitude, frequency, true);
     }
 
     // Called by the chart fragment (which updates the fit parameters)

@@ -112,7 +112,7 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
         } else {
             f = (AnalysisResidualsFragment) fm.findFragmentByTag(mChartTwoTag);
         }
-        f.computeFit(amplitude, frequency);
+        f.computeFit(amplitude, frequency, true);
     }
 
     // Called by the chart fragment (which updates the fit parameters)

@@ -79,7 +79,8 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_analysis_residuals, container, false);
 
-        computeFit(getAmplitude(), getFrequency());
+        computeFit(getAmplitude(), getFrequency(), false);
+        //displayResiduals(false);
 
         return rootView;
     }
@@ -117,7 +118,7 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         return mSinusoidParameters[3];
     }
 
-    public void computeFit(final double initialAmplitude, final double initialFrequency) {
+    public void computeFit(final double initialAmplitude, final double initialFrequency, final boolean drawFit) {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -126,7 +127,7 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
 
                 // Compute the sinusoid parameters
                 mSinusoidParameters = Routines.fitSinusoid(mAnalysisResult.measuredTOAs(),
-                        mAnalysisResult.detrendedResiduals(),
+                        mAnalysisResult.residuals(),
                         initialAmplitude,
                         initialFrequency);
 
@@ -136,7 +137,7 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 setupLineChart(getView());
-                displayResiduals();
+                displayResiduals(drawFit);
 
                 // It should never be null, but whatever
                 if (mListener != null) {
@@ -147,8 +148,8 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         }).execute();
     }
 
-    public void displayResiduals() {
-        final boolean showResiduals = false;
+    public void displayResiduals(boolean showSinusoidFit) {
+        //final boolean showResiduals = false;
 
         if (mAnalysisResult == null) {
             return;
@@ -159,7 +160,7 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
 
         double[] residuals = mAnalysisResult.residuals();
 
-        double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
+        //double[] detrendedResiduals = mAnalysisResult.detrendedResiduals();
 
         /*double[] detrendedResiduals = new double[toas.length];
         // Make sinusoid
@@ -197,24 +198,30 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
             xVals.add(x[i] + "");
         }
 
-        if (showResiduals) {
-            // Residual series
-            ArrayList<Entry> residualsVals = new ArrayList<Entry>();
-            for (int i = 0; i < count; i++) {
-                float val = (float) residuals[i];
-                residualsVals.add(new Entry(val, i));
+        // Residual series
+        ArrayList<Entry> residualsVals = new ArrayList<Entry>();
+        for (int i = 0; i < residuals.length; i++) {
+            float val = (float) residuals[i];
+            // find which index in the x-array our i resides at
+            int j;
+            for (j = 0; j < count; j++) {
+                if (toas[i] <= x[j]) break;
             }
-
-            // create the audio dataset and give it a type
-            LineDataSet residualsSet = new LineDataSet(residualsVals, "Residuals");
-            residualsSet.setColor(Color.GRAY);
-            residualsSet.setCircleColor(Color.DKGRAY);
-            residualsSet.setLineWidth(0f);
-            residualsSet.setDrawCircles(true);
-            residualsSet.setDrawValues(false);
-            dataSets.add(residualsSet);
+            residualsVals.add(new Entry(val, j));
         }
 
+        // create the audio dataset and give it a type
+        LineDataSet residualsSet = new LineDataSet(residualsVals, "Residuals");
+        residualsSet.setColor(Color.BLUE);
+        residualsSet.setCircleColor(Color.RED);
+        residualsSet.setCircleColorHole(Color.RED);
+        residualsSet.setLineWidth(1f);
+        residualsSet.setDrawCircles(true);
+        residualsSet.setDrawValues(false);
+        residualsSet.setDrawCircleHole(true);
+        dataSets.add(residualsSet);
+
+        /*
         // Detrended Residual series
         ArrayList<Entry> detrendedResidualsVals = new ArrayList<Entry>();
         for (int i = 0; i < detrendedResiduals.length; i++) {
@@ -237,29 +244,32 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         detrendedResidualsSet.setDrawValues(false);
         detrendedResidualsSet.setDrawCircleHole(true);
         dataSets.add(detrendedResidualsSet);
+        */
 
 
-        // Fitted sinsoid series
-        ArrayList<Entry> sinusoidVals = new ArrayList<Entry>();
-        for (int i = 0; i < count; i++) {
-            double p0 = mSinusoidParameters[0];
-            double p1 = mSinusoidParameters[1];
-            double p2 = mSinusoidParameters[2];
-            double p3 = mSinusoidParameters[3];
-            double val = p0 * Math.sin(2.0*Math.PI*x[i]*p1 + p2) + p3;
-            sinusoidVals.add(new Entry((float)val, i));
+        if (showSinusoidFit) {
+            // Fitted sinusoid series
+            ArrayList<Entry> sinusoidVals = new ArrayList<Entry>();
+            for (int i = 0; i < count; i++) {
+                double p0 = mSinusoidParameters[0];
+                double p1 = mSinusoidParameters[1];
+                double p2 = mSinusoidParameters[2];
+                double p3 = mSinusoidParameters[3];
+                double val = p0 * Math.sin(2.0 * Math.PI * x[i] * p1 + p2) + p3;
+                sinusoidVals.add(new Entry((float) val, i));
+            }
+
+            // create the audio dataset and give it a type
+            LineDataSet sinusoidSet = new LineDataSet(sinusoidVals, "Fit");
+            sinusoidSet.setColor(Color.MAGENTA);
+            sinusoidSet.setCircleColor(Color.MAGENTA);
+            sinusoidSet.setCircleColorHole(Color.MAGENTA);
+            sinusoidSet.setLineWidth(4f);
+            sinusoidSet.setDrawCircles(false);
+            sinusoidSet.setDrawValues(false);
+            sinusoidSet.setDrawCircleHole(false);
+            dataSets.add(sinusoidSet);
         }
-
-        // create the audio dataset and give it a type
-        LineDataSet sinusoidSet = new LineDataSet(sinusoidVals, "Fit");
-        sinusoidSet.setColor(Color.MAGENTA);
-        sinusoidSet.setCircleColor(Color.MAGENTA);
-        sinusoidSet.setCircleColorHole(Color.MAGENTA);
-        sinusoidSet.setLineWidth(4f);
-        sinusoidSet.setDrawCircles(false);
-        sinusoidSet.setDrawValues(false);
-        sinusoidSet.setDrawCircleHole(false);
-        dataSets.add(sinusoidSet);
 
         // create a data object with the datasets
         LineData mLineData = new LineData(xVals, dataSets);
