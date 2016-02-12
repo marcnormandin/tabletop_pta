@@ -44,8 +44,8 @@
             android:paddingRight="10dp"
             android:text="Label" />
 
-        <Spinner
-            android:id="@+id/spinnerAudioTag"
+        <AutoCompleteTextView
+            android:id="@+id/audioTag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

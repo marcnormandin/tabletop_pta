@@ -29,6 +29,7 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
     private final String mChartOneTag = "chartOneTag";
     private FitSinusoidFragment mControlOne;
     private AnalysisResidualsFragment mChartOne;
+    private InfoPanelFragment mInfoPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +56,14 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
 
             mControlOne = FitSinusoidFragment.newInstance(mControlOneTag);
             mChartOne = AnalysisResidualsFragment.newInstance(mChartOneTag, entry.filenameResult());
+            //mInfoPanel = InfoPanelFragment.newInstance();
 
             FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.container, mControlOne, mControlOneTag);
             ft.add(R.id.container, mChartOne, mChartOneTag);
+
+            //ft.add(R.id.container, mInfoPanel, "infopanel");
+
             ft.commit();
 
 
@@ -76,6 +81,9 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
 
             TextView computationTime = (TextView) findViewById(R.id.computationtimeseconds);
             computationTime.setText("" + String.format("%.2f", result.computationTimeSeconds()));
+
+            //TextView timePerSample = (TextView) findViewById(R.id.timepersample);
+            //timePerSample.setText("" + String.format("%.2f", result.computationTimeSeconds()));
         }
     }
 

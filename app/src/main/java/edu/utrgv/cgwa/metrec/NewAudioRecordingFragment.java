@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.Date;
 public class NewAudioRecordingFragment extends Fragment implements View.OnClickListener{
 
     private NewAudioRecordingListener mListener;
-    private Spinner mSpinnerAudioTag;
+    private AutoCompleteTextView mAudioTag;
 
     public static final String ARG_AUDIO_TAG = "ARG_AUDIO_TAG";
 
@@ -58,36 +60,32 @@ public class NewAudioRecordingFragment extends Fragment implements View.OnClickL
         Button cancel = (Button) rootView.findViewById(R.id.buttonCancel);
         cancel.setOnClickListener(this);
 
-        setupSpinner(rootView);
+        setupAudioTag(rootView);
 
         if (getArguments() != null) {
             String tag = getArguments().getString(ARG_AUDIO_TAG, "NULL");
             if (!tag.equals("NULL")) {
-                for (int i = 0; i < mSpinnerAudioTag.getCount(); i++) {
-                    if (mSpinnerAudioTag.getItemAtPosition(i).equals(tag)) {
-                        mSpinnerAudioTag.setSelection(i);
-                        break;
-                    }
-                }
-                mSpinnerAudioTag.setEnabled(false);
+                mAudioTag.setText(tag);
             }
         }
 
         return rootView;
     }
 
-    public void setupSpinner(View rootView) {
-        mSpinnerAudioTag = (Spinner) rootView.findViewById(R.id.spinnerAudioTag);
+    public void setupAudioTag(View rootView) {
+        mAudioTag = (AutoCompleteTextView) rootView.findViewById(R.id.audioTag);
 
         ArrayList<String> array = new ArrayList<>();
-        array.add( AudioRecordingManager.VALUE_NAME_TAG_PULSE_PROFILE );
-        array.add( AudioRecordingManager.VALUE_NAME_TAG_SINGLE_METRONOME);
+        array.add(AudioRecordingManager.VALUE_NAME_TAG_PULSE_PROFILE);
+        array.add(AudioRecordingManager.VALUE_NAME_TAG_SINGLE_METRONOME);
         array.add(AudioRecordingManager.VALUE_NAME_TAG_DOUBLE_METRONOME);
 
-        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter(getActivity(), R.layout.spinner_layout, array);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerAudioTag.setAdapter(spinnerArrayAdapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, array);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mAudioTag.setAdapter(adapter);
     }
+
 
     // Fixme
     // This is hackish
@@ -124,7 +122,7 @@ public class NewAudioRecordingFragment extends Fragment implements View.OnClickL
 
 
 
-        final String tag = (String)mSpinnerAudioTag.getSelectedItem();
+        final String tag = mAudioTag.getText().toString();
 
         final AudioRecordingModel mAudioRecording = new AudioRecordingModel(getFilenamePrefix());
 
