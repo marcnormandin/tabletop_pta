@@ -113,8 +113,9 @@ public class PreferencesFragment extends PreferenceFragment {
         // Get a list of the data files
         File folder = getActivity().getFilesDir();
         File[] listOfFiles = folder.listFiles();
-        ArrayList<String> listOfFileNames = new ArrayList<>();
 
+        // Add the filenames to the list
+        ArrayList<String> listOfFileNames = new ArrayList<>();
         for (File file : listOfFiles) {
             if (file.isFile()) {
                 listOfFileNames.add(file.getName());

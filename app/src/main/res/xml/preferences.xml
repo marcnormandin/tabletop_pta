@@ -69,7 +69,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="ERASE AND RESET"
+        android:title="ADVANCED FUNCTIONS (CAUTION)"
         android:layout="@layout/preferences_category">
 
         <Preference android:title="Erase and reset to default"
