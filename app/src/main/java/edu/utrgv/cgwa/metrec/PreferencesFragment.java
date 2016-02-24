@@ -1,6 +1,7 @@
 package edu.utrgv.cgwa.metrec;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -8,9 +9,9 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class PreferencesFragment extends PreferenceFragment {
@@ -20,25 +21,28 @@ public class PreferencesFragment extends PreferenceFragment {
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         // Check if the user wants to restore the default settings
         if (preference.getKey().equalsIgnoreCase("restoredefaultsettings")) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                alert.setTitle("WARNING!!!");
-                alert.setMessage("Are you sure that you erase data and restore to default settings?");
-                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        resetToDefault();
-                        dialog.dismiss();
-                    }
-                });
-                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle("WARNING!!!");
+            alert.setMessage("Are you sure that you erase data and restore to default settings?");
+            alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    resetToDefault();
+                    dialog.dismiss();
+                }
+            });
+            alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                        dialog.dismiss();
-                    }
-                });
+                    dialog.dismiss();
+                }
+            });
 
-                alert.show();
+            alert.show();
+            return true;
+        } else if (preference.getKey().equalsIgnoreCase("listFiles")) {
+            showListOfFilesDialog();
             return true;
         } else {
             return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -103,6 +107,35 @@ public class PreferencesFragment extends PreferenceFragment {
         for (String name : databaseList) {
             getActivity().deleteDatabase(name);
         }
+    }
+
+    private void showListOfFilesDialog() {
+        // Get a list of the data files
+        File folder = getActivity().getFilesDir();
+        File[] listOfFiles = folder.listFiles();
+        ArrayList<String> listOfFileNames = new ArrayList<>();
+
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                listOfFileNames.add(file.getName());
+            } else if (file.isDirectory()) {
+                // noop
+            }
+        }
+
+        // Add any database files to the list
+        for (String fn : getActivity().databaseList()) {
+            listOfFileNames.add(fn);
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(PreferencesShowFilesDialog.ARG_LISTOFFILENAMES, listOfFileNames);
+
+        FragmentManager manager = getFragmentManager();
+        PreferencesShowFilesDialog d = new PreferencesShowFilesDialog();
+        d.setArguments(bundle);
+
+        d.show(manager, "filesDialog");
     }
 }
 

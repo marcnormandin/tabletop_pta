@@ -75,5 +75,11 @@
         <Preference android:title="Erase and reset to default"
             android:key="restoredefaultsettings"
             android:summary="@string/pref_summary_restoredefaultsettings"/>
+
+        <Preference
+            android:title="List data files"
+            android:key="listFiles"
+            android:summary="List all data files" />
+
     </PreferenceCategory>
 </PreferenceScreen>
