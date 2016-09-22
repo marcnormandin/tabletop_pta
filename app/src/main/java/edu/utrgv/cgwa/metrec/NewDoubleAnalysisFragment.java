@@ -283,7 +283,7 @@ public class NewDoubleAnalysisFragment extends android.support.v4.app.Fragment i
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
             final double tcorr = Double.parseDouble(sp.getString("correlationTime", "4e-4"));
-            final boolean useBrent = Boolean.parseBoolean(sp.getString("useBrent", "false"));
+            final boolean useBrent = sp.getBoolean("useBrent", false);
 
             Routines.CalMeasuredTOAsResult result = Routines.calmeasuredTOAs(singleMovingMetronome,
                     template, pulseProfile.T, tcorr, useBrent);

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.utrgv.cgwa.tabletoppta.Routines;
 import edu.utrgv.cgwa.tabletoppta.Utility;
 
 public class ViewDoubleAnalysisResidualsActivity extends AppCompatActivity
@@ -97,7 +98,7 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
         return false;
     }
 
-    // Called by the control fragment
+    // Called by the FitSinusoidFragment when the "FIT" button is clicked on
     @Override
     public void onFit(String controlTag, double amplitude, double frequency) {
         //Toast.makeText(this, "FIT: id = " + controlTag + ", amp = " + amplitude + ", freq = " + frequency,
@@ -115,7 +116,7 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
         f.computeFit(amplitude, frequency, true);
     }
 
-    // Called by the chart fragment (which updates the fit parameters)
+    // Called by the AnalysisResidualsFragment after it computes the fit parameters
     @Override
     public void onFitParametersUpdated(String tag, double amplitude, double frequency,
                                        double phase, double offset) {
@@ -138,41 +139,22 @@ implements FitSinusoidFragment.Listener, AnalysisResidualsFragment.Listener {
 
         // Fixme
         // This should use a range around the two recording times
-        double[] t = Utility.linspace(0.0, 16.0, N);
+        double[] t = Utility.linspace(0.0, 8.0, N);
 
         final double a = frag.getAmplitude();
         final double f = frag.getFrequency();
         final double p = frag.getPhase();
         final double o = frag.getOffset();
-        double[] y = new double[N];
-        for (int i = 0; i < N; i++) {
-            y[i] = a * Math.sin(2.0*Math.PI*f*t[i] + p) + o;
-        }
 
-        return y;
-    }
-
-    private double computeCorrelation(double[] y1, double[] y2) {
-        double sum_y1y2 = 0.0;
-        double sum_y1y1 = 0.0;
-        double sum_y2y2 = 0.0;
-
-        for (int i = 0; i < y1.length; i++) {
-            sum_y1y2 += y1[i] * y2[i];
-            sum_y1y1 += y1[i] * y1[i];
-            sum_y2y2 += y2[i] * y2[i];
-        }
-
-        double corr = sum_y1y2 / (Math.sqrt(sum_y1y1) * Math.sqrt(sum_y2y2));
-
-        return corr;
+        return Routines.genSinusoid(t, a, f, p, o);
     }
 
     private void updateCorrelation() {
         double[] sinusoidOne = genSinusoid(mChartOne);
         double[] sinusoidTwo = genSinusoid(mChartTwo);
-        double corr = computeCorrelation(sinusoidOne, sinusoidTwo);
+        double corr = Routines.computeCorrelation(sinusoidOne, sinusoidTwo);
 
-        mTextCorrelation.setText("Correlation (" + corr + ")");
+        mTextCorrelation.setText("Correlation\n (" + corr + ")");
     }
 }
+

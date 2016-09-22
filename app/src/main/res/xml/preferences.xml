@@ -81,5 +81,10 @@
             android:key="listFiles"
             android:summary="List all data files" />
 
+        <Preference
+            android:title="Export data files"
+            android:key="exportDataFiles"
+            android:summary="Export all datafiles as a zip archive" />
+
     </PreferenceCategory>
 </PreferenceScreen>

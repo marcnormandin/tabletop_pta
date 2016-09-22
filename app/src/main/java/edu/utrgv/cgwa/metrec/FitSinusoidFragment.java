@@ -65,9 +65,11 @@ public class FitSinusoidFragment extends Fragment implements View.OnClickListene
         switch (v.getId()) {
             case R.id.buttonFit:
                 if (mListener != null) {
+                    // Use the edit boxes as the initial guess for the fitted parameters
                     double amplitude = Double.parseDouble(mEditAmplitude.getText().toString());
                     double frequency = Double.parseDouble(mEditFrequency.getText().toString());
 
+                    // Send the initial guess to the fitting routine
                     mListener.onFit(mControlTag, amplitude, frequency);
                 }
                 break;

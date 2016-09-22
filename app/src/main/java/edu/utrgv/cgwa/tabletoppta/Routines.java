@@ -33,9 +33,148 @@ import java.util.Arrays;
 
 import ca.uol.aig.fftpack.Complex1D;
 import ca.uol.aig.fftpack.RealDoubleFFT;
+import edu.utrgv.cgwa.metrec.AnalysisResidualsFragment;
 
 public class Routines {
     private static final String TAG = "Routines";
+
+    /*
+    def errsinusoid(p, t, y, err):
+
+    '''
+    calculate function to minimize when fitting to a sinusoid plus constant
+
+    p - parameters for model sinusoid (A, f, phi, b)
+    t - discrete times
+    y - array of measeured data
+    err - array of error bars on measured data
+    '''
+
+    f = (y-sinusoid(p,t))/err
+
+    return f
+    */
+
+    /*
+    def sinusoid(p,t):
+
+    '''
+    calculate sine function plus constant offset in y
+
+    p - parameters (A, f, phi, b)
+    t - discrete times
+    '''
+
+    y = p[0]*np.sin(2*np.pi*p[1]*t+p[2]) + p[3]
+
+    return y
+    */
+
+
+    public static double[] fitSinusoid(final double[] measuredTOAs, final double[] residuals,
+                                       final double initialAmplitude,
+                                       final double initialFrequency) {
+
+        // Initialize the starting parameters
+        final int M = 4;
+        double[] initialParameters = new double[M];
+        initialParameters[0] = initialAmplitude;
+        initialParameters[1] = initialFrequency; // frequency eg. 0.4
+        initialParameters[2] = 0.0; // phase
+        initialParameters[3] = 0.0; // offset
+
+        final int N = measuredTOAs.length;
+
+        MultivariateJacobianFunction distances = new MultivariateJacobianFunction() {
+            public Pair<RealVector, RealMatrix> value(final RealVector point) {
+
+                // Parameters being checked
+                double p0 = point.getEntry(0);
+                double p1 = point.getEntry(1);
+                double p2 = point.getEntry(2);
+                double p3 = point.getEntry(3);
+
+
+                RealVector value = new ArrayRealVector(N);
+                RealMatrix jacobian = new Array2DRowRealMatrix(N, M);
+
+                for (int i = 0; i < N; ++i) {
+                    final double xi = measuredTOAs[i];
+
+                    value.setEntry(i, p0*Math.sin(2.0*Math.PI*xi*p1 + p2) + p3);
+
+                    // derivative with respect to p0
+                    jacobian.setEntry(i, 0, Math.sin(2.0*Math.PI*p1*xi + p2));
+
+                    // derivative with respect to p1
+                    jacobian.setEntry(i, 1, p0*Math.cos(2.0*Math.PI*p1*xi + p2)*(2.0*Math.PI*xi));
+
+                    // derivative with respect to p2
+                    jacobian.setEntry(i, 2, p0*Math.cos(2.0*Math.PI*p1*xi + p2));
+
+                    // derivative with respect to p3
+                    jacobian.setEntry(i, 3, 1.0);
+                }
+
+                return new Pair<RealVector, RealMatrix>(value, jacobian);
+            }
+        };
+
+        LeastSquaresProblem problem = new LeastSquaresBuilder().
+                start(initialParameters).
+                model(distances).
+                target(residuals).
+                lazyEvaluation(false).
+                maxEvaluations(10000).
+                maxIterations(10000).
+                build();
+
+        LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().
+                withCostRelativeTolerance(2 * Precision.EPSILON).
+                withParameterRelativeTolerance(2 * Precision.EPSILON).
+                optimize(problem);
+
+        // Get the fitted parameters
+        double[] fittedParameters = new double[M];
+        for (int i = 0; i < M; i++) {
+            fittedParameters[i] = optimum.getPoint().getEntry(i);
+        }
+
+        // Print the results
+        for (int i = 0; i < M; i++) {
+            Log.d(TAG, "p" + i + " = " + fittedParameters[i]);
+        }
+
+
+        return fittedParameters;
+    }
+
+    public static double[] genSinusoid(double[] t, double a, double f, double p, double o) {
+        final int N = t.length;
+        double[] y = new double[N];
+        for (int i = 0; i < N; i++) {
+            // This routine is used for the correlation calculation.
+            // We explicitly use a vertical offset of 0, o = 0, on purpose.
+            y[i] = a * Math.sin(2.0*Math.PI*f*t[i] + p);
+        }
+        return y;
+    }
+
+    public static double computeCorrelation(double[] y1, double[] y2) {
+        double sum_y1y2 = 0.0;
+        double sum_y1y1 = 0.0;
+        double sum_y2y2 = 0.0;
+
+        for (int i = 0; i < y1.length; i++) {
+            sum_y1y2 += y1[i] * y2[i];
+            sum_y1y1 += y1[i] * y1[i];
+            sum_y2y2 += y2[i] * y2[i];
+        }
+
+        double corr = sum_y1y2 / (Math.sqrt(sum_y1y1) * Math.sqrt(sum_y2y2));
+
+        return corr;
+    }
 
     public static PulseProfile calpulseprofile(TimeSeries ts, double bpm, double Tcorr, boolean useBrent) {
         Log.d(TAG, "len(ts) = " + ts.t.length);
@@ -1071,116 +1210,7 @@ public class Routines {
         return y;
     }
 
-    /*
-    def errsinusoid(p, t, y, err):
 
-    '''
-    calculate function to minimize when fitting to a sinusoid plus constant
-
-    p - parameters for model sinusoid (A, f, phi, b)
-    t - discrete times
-    y - array of measeured data
-    err - array of error bars on measured data
-    '''
-
-    f = (y-sinusoid(p,t))/err
-
-    return f
-    */
-
-    /*
-    def sinusoid(p,t):
-
-    '''
-    calculate sine function plus constant offset in y
-
-    p - parameters (A, f, phi, b)
-    t - discrete times
-    '''
-
-    y = p[0]*np.sin(2*np.pi*p[1]*t+p[2]) + p[3]
-
-    return y
-    */
-
-
-    public static double[] fitSinusoid(final double[] measuredTOAs, final double[] residuals,
-                                       final double initialAmplitude,
-                                       final double initialFrequency) {
-
-        // Initialize the starting parameters
-        final int M = 4;
-        double[] initialParameters = new double[M];
-        initialParameters[0] = initialAmplitude;
-        initialParameters[1] = initialFrequency; // frequency eg. 0.4
-        initialParameters[2] = 0.0; // phase
-        initialParameters[3] = 0.0; // offset
-
-        final int N = measuredTOAs.length;
-
-        MultivariateJacobianFunction distances = new MultivariateJacobianFunction() {
-            public Pair<RealVector, RealMatrix> value(final RealVector point) {
-
-                // Parameters being checked
-                double p0 = point.getEntry(0);
-                double p1 = point.getEntry(1);
-                double p2 = point.getEntry(2);
-                double p3 = point.getEntry(3);
-
-
-                RealVector value = new ArrayRealVector(N);
-                RealMatrix jacobian = new Array2DRowRealMatrix(N, M);
-
-                for (int i = 0; i < N; ++i) {
-                    final double xi = measuredTOAs[i];
-
-                    value.setEntry(i, p0*Math.sin(2.0*Math.PI*xi*p1 + p2) + p3);
-
-                    // derivative with respect to p0
-                    jacobian.setEntry(i, 0, Math.sin(2.0*Math.PI*p1*xi + p2));
-
-                    // derivative with respect to p1
-                    jacobian.setEntry(i, 1, p0*Math.cos(2.0*Math.PI*p1*xi + p2)*(2.0*Math.PI*xi));
-
-                    // derivative with respect to p2
-                    jacobian.setEntry(i, 2, p0*Math.cos(2.0*Math.PI*p1*xi + p2));
-
-                    // derivative with respect to p3
-                    jacobian.setEntry(i, 3, 1.0);
-                }
-
-                return new Pair<RealVector, RealMatrix>(value, jacobian);
-            }
-        };
-
-        LeastSquaresProblem problem = new LeastSquaresBuilder().
-                start(initialParameters).
-                model(distances).
-                target(residuals).
-                lazyEvaluation(false).
-                maxEvaluations(10000).
-                maxIterations(10000).
-                build();
-        
-        LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().
-                withCostRelativeTolerance(2 * Precision.EPSILON).
-                withParameterRelativeTolerance(2 * Precision.EPSILON).
-                optimize(problem);
-
-        // Get the fitted parameters
-        double[] fittedParameters = new double[M];
-        for (int i = 0; i < M; i++) {
-            fittedParameters[i] = optimum.getPoint().getEntry(i);
-        }
-
-        // Print the results
-        for (int i = 0; i < M; i++) {
-            Log.d(TAG, "p" + i + " = " + fittedParameters[i]);
-        }
-
-
-        return fittedParameters;
-    }
 
     public static void debug() {
         // These values were picked by Joe, and the math

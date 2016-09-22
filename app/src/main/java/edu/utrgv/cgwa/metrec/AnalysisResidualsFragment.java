@@ -118,6 +118,7 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
         return mSinusoidParameters[3];
     }
 
+    // This is called by the ViewDoubleAnalysisActivity after user clicks on "FIT" button of the FitSinusoidFragment
     public void computeFit(final double initialAmplitude, final double initialFrequency, final boolean drawFit) {
         (new AsyncTask<Void, Void, Void>() {
             @Override
@@ -251,10 +252,10 @@ public class AnalysisResidualsFragment extends android.support.v4.app.Fragment {
             // Fitted sinusoid series
             ArrayList<Entry> sinusoidVals = new ArrayList<Entry>();
             for (int i = 0; i < count; i++) {
-                double p0 = mSinusoidParameters[0];
-                double p1 = mSinusoidParameters[1];
-                double p2 = mSinusoidParameters[2];
-                double p3 = mSinusoidParameters[3];
+                double p0 = mSinusoidParameters[0]; // amplitude
+                double p1 = mSinusoidParameters[1]; // frequency
+                double p2 = mSinusoidParameters[2]; // phase
+                double p3 = mSinusoidParameters[3]; // offset
                 double val = p0 * Math.sin(2.0 * Math.PI * x[i] * p1 + p2) + p3;
                 sinusoidVals.add(new Entry((float) val, i));
             }

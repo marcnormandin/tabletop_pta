@@ -206,8 +206,8 @@ public class NewProfileFragment extends Fragment implements View.OnClickListener
                     profileModel.setProfileProgressListener(this);
 
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    final double tcorr = Double.parseDouble(sp.getString("correlationTime", "4e-4"));
-                    final boolean useBrent = Boolean.parseBoolean(sp.getString("useBrent", "false"));
+                    final double tcorr = Double.parseDouble(sp.getString("correlationTime", "4.0e-4"));
+                    final boolean useBrent = false; //!Fixme Boolean.valueOf(sp.getString("useBrent", "false"));
 
                     profileModel.newProfile(mBeatsPerMinute, audioModel.getTimeSeries(), tcorr, useBrent);
                     PulseProfile pulse = profileModel.getPulseProfile();
