@@ -21,9 +21,6 @@
     <string name="pref_title_restoredefaultsettings">Restore default settings</string>
     <string name="pref_summary_restoredefaultsettings">WARNING! This can not be undone.</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="title_activity_record_sound">RecordSoundActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">Tabletop\n Pulsar Timing Array</string>
